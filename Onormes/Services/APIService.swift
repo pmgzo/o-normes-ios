@@ -17,7 +17,7 @@ class APIService {
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
     // Check the URL, if the URL isn't correctly formated return an error
-    guard let url = URL(string: "http://localhost:3001/api/users/connect") else {
+    guard let url = URL(string: "http://192.168.1.4:3001/api/users/connect") else {
       completion(.failure(.custom(errorMessage: "Url is not correct")))
       return
     }

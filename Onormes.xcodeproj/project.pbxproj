@@ -45,12 +45,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		94088DCC274010C3002F64D5 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				944A4B55273672B400811D53 /* LoginView.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		94088DCD27404C26002F64D5 /* Views Models */ = {
+			isa = PBXGroup;
+			children = (
+				94088DCE27404C3A002F64D5 /* Login */,
+			);
+			path = "Views Models";
+			sourceTree = "<group>";
+		};
+		94088DCE27404C3A002F64D5 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				944A4B4D27366DAA00811D53 /* LoginViewModel.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
 		944A4B4C27366D9000811D53 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				94088DCC274010C3002F64D5 /* Login */,
 				94996E3A272D3939003E6D96 /* ContentView.swift */,
-				944A4B4D27366DAA00811D53 /* LoginViewModel.swift */,
-				944A4B55273672B400811D53 /* LoginView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -91,6 +114,7 @@
 		94996E37272D3939003E6D96 /* Onormes */ = {
 			isa = PBXGroup;
 			children = (
+				94088DCD27404C26002F64D5 /* Views Models */,
 				944A4B4C27366D9000811D53 /* Views */,
 				9494C80D273668FB00FA0354 /* Services */,
 				9494C80C273668EC00FA0354 /* Models */,
@@ -316,7 +340,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Onormes/Preview Content\"";
@@ -324,6 +348,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Onormes/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "O-Normes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -348,7 +373,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Onormes/Preview Content\"";
@@ -356,6 +381,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Onormes/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "O-Normes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
