@@ -36,7 +36,7 @@ class APIService {
 
       // If no data, throw an error
       guard let data = data, error == nil else {
-        completion(.failure(.custom(errorMessage: "Server error")))
+        completion(.failure(.custom(errorMessage: "Serveur erreur")))
         return
       }
 

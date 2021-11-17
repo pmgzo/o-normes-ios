@@ -11,6 +11,7 @@
     var body: some View {
         VStack(alignment: .center, content: {
           LogoImage()
+          Text("Vous êtes connecté !")
         }).background(Color.white).padding()
         .preferredColorScheme(.light)
       }

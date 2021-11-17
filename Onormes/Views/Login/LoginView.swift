@@ -7,115 +7,69 @@
 
 import SwiftUI
 
-enum Field: Hashable {
-  case usernameField
-  case passwordField
-}
-
 let lightGreyColor = Color(red: 239.0/255.0, green: 243.0/255.0, blue: 244.0/255.0, opacity: 1.0)
 
 struct LoginView: View {
   @StateObject private var loginVM = LoginViewModel()
   @EnvironmentObject var authentication: Authentication
-  @State var isShowPassword: Bool = true
-  @FocusState var focusedField: Field?
-
-    var body: some View {
-      VStack {
-
-        LogoImage()
-
-        WelcomeText()
-
-        LoginForm(isShowPassword: $isShowPassword).environmentObject(loginVM)
-        
-        if loginVM.showProgressView {
-          ProgressView()
-        }
-
-        Button(action: {
-          if !loginVM.loginDisabled {
-            loginVM.login { success in
-              authentication.updateValidation(success: success)
-            }
-          }
-        }, label: { loginVM.showProgressView
-          ? AnyView(ProgressView())
-          : AnyView(LoginButtonContent()) })
   
-        LabelledDivider(label: "ou")
-
-        Text("Mot de passe oublié").foregroundColor(.accentColor)
-      }.padding()
-        .preferredColorScheme(.light)
-        .autocapitalization(.none)
-        .onTapGesture {
-          UIApplication.shared.endEditing()
+  var body: some View {
+    VStack {
+      
+      LogoImage()
+      
+      WelcomeText()
+      
+      LoginForm().environmentObject(loginVM)
+      
+      Button(action: {
+        if !loginVM.loginDisabled {
+          loginVM.login { success in
+            authentication.updateValidation(success: success)
+          }
         }
-        .alert(item: $loginVM.error) { error in
-          Alert(title: Text("Erreur"), message: Text(error.localizedDescription))
-        }
-    }
+      }, label: { loginVM.showProgressView
+        ? AnyView(ProgressView())
+        : AnyView(LoginButtonContent()) })
+      
+      LabelledDivider(label: "ou")
+      
+      Text("Mot de passe oublié").foregroundColor(Color(hex: 0x282359))
+    }.padding()
+      .preferredColorScheme(.light)
+      .autocapitalization(.none)
+      .onTapGesture {
+        UIApplication.shared.endEditing()
+      }
+      .alert(item: $loginVM.error) { error in
+        Alert(title: Text("Erreur"), message: Text(error.localizedDescription))
+      }
+  }
 }
 
 struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {  
-        LoginView()
-    }
+  static var previews: some View {
+    LoginView()
+  }
 }
 
 struct LoginForm: View {
   enum Field: Hashable {
-    case usernameField
+    case emailAddress
     case passwordField
   }
   
   @FocusState private var focusedField: Field?
   @EnvironmentObject var loginVM: LoginViewModel
-  @Binding var isShowPassword: Bool
-
+  
   var body: some View {
-    TextField("Adresse mail", text: $loginVM.credentials.email)
-      .padding()
-      .background(lightGreyColor)
-      .cornerRadius(5.0)
-      .keyboardType(.emailAddress)
-      .disableAutocorrection(true)
-      .focused($focusedField, equals: .usernameField)
-      .submitLabel(.next)
+    UsernameTextField(username: $loginVM.credentials.email).focused($focusedField, equals: .emailAddress)
       .onSubmit {
         focusedField = .passwordField
       }
     
-    ZStack(alignment: .trailing) {
-
-    if isShowPassword {
-      SecureField("Mot de passe", text: $loginVM.credentials.password)
-        .padding()
-        .background(lightGreyColor)
-        .cornerRadius(5.0)
-        .focused($focusedField, equals: .passwordField)
-        .submitLabel(.done)
-        .padding(.bottom, 20)
-    } else {
-      TextField("Mot de passe", text: $loginVM.credentials.password)
-        .padding()
-        .background(lightGreyColor)
-        .cornerRadius(5.0)
-        .disableAutocorrection(true)
-        .focused($focusedField, equals: .passwordField)
-        .submitLabel(.done)
-        .padding(.bottom, 20)
-    }
-    Button(action: {
-      isShowPassword.toggle()
-    }) {
-      Image(systemName: self.isShowPassword ? "eye.slash" : "eye")
-        .resizable()
-        .frame(width: 28, height: 20)
-        .foregroundColor(.accentColor)
-    }.offset(x: -10, y: -10)
-    }
+    PasswordSecureField(password: $loginVM.credentials.password).focused($focusedField, equals: .passwordField).padding(.bottom)
+    
   }
 }
 
@@ -143,43 +97,71 @@ struct UsernameTextField: View {
   @Binding var username: String
   
   var body: some View {
-    TextField("Adresse mail", text: $username)
-      .padding()
-      .background(lightGreyColor)
+    HStack(alignment: .center) {
+      ZStack(alignment: .center) {
+        Image(systemName: "envelope.fill")
+          .foregroundColor(Color(hex: 0x282359))
+      }.frame(width: 40, height: 40, alignment: .center)
+      
+      TextField("Adresse mail", text: $username)
+        .background(lightGreyColor)
+        .padding(.bottom)
+        .padding(.top)
+        .keyboardType(.emailAddress)
+        .disableAutocorrection(true)
+        .submitLabel(.next)
+    }.background(lightGreyColor)
       .cornerRadius(5.0)
-      .keyboardType(.emailAddress)
-      .disableAutocorrection(true)
-      .submitLabel(.next)
   }
 }
 
 struct PasswordSecureField: View {
   @Binding var password: String
-  @Binding var isShowPassword: Bool
+  @State var isShowPassword: Bool = true
   
   var body: some View {
-    ZStack(alignment: .trailing) {
+    ZStack (alignment: .trailing) {
       if isShowPassword {
-        SecureField("Mot de passe", text: $password)
-          .padding()
-          .background(lightGreyColor)
+        HStack(alignment: .center){
+          ZStack(alignment: .center) {
+            Image(systemName: "lock.fill")
+              .foregroundColor(Color(hex: 0x282359))
+              .font(Font.system(size: 22, weight: .regular))
+          }.frame(width: 40, height: 40, alignment: .center)
+          
+          SecureField("Mot de passe", text: $password)
+            .padding(.bottom)
+            .padding(.top)
+            .background(lightGreyColor)
+            .submitLabel(.done)
+        }.background(lightGreyColor)
           .cornerRadius(5.0)
-          .submitLabel(.done)
+        
       } else {
-        TextField("Mot de passe", text: $password)
-          .padding()
-          .background(lightGreyColor)
+        HStack {
+          ZStack(alignment: .center) {
+            Image(systemName: "lock.fill")
+              .foregroundColor(Color(hex: 0x282359))
+              .font(Font.system(size: 22, weight: .regular))
+          }.frame(width: 40, height: 40, alignment: .center)
+          
+          TextField("Mot de passe", text: $password)
+            .padding(.bottom)
+            .padding(.top)
+            .background(lightGreyColor)
+            .disableAutocorrection(true)
+            .submitLabel(.done)
+        }.background(lightGreyColor)
           .cornerRadius(5.0)
-          .disableAutocorrection(true)
-          .submitLabel(.done)
       }
       Button(action: {
         isShowPassword.toggle()
       }) {
         Image(systemName: self.isShowPassword ? "eye.slash" : "eye")
-          .foregroundColor(.accentColor)
+          .foregroundColor(Color(hex: 0x282359))
       }.offset(x: -10, y: 0)
-    }
+    }.frame(height: 60)
+    
   }
 }
 
@@ -190,7 +172,7 @@ struct LoginButtonContent: View {
       .font(.headline)
       .foregroundColor(.white)
       .padding()
-      .background(Color.accentColor)
+      .background(Color(hex: 0x282359))
       .cornerRadius(15.0)
   }
 }
