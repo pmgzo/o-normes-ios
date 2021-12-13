@@ -17,6 +17,10 @@
 		94996E3B272D3939003E6D96 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94996E3A272D3939003E6D96 /* ContentView.swift */; };
 		94996E3D272D393B003E6D96 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94996E3C272D393B003E6D96 /* Assets.xcassets */; };
 		94996E40272D393B003E6D96 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94996E3F272D393B003E6D96 /* Preview Assets.xcassets */; };
+		94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61EF27674E5B0046B02E /* ProfileView.swift */; };
+		94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F127679D0A0046B02E /* GeometryUtils.swift */; };
+		94CD61F427679D480046B02E /* ARViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F327679D480046B02E /* ARViewRepresentable.swift */; };
+		94CD61F627679DF90046B02E /* ARDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F527679DF90046B02E /* ARDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +36,10 @@
 		94996E3C272D393B003E6D96 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		94996E3F272D393B003E6D96 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		949FE4ED272D6B4E008DD273 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		94CD61EF27674E5B0046B02E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		94CD61F127679D0A0046B02E /* GeometryUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryUtils.swift; sourceTree = "<group>"; };
+		94CD61F327679D480046B02E /* ARViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewRepresentable.swift; sourceTree = "<group>"; };
+		94CD61F527679DF90046B02E /* ARDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +82,7 @@
 			children = (
 				94088DCC274010C3002F64D5 /* Login */,
 				94996E3A272D3939003E6D96 /* ContentView.swift */,
+				94CD61EF27674E5B0046B02E /* ProfileView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -119,10 +128,13 @@
 				9494C80D273668FB00FA0354 /* Services */,
 				9494C80C273668EC00FA0354 /* Models */,
 				949FE4ED272D6B4E008DD273 /* Info.plist */,
+				94CD61F127679D0A0046B02E /* GeometryUtils.swift */,
 				94996E38272D3939003E6D96 /* OnormesApp.swift */,
 				944A4B5727367CE300811D53 /* Authentication.swift */,
 				94996E3C272D393B003E6D96 /* Assets.xcassets */,
 				94996E3E272D393B003E6D96 /* Preview Content */,
+				94CD61F327679D480046B02E /* ARViewRepresentable.swift */,
+				94CD61F527679DF90046B02E /* ARDelegate.swift */,
 			);
 			path = Onormes;
 			sourceTree = "<group>";
@@ -206,11 +218,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				94996E3B272D3939003E6D96 /* ContentView.swift in Sources */,
+				94CD61F627679DF90046B02E /* ARDelegate.swift in Sources */,
+				94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */,
 				944A4B56273672B400811D53 /* LoginView.swift in Sources */,
+				94CD61F427679D480046B02E /* ARViewRepresentable.swift in Sources */,
 				944A4B5227366FEB00811D53 /* APIService.swift in Sources */,
 				94996E39272D3939003E6D96 /* OnormesApp.swift in Sources */,
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
+				94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */,
 				944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */,
 				944A4B5827367CE300811D53 /* Authentication.swift in Sources */,
 			);
