@@ -31,7 +31,8 @@ class LoginViewModel: ObservableObject {
       
       switch result {
         case .success(let token):
-          defaults.setValue(token, forKey: "token")
+          defaults.set(token, forKey: "token")
+          defaults.set(self.credentials.email, forKey: "email")
           DispatchQueue.main.async {
             self.isAuthenticate = true
           }

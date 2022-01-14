@@ -9,17 +9,23 @@
 
   struct ContentView: View {
     @ObservedObject var arDelegate = ARDelegate()
-
-    var body: some View {
+  
+        var body: some View {
         VStack(alignment: .center, content: {
           TabView {
             ARViewRepresentable(arDelegate: arDelegate)
+              .tabItem {
+                Image(systemName: "ruler.fill")
+                Text("Mesures")
+              }
+            
+            ReconsView()
               .tabItem {
                 Image(systemName: "sensor.tag.radiowaves.forward.fill")
                 Text("LiDAR")
               }
             
-            Text("The content of the second view")
+            Text("Vous êtes connecté !")
               .tabItem {
                 Image(systemName: "house")
                 Text("Accueil")

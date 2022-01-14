@@ -76,13 +76,16 @@ class ARDelegate: NSObject, ARSCNViewDelegate, ObservableObject {
   private var arView: ARSCNView?
   private var circles:[SCNNode] = []
   private var trackedNode:SCNNode?
-  
+  private var text = SCNText(string: "0.0", extrusionDepth: 2)
+  private var textNode:SCNNode = SCNNode()
+
   
   private func addCircle(raycastResult: ARRaycastResult) {
     let circleNode = GeometryUtils.createCircle(fromRaycastResult: raycastResult)
     if circles.count >= 2 {
       for circle in circles {
         circle.removeFromParentNode()
+        textNode.removeFromParentNode()
       }
       circles.removeAll()
     }
@@ -109,6 +112,14 @@ class ARDelegate: NSObject, ARSCNViewDelegate, ObservableObject {
   private func nodesUpdated() {
     if circles.count == 2 {
       let distance = GeometryUtils.calculateDistance(firstNode: circles[0], secondNode: circles[1])
+      text = SCNText(string: String(distance), extrusionDepth: 2)
+      let material = SCNMaterial()
+      material.diffuse.contents = UIColor.blue
+      text.materials = [material]
+      textNode.position = SCNVector3(x:0, y:0.02, z:-0.1)
+      textNode.scale = SCNVector3(x:0.01, y:0.01, z:0.01)
+      textNode.geometry = text
+      arView?.scene.rootNode.addChildNode(textNode)
       print("distance = \(distance)")
       message = "distance " + String(format: "%.2f cm", distance)
     }

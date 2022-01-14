@@ -10,7 +10,9 @@ import SwiftUI
 struct ProfileView: View {
   let gradient = Gradient(colors: [.blue, .orange])
   @State private var enableBlogger = true
-
+  @State var savedEmail = ""
+  @StateObject private var userVM = UserViewModel()
+  
     var body: some View {
       NavigationView {
         Form {
@@ -23,22 +25,22 @@ struct ProfileView: View {
             HStack {
               Text("First Name")
               Spacer(minLength: 100)
-              Text("Anmol")
+              Text(userVM.user?.first_name ?? "")
             }
             HStack {
               Text("Last Name")
               Spacer(minLength: 100)
-              Text("Maheshwari")
+              Text(userVM.user?.last_name ?? "")
             }
             HStack {
               Text("Email")
               Spacer()
-              Text("Maheshwari@gmail.com")
+              Text(userVM.user?.email ?? "")
             }
             HStack {
               Text("Numéro de téléphone")
               Spacer()
-              Text("06 12 34 56 78")
+              Text(userVM.user?.phone_number ?? "")
             }
           }
           Section(header: Text("Informations entreprise")) {
@@ -59,8 +61,13 @@ struct ProfileView: View {
             }
           }
         }.navigationBarTitle(Text("Profile"))
-      }
+      }.onAppear(perform: {
+        userVM.getCurrentUser()
+      })
     }
+  func getData() {
+    savedEmail = UserDefaults.standard.string(forKey: "email") ?? ""
+  }
 }
 
 struct ProfileView_Previews: PreviewProvider {

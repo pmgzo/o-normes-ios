@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9412DA232769F31E0021A441 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9412DA222769F31E0021A441 /* User.swift */; };
+		9412DA25276A0AFF0021A441 /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9412DA24276A0AFF0021A441 /* UserViewModel.swift */; };
+		9431A0DD2792077600088DFB /* ReconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0DC2792077600088DFB /* ReconsView.swift */; };
+		9431A0DF279207B100088DFB /* ReconsView_Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0DE279207B100088DFB /* ReconsView_Overlay.swift */; };
+		9431A0E12792080400088DFB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0E02792080400088DFB /* Extensions.swift */; };
+		9431A0E3279208AA00088DFB /* ARViewIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0E2279208AA00088DFB /* ARViewIndicator.swift */; };
+		9431A0E5279209BC00088DFB /* NavigatorIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0E4279209BC00088DFB /* NavigatorIndicator.swift */; };
 		944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944A4B4D27366DAA00811D53 /* LoginViewModel.swift */; };
 		944A4B5027366FB100811D53 /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944A4B4F27366FB100811D53 /* Credentials.swift */; };
 		944A4B5227366FEB00811D53 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944A4B5127366FEB00811D53 /* APIService.swift */; };
@@ -24,6 +31,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9412DA222769F31E0021A441 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		9412DA24276A0AFF0021A441 /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
+		9431A0DC2792077600088DFB /* ReconsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconsView.swift; sourceTree = "<group>"; };
+		9431A0DE279207B100088DFB /* ReconsView_Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconsView_Overlay.swift; sourceTree = "<group>"; };
+		9431A0E02792080400088DFB /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		9431A0E2279208AA00088DFB /* ARViewIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewIndicator.swift; sourceTree = "<group>"; };
+		9431A0E4279209BC00088DFB /* NavigatorIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigatorIndicator.swift; sourceTree = "<group>"; };
 		944A4B4D27366DAA00811D53 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		944A4B4F27366FB100811D53 /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		944A4B5127366FEB00811D53 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
@@ -53,34 +67,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		94088DCC274010C3002F64D5 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				944A4B55273672B400811D53 /* LoginView.swift */,
-			);
-			path = Login;
-			sourceTree = "<group>";
-		};
 		94088DCD27404C26002F64D5 /* Views Models */ = {
 			isa = PBXGroup;
 			children = (
-				94088DCE27404C3A002F64D5 /* Login */,
+				944A4B4D27366DAA00811D53 /* LoginViewModel.swift */,
+				9412DA24276A0AFF0021A441 /* UserViewModel.swift */,
 			);
 			path = "Views Models";
-			sourceTree = "<group>";
-		};
-		94088DCE27404C3A002F64D5 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				944A4B4D27366DAA00811D53 /* LoginViewModel.swift */,
-			);
-			path = Login;
 			sourceTree = "<group>";
 		};
 		944A4B4C27366D9000811D53 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				94088DCC274010C3002F64D5 /* Login */,
+				944A4B55273672B400811D53 /* LoginView.swift */,
 				94996E3A272D3939003E6D96 /* ContentView.swift */,
 				94CD61EF27674E5B0046B02E /* ProfileView.swift */,
 			);
@@ -91,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				944A4B4F27366FB100811D53 /* Credentials.swift */,
+				9412DA222769F31E0021A441 /* User.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -135,6 +135,11 @@
 				94996E3E272D393B003E6D96 /* Preview Content */,
 				94CD61F327679D480046B02E /* ARViewRepresentable.swift */,
 				94CD61F527679DF90046B02E /* ARDelegate.swift */,
+				9431A0DC2792077600088DFB /* ReconsView.swift */,
+				9431A0E02792080400088DFB /* Extensions.swift */,
+				9431A0DE279207B100088DFB /* ReconsView_Overlay.swift */,
+				9431A0E2279208AA00088DFB /* ARViewIndicator.swift */,
+				9431A0E4279209BC00088DFB /* NavigatorIndicator.swift */,
 			);
 			path = Onormes;
 			sourceTree = "<group>";
@@ -217,16 +222,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9431A0DD2792077600088DFB /* ReconsView.swift in Sources */,
+				9431A0E12792080400088DFB /* Extensions.swift in Sources */,
 				94996E3B272D3939003E6D96 /* ContentView.swift in Sources */,
+				9431A0E5279209BC00088DFB /* NavigatorIndicator.swift in Sources */,
 				94CD61F627679DF90046B02E /* ARDelegate.swift in Sources */,
+				9431A0DF279207B100088DFB /* ReconsView_Overlay.swift in Sources */,
 				94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */,
 				944A4B56273672B400811D53 /* LoginView.swift in Sources */,
 				94CD61F427679D480046B02E /* ARViewRepresentable.swift in Sources */,
+				9412DA25276A0AFF0021A441 /* UserViewModel.swift in Sources */,
 				944A4B5227366FEB00811D53 /* APIService.swift in Sources */,
 				94996E39272D3939003E6D96 /* OnormesApp.swift in Sources */,
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
+				9412DA232769F31E0021A441 /* User.swift in Sources */,
 				94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */,
+				9431A0E3279208AA00088DFB /* ARViewIndicator.swift in Sources */,
 				944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */,
 				944A4B5827367CE300811D53 /* Authentication.swift in Sources */,
 			);

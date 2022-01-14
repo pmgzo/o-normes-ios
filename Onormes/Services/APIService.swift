@@ -17,7 +17,7 @@ class APIService {
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
     // Check the URL, if the URL isn't correctly formated return an error
-    guard let url = URL(string: "http://localhost:3001/api/users/connect") else {
+    guard let url = URL(string: "http://192.168.86.33:3001/api/users/connect") else {
       completion(.failure(.custom(errorMessage: "Url is not correct")))
       return
     }
@@ -56,6 +56,33 @@ class APIService {
       completion(.success(token))
       
     }.resume()
-    
   }
-}
+  
+  func getUser(completion: @escaping (User) -> Void) {
+    let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+    let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
+
+    guard let url = URL(string: "http://192.168.86.33:3001/api/users/?email=\(email)") else { return }
+    
+    // Build the request, set the method, the value and the body of the request
+    var request = URLRequest(url: url)
+    request.httpMethod = "GET"
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.addValue("application/json", forHTTPHeaderField: "Accept")
+    request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+    URLSession.shared.dataTask(with: request) {(data, response, error) in
+      guard let data = data, error == nil else {
+        print(error?.localizedDescription ?? "No data")
+        return
+      }
+
+      guard let userResponse = try? JSONDecoder().decode(User.self, from: data) else {
+        print("Error get current User")
+        return
+      }
+      completion(userResponse)
+    }.resume()
+  }
+
+ }

@@ -13,13 +13,13 @@ struct OnormesApp: App {
 
     var body: some Scene {
         WindowGroup {
-//          if authentication.isValidated {
+          if authentication.isValidated {
             ContentView()
               .environmentObject(authentication)
-//          } else {
-//            LoginView()
-//              .environmentObject(authentication)
-//          }
+          } else {
+            LoginView()
+              .environmentObject(authentication)
+          }
         }
     }
 }
