@@ -17,7 +17,7 @@ class APIService {
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
     // Check the URL, if the URL isn't correctly formated return an error
-    guard let url = URL(string: "http://192.168.86.33:3001/api/users/connect") else {
+    guard let url = URL(string: "http://192.168.86.110:3001/api/users/connect") else {
       completion(.failure(.custom(errorMessage: "Url is not correct")))
       return
     }
@@ -62,7 +62,7 @@ class APIService {
     let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
     let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
 
-    guard let url = URL(string: "http://192.168.86.33:3001/api/users/?email=\(email)") else { return }
+    guard let url = URL(string: "http://192.168.86.110:3001/api/users/?email=\(email)") else { return }
     
     // Build the request, set the method, the value and the body of the request
     var request = URLRequest(url: url)

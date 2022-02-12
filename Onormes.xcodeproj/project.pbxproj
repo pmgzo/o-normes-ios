@@ -7,13 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		940D380127B7241700231AD1 /* MeasureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D380027B7241700231AD1 /* MeasureViewController.swift */; };
+		940D380327B7244200231AD1 /* MeasureSCNView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D380227B7244200231AD1 /* MeasureSCNView.swift */; };
+		940D380527B7246200231AD1 /* SCNSphere+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D380427B7246200231AD1 /* SCNSphere+Init.swift */; };
+		940D380727B7247B00231AD1 /* AreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D380627B7247B00231AD1 /* AreaViewController.swift */; };
+		940D380927B7249500231AD1 /* DistanceMeasureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D380827B7249500231AD1 /* DistanceMeasureViewController.swift */; };
+		940D380B27B724A700231AD1 /* LineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D380A27B724A700231AD1 /* LineNode.swift */; };
+		940D380D27B724CB00231AD1 /* Measure.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 940D380C27B724CB00231AD1 /* Measure.storyboard */; };
+		940D381027B7283E00231AD1 /* ReconstructionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D380F27B7283E00231AD1 /* ReconstructionViewController.swift */; };
+		940D381227B7287800231AD1 /* Reconstruction.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 940D381127B7287800231AD1 /* Reconstruction.storyboard */; };
+		940D381527B72A0E00231AD1 /* ARMeshGeometry+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D381427B72A0E00231AD1 /* ARMeshGeometry+Ext.swift */; };
+		940D381727B72A5400231AD1 /* ARFrame+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D381627B72A5400231AD1 /* ARFrame+Ext.swift */; };
+		940D381927B72A7900231AD1 /* MDLMesh+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D381827B72A7900231AD1 /* MDLMesh+Ext.swift */; };
+		940D381B27B72A9400231AD1 /* SCNGeometry+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940D381A27B72A9400231AD1 /* SCNGeometry+Ext.swift */; };
 		9412DA232769F31E0021A441 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9412DA222769F31E0021A441 /* User.swift */; };
 		9412DA25276A0AFF0021A441 /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9412DA24276A0AFF0021A441 /* UserViewModel.swift */; };
-		9431A0DD2792077600088DFB /* ReconsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0DC2792077600088DFB /* ReconsView.swift */; };
-		9431A0DF279207B100088DFB /* ReconsView_Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0DE279207B100088DFB /* ReconsView_Overlay.swift */; };
-		9431A0E12792080400088DFB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0E02792080400088DFB /* Extensions.swift */; };
-		9431A0E3279208AA00088DFB /* ARViewIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0E2279208AA00088DFB /* ARViewIndicator.swift */; };
-		9431A0E5279209BC00088DFB /* NavigatorIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9431A0E4279209BC00088DFB /* NavigatorIndicator.swift */; };
 		944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944A4B4D27366DAA00811D53 /* LoginViewModel.swift */; };
 		944A4B5027366FB100811D53 /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944A4B4F27366FB100811D53 /* Credentials.swift */; };
 		944A4B5227366FEB00811D53 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944A4B5127366FEB00811D53 /* APIService.swift */; };
@@ -26,18 +34,24 @@
 		94996E40272D393B003E6D96 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94996E3F272D393B003E6D96 /* Preview Assets.xcassets */; };
 		94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61EF27674E5B0046B02E /* ProfileView.swift */; };
 		94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F127679D0A0046B02E /* GeometryUtils.swift */; };
-		94CD61F427679D480046B02E /* ARViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F327679D480046B02E /* ARViewRepresentable.swift */; };
-		94CD61F627679DF90046B02E /* ARDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F527679DF90046B02E /* ARDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		940D380027B7241700231AD1 /* MeasureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureViewController.swift; sourceTree = "<group>"; };
+		940D380227B7244200231AD1 /* MeasureSCNView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureSCNView.swift; sourceTree = "<group>"; };
+		940D380427B7246200231AD1 /* SCNSphere+Init.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNSphere+Init.swift"; sourceTree = "<group>"; };
+		940D380627B7247B00231AD1 /* AreaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaViewController.swift; sourceTree = "<group>"; };
+		940D380827B7249500231AD1 /* DistanceMeasureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceMeasureViewController.swift; sourceTree = "<group>"; };
+		940D380A27B724A700231AD1 /* LineNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineNode.swift; sourceTree = "<group>"; };
+		940D380C27B724CB00231AD1 /* Measure.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Measure.storyboard; sourceTree = "<group>"; };
+		940D380F27B7283E00231AD1 /* ReconstructionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconstructionViewController.swift; sourceTree = "<group>"; };
+		940D381127B7287800231AD1 /* Reconstruction.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Reconstruction.storyboard; sourceTree = "<group>"; };
+		940D381427B72A0E00231AD1 /* ARMeshGeometry+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARMeshGeometry+Ext.swift"; sourceTree = "<group>"; };
+		940D381627B72A5400231AD1 /* ARFrame+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARFrame+Ext.swift"; sourceTree = "<group>"; };
+		940D381827B72A7900231AD1 /* MDLMesh+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MDLMesh+Ext.swift"; sourceTree = "<group>"; };
+		940D381A27B72A9400231AD1 /* SCNGeometry+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNGeometry+Ext.swift"; sourceTree = "<group>"; };
 		9412DA222769F31E0021A441 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		9412DA24276A0AFF0021A441 /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
-		9431A0DC2792077600088DFB /* ReconsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconsView.swift; sourceTree = "<group>"; };
-		9431A0DE279207B100088DFB /* ReconsView_Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconsView_Overlay.swift; sourceTree = "<group>"; };
-		9431A0E02792080400088DFB /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		9431A0E2279208AA00088DFB /* ARViewIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewIndicator.swift; sourceTree = "<group>"; };
-		9431A0E4279209BC00088DFB /* NavigatorIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigatorIndicator.swift; sourceTree = "<group>"; };
 		944A4B4D27366DAA00811D53 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		944A4B4F27366FB100811D53 /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		944A4B5127366FEB00811D53 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
@@ -52,8 +66,6 @@
 		949FE4ED272D6B4E008DD273 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		94CD61EF27674E5B0046B02E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		94CD61F127679D0A0046B02E /* GeometryUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryUtils.swift; sourceTree = "<group>"; };
-		94CD61F327679D480046B02E /* ARViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewRepresentable.swift; sourceTree = "<group>"; };
-		94CD61F527679DF90046B02E /* ARDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +88,40 @@
 			path = "Views Models";
 			sourceTree = "<group>";
 		};
+		940D37FF27B7236500231AD1 /* Measures */ = {
+			isa = PBXGroup;
+			children = (
+				940D380027B7241700231AD1 /* MeasureViewController.swift */,
+				940D380227B7244200231AD1 /* MeasureSCNView.swift */,
+				940D380427B7246200231AD1 /* SCNSphere+Init.swift */,
+				940D380627B7247B00231AD1 /* AreaViewController.swift */,
+				940D380827B7249500231AD1 /* DistanceMeasureViewController.swift */,
+				940D380A27B724A700231AD1 /* LineNode.swift */,
+				940D380C27B724CB00231AD1 /* Measure.storyboard */,
+			);
+			path = Measures;
+			sourceTree = "<group>";
+		};
+		940D380E27B7282F00231AD1 /* Reconstruction */ = {
+			isa = PBXGroup;
+			children = (
+				940D380F27B7283E00231AD1 /* ReconstructionViewController.swift */,
+				940D381127B7287800231AD1 /* Reconstruction.storyboard */,
+			);
+			path = Reconstruction;
+			sourceTree = "<group>";
+		};
+		940D381327B729F900231AD1 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				940D381427B72A0E00231AD1 /* ARMeshGeometry+Ext.swift */,
+				940D381627B72A5400231AD1 /* ARFrame+Ext.swift */,
+				940D381827B72A7900231AD1 /* MDLMesh+Ext.swift */,
+				940D381A27B72A9400231AD1 /* SCNGeometry+Ext.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		944A4B4C27366D9000811D53 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -91,6 +137,7 @@
 			children = (
 				944A4B4F27366FB100811D53 /* Credentials.swift */,
 				9412DA222769F31E0021A441 /* User.swift */,
+				940D381327B729F900231AD1 /* Common */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -123,6 +170,8 @@
 		94996E37272D3939003E6D96 /* Onormes */ = {
 			isa = PBXGroup;
 			children = (
+				940D380E27B7282F00231AD1 /* Reconstruction */,
+				940D37FF27B7236500231AD1 /* Measures */,
 				94088DCD27404C26002F64D5 /* Views Models */,
 				944A4B4C27366D9000811D53 /* Views */,
 				9494C80D273668FB00FA0354 /* Services */,
@@ -133,13 +182,6 @@
 				944A4B5727367CE300811D53 /* Authentication.swift */,
 				94996E3C272D393B003E6D96 /* Assets.xcassets */,
 				94996E3E272D393B003E6D96 /* Preview Content */,
-				94CD61F327679D480046B02E /* ARViewRepresentable.swift */,
-				94CD61F527679DF90046B02E /* ARDelegate.swift */,
-				9431A0DC2792077600088DFB /* ReconsView.swift */,
-				9431A0E02792080400088DFB /* Extensions.swift */,
-				9431A0DE279207B100088DFB /* ReconsView_Overlay.swift */,
-				9431A0E2279208AA00088DFB /* ARViewIndicator.swift */,
-				9431A0E4279209BC00088DFB /* NavigatorIndicator.swift */,
 			);
 			path = Onormes;
 			sourceTree = "<group>";
@@ -212,6 +254,8 @@
 			files = (
 				94996E40272D393B003E6D96 /* Preview Assets.xcassets in Resources */,
 				94996E3D272D393B003E6D96 /* Assets.xcassets in Resources */,
+				940D381227B7287800231AD1 /* Reconstruction.storyboard in Resources */,
+				940D380D27B724CB00231AD1 /* Measure.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,24 +266,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9431A0DD2792077600088DFB /* ReconsView.swift in Sources */,
-				9431A0E12792080400088DFB /* Extensions.swift in Sources */,
+				940D381927B72A7900231AD1 /* MDLMesh+Ext.swift in Sources */,
+				940D380927B7249500231AD1 /* DistanceMeasureViewController.swift in Sources */,
 				94996E3B272D3939003E6D96 /* ContentView.swift in Sources */,
-				9431A0E5279209BC00088DFB /* NavigatorIndicator.swift in Sources */,
-				94CD61F627679DF90046B02E /* ARDelegate.swift in Sources */,
-				9431A0DF279207B100088DFB /* ReconsView_Overlay.swift in Sources */,
 				94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */,
+				940D380527B7246200231AD1 /* SCNSphere+Init.swift in Sources */,
 				944A4B56273672B400811D53 /* LoginView.swift in Sources */,
-				94CD61F427679D480046B02E /* ARViewRepresentable.swift in Sources */,
 				9412DA25276A0AFF0021A441 /* UserViewModel.swift in Sources */,
 				944A4B5227366FEB00811D53 /* APIService.swift in Sources */,
 				94996E39272D3939003E6D96 /* OnormesApp.swift in Sources */,
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
+				940D380727B7247B00231AD1 /* AreaViewController.swift in Sources */,
+				940D380327B7244200231AD1 /* MeasureSCNView.swift in Sources */,
 				9412DA232769F31E0021A441 /* User.swift in Sources */,
 				94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */,
-				9431A0E3279208AA00088DFB /* ARViewIndicator.swift in Sources */,
+				940D380127B7241700231AD1 /* MeasureViewController.swift in Sources */,
+				940D380B27B724A700231AD1 /* LineNode.swift in Sources */,
+				940D381527B72A0E00231AD1 /* ARMeshGeometry+Ext.swift in Sources */,
+				940D381027B7283E00231AD1 /* ReconstructionViewController.swift in Sources */,
 				944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */,
+				940D381727B72A5400231AD1 /* ARFrame+Ext.swift in Sources */,
+				940D381B27B72A9400231AD1 /* SCNGeometry+Ext.swift in Sources */,
 				944A4B5827367CE300811D53 /* Authentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

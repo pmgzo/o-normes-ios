@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Reconstruction View Controller-->
+        <scene sceneID="f2k-wi-Xuk">
+            <objects>
+                <viewController storyboardIdentifier="ReconstructionViewController" id="fgG-P0-mrf" customClass="ReconstructionViewController" customModule="Onormes" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="JUX-tE-Itg">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <arView multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QGX-GA-bvq">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </arView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NVf-uH-6WO">
+                                <rect key="frame" x="182" y="792" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="cRu-mM-0Bc"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="wan-N5-PEb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <imageReference key="image" image="square.and.arrow.up" catalog="system" symbolScale="default"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
+                                </state>
+                                <connections>
+                                    <action selector="tappedExportButton:" destination="fgG-P0-mrf" eventType="touchUpInside" id="JUp-g9-Jl7"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Pn0-Wg-1fa"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Pn0-Wg-1fa" firstAttribute="bottom" secondItem="NVf-uH-6WO" secondAttribute="bottom" constant="20" id="8uy-Fe-wVZ"/>
+                            <constraint firstItem="QGX-GA-bvq" firstAttribute="leading" secondItem="Pn0-Wg-1fa" secondAttribute="leading" id="JyG-kE-0yD"/>
+                            <constraint firstItem="QGX-GA-bvq" firstAttribute="top" secondItem="JUX-tE-Itg" secondAttribute="top" id="L2J-Z8-heB"/>
+                            <constraint firstAttribute="bottom" secondItem="QGX-GA-bvq" secondAttribute="bottom" id="UKS-ij-Hzu"/>
+                            <constraint firstItem="QGX-GA-bvq" firstAttribute="trailing" secondItem="Pn0-Wg-1fa" secondAttribute="trailing" id="cP6-rc-WV3"/>
+                            <constraint firstItem="NVf-uH-6WO" firstAttribute="centerX" secondItem="JUX-tE-Itg" secondAttribute="centerX" id="mu2-RM-qyW"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="arView" destination="QGX-GA-bvq" id="gNQ-sQ-l0Z"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KzZ-vQ-o30" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-610.14492753623188" y="42.857142857142854"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
+    </resources>
+</document>

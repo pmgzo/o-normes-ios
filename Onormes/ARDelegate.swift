@@ -133,6 +133,7 @@ class ARDelegate: NSObject, ARSCNViewDelegate, ObservableObject {
           let query = arView.raycastQuery(from: location,
                                           allowing: .existingPlaneGeometry,
                                           alignment: .horizontal) else { return nil }
+    
     let results = arView.session.raycast(query)
     return results.first
   }
