@@ -36,8 +36,10 @@ class MeasureComponentViewModel: PRegulationCheckViewModel {
         if !optional {
 
             if self.value != "" {
+                displayError = false
                 return true
             } else {
+                displayError = true
                 return false
             }
         }
@@ -59,6 +61,7 @@ class MeasureComponentViewModel: PRegulationCheckViewModel {
 struct MeasureComponent: PRegulationCheckView {
     // TODO: add binding with AR view
     // TODO: add comment form put it as optional in ctor
+    //TODO: add more parameter for that component to specifiy if that field is optional etc...
     let title: String;
     let action: (Float) -> Void; // used to modified
     @ObservedObject var model: MeasureComponentViewModel;

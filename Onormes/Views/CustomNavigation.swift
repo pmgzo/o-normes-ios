@@ -15,7 +15,8 @@ class CustomNavCoordinator: ObservableObject {
 }
 
 // Page to add Stages
-struct AccessibilityRegulationsPage: View {
+struct AccessibilityRegulationsPage: PRegulationCheckView {
+    //TODO: update navigation here
     @State private var selectionTag: String?;
     private unowned let coordinator: CustomNavCoordinator;
     
@@ -41,7 +42,15 @@ struct AccessibilityRegulationsPage: View {
             }
             CustomNavigationLink(tag: "doorChecking2", selection: $selectionTag, destination: AccessibilityRegulationsPage(coordinator: coordinator)) {}
         }
-    };
+    }
+    
+    func check() -> Bool {
+        return true
+    }
+    
+    func modify() -> Bool {
+        return true
+    }
 }
 
 struct UserJourneyNavigationPage<Content> : View where Content : PRegulationCheckView {
@@ -89,6 +98,10 @@ struct UserJourneyNavigationPage<Content> : View where Content : PRegulationChec
                         Button("Etape suivante") {
                             // coordinator check
                             // call coordinator to load the next page
+                            if content.check() {
+                                content.modify()
+                                //TODO: handle redirection with coordinator
+                            }
                             selectionTag  = "skip"
                         }.buttonStyle(ButtonStyle())
                     }

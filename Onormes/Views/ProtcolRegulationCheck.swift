@@ -8,11 +8,6 @@
 import Foundation
 import SwiftUI
 
-//protocol PRegulationCheck {
-//    func check() -> Bool
-//    func modify() -> Void
-//}
-
 protocol PRegulationCheckView: View {
     func check() -> Bool
     func modify() -> Bool

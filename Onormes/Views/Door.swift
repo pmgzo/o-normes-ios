@@ -12,24 +12,23 @@ enum ViewModelUserJouneyError: Error {
     case missedInitializedVariable
 }
 
-class DoorViewModel: ObservableObject, Identifiable {
+class DoorViewModel: PRegulationCheckViewModel {
     @Published var doorWidth: Float?;
     @Published var doorComment: String?;
     private var  key = "Door";
     
-    private unowned let coordinator: UJCoordinator;
+    //private unowned let coordinator: UJCoordinator;
     
-    init(coordinator: UJCoordinator) {
-        self.coordinator = coordinator
-        
-    }
-    
+//    init(coordinator: UJCoordinator) {
+//        self.coordinator = coordinator
+//
+//    }
     // in case he goes back to the step
-    init(coordinator: UJCoordinator, data: String) {
-        self.coordinator = coordinator
-        // TODO: reload data with the string
-
-    }
+//    init(coordinator: UJCoordinator, data: String) {
+//        self.coordinator = coordinator
+//        // TODO: reload data with the string
+//
+//    }
     
     func getId() -> String {
         return "external-door"
@@ -42,15 +41,17 @@ class DoorViewModel: ObservableObject, Identifiable {
         return false
     }
     
-    func registerJSONObject() throws -> Void {
+    func addRegulationCheck(coordinator: UJCoordinator) -> Bool {
         guard doorWidth == nil else {
-            throw ViewModelUserJouneyError.missedInitializedVariable
+            return false
+//            throw ViewModelUserJouneyError.missedInitializedVariable
         }
         
         let wrappedObject: NSDictionary = ["doorWidth": self.doorWidth, "doorComment": self.doorComment != nil ? self.doorComment : ""]
         
         // send it to coordinator
-        self.coordinator.addNewRegulationCheck(newObject: wrappedObject, newKey: self.key)
+        coordinator.addNewRegulationCheck(newObject: wrappedObject, newKey: self.key)
+        return true
     }
     
     // useless
@@ -59,14 +60,27 @@ class DoorViewModel: ObservableObject, Identifiable {
     }
 }
 
-struct DoorView: View {
+struct DoorView: PRegulationCheckView {
     // handle form and save in json
-    @ObservedObject var viewModel: DoorViewModel;
+    @ObservedObject var viewModel = DoorViewModel();
+    private unowned let coordinator: UJCoordinator;
+    
+    init(coordinator: UJCoordinator) {
+        self.coordinator = coordinator
+    }
     
     var body: some View {
         VStack {
             Text("Door model form")
             // add form
         }
-    };
+    }
+    
+    func check() -> Bool {
+        return viewModel.formIsOkay()
+    }
+    
+    func modify() -> Bool {
+        return viewModel.addRegulationCheck(coordinator: self.coordinator)
+    }
 }

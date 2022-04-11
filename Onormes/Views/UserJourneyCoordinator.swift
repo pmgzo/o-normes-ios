@@ -33,8 +33,8 @@ class UJCoordinator: ObservableObject {
     }
 }
 
-// Main view root
-struct UJCoordinatorView: View {
+//TODO: to remove (Main view root)
+struct UJCoordinatorView: PRegulationCheckView {
     @ObservedObject var object: UJCoordinator;
     
     init() {
@@ -57,10 +57,18 @@ struct UJCoordinatorView: View {
                 }}.buttonStyle(ButtonStyle())
         }
     }
+    
+    func check() -> Bool {
+        return true
+    }
+    
+    func modify() -> Bool {
+        return true
+    }
 }
 
 // Dummy page to remove
-struct UserJourney: View {
+struct UserJourney: PRegulationCheckView {
 
     var body: some View {
         VStack {
@@ -71,8 +79,17 @@ struct UserJourney: View {
             // Have to handle layout
             Text("Simple user journey page that will be deleted")
         }
-    };
+    }
+    
     func startUserJourney()-> Void {
         print("jag börjar min User Journey")
+    }
+    
+    func check() -> Bool {
+        return true
+    }
+    
+    func modify() -> Bool {
+        return true
     }
 }
