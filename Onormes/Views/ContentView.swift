@@ -10,32 +10,33 @@
   struct ContentView: View {
         var body: some View {
         VStack(alignment: .center, content: {
-          TabView {
-
-            MeasuresVCRepresented()
-              .tabItem {
-                Image(systemName: "ruler.fill")
-                Text("Mesures")
-              }
-            
-            ReconstructionVCRepresented()
-              .tabItem {
-                Image(systemName: "sensor.tag.radiowaves.forward.fill")
-                Text("LiDAR")
-              }
-            
-            Text("Vous êtes connecté !")
-              .tabItem {
-                Image(systemName: "house")
-                Text("Accueil")
-              }
-            
-            ProfileView()
-              .tabItem {
-                Image(systemName: "person.circle.fill")
-                Text("Profil")
-              }
-          }.accentColor(Color(hex: 0x282359))
+            NavigationView {
+                TabView {
+                  MeasuresVCRepresented()
+                    .tabItem {
+                      Image(systemName: "ruler.fill")
+                      Text("Mesures")
+                    }
+                  
+                  ReconstructionVCRepresented()
+                    .tabItem {
+                      Image(systemName: "sensor.tag.radiowaves.forward.fill")
+                      Text("LiDAR")
+                    }
+                  
+                    HomeMenu()
+                    .tabItem {
+                      Image(systemName: "house")
+                      Text("Accueil")
+                    }
+                  
+                  ProfileView()
+                    .tabItem {
+                      Image(systemName: "person.circle.fill")
+                      Text("Profil")
+                    }
+                }.accentColor(Color(hex: 0x282359))
+            }
         })
         .preferredColorScheme(.light)
       }
@@ -43,6 +44,7 @@
 
 struct ReconstructionVCRepresented : UIViewControllerRepresentable {
   func updateUIViewController(_ uiViewController: ReconstructionViewController, context: Context) {
+      
   }
   
   func makeUIViewController(context: Context) -> ReconstructionViewController {
@@ -59,11 +61,30 @@ struct MeasuresVCRepresented : UIViewControllerRepresentable {
   }
 }
 
-  struct ContentView_Previews: PreviewProvider {
-      static var previews: some View {
-        Group {
-          ContentView()
-            .preferredColorScheme(.dark)
+struct HomeMenu: View {
+    
+    @State private var isShowingDetailView = false
+    
+    var body: some View {
+        VStack {
+            // Method with navigation
+            // Have to handle layout
+            //Text(self.value)
+            Text("Vous êtes connecté !")
+            CustomNavigationLink(isActive: $isShowingDetailView, destination: UJCoordinatorView()) {
+                Button("Commencer le parcours utilisateur") {
+                    print("User jounrey started")
+                    isShowingDetailView = true
+                }.buttonStyle(ButtonStyle())
+            }
         }
-      }
+    }
+};
+
+struct HomeMenu_Previews: PreviewProvider {
+  static var previews: some View {
+    Group {
+        HomeMenu()
+    }
   }
+}
