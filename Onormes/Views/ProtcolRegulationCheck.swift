@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 protocol PRegulationCheckView: View {
+    var coordinator: UJCoordinator { get };
+    
     func check() -> Bool
     func modify() -> Bool
 }

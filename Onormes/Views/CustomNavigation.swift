@@ -18,9 +18,13 @@ class CustomNavCoordinator: ObservableObject {
 struct AccessibilityRegulationsPage: PRegulationCheckView {
     //TODO: update navigation here
     @State private var selectionTag: String?;
-    private unowned let coordinator: CustomNavCoordinator;
+//    private unowned let coordinator: CustomNavCoordinator;
+//
+    var navcoordinator: CustomNavCoordinator;
+    var coordinator: UJCoordinator;
     
-    init(coordinator: CustomNavCoordinator) {
+    init(coordinator: UJCoordinator, navcoordinator: CustomNavCoordinator) {
+        self.navcoordinator = navcoordinator
         self.coordinator = coordinator
     }
     
@@ -29,18 +33,19 @@ struct AccessibilityRegulationsPage: PRegulationCheckView {
             HStack {
                 Button("Retour") {
                     // coordinator check
-                    self.coordinator.renderStepPage = false
+                    self.navcoordinator.renderStepPage = false
                 }.buttonStyle(ButtonStyle())
                 Spacer().frame(width: 250)
             }
             Spacer()
+            //TODO: DELETE ?
             Text("Here you will get the accessibility rules you can add to the audit")
-            CustomNavigationLink(tag: "doorChecking", selection: $selectionTag, destination: AccessibilityRegulationsPage(coordinator: coordinator)) {
+            CustomNavigationLink(coordinator: coordinator, tag: "doorChecking", selection: $selectionTag, destination: AccessibilityRegulationsPage(coordinator: coordinator, navcoordinator: navcoordinator)) {
                 Button("Add external door checking") {
                     selectionTag = "doorChecking"
                 }
             }
-            CustomNavigationLink(tag: "doorChecking2", selection: $selectionTag, destination: AccessibilityRegulationsPage(coordinator: coordinator)) {}
+            CustomNavigationLink(coordinator: coordinator, tag: "doorChecking2", selection: $selectionTag, destination: AccessibilityRegulationsPage(coordinator: coordinator, navcoordinator: navcoordinator)) {}
         }
     }
     
@@ -57,11 +62,13 @@ struct UserJourneyNavigationPage<Content> : View where Content : PRegulationChec
     @State private var selectionTag: String?;
     
     let content: Content;
-    private unowned let coordinator: CustomNavCoordinator;
+    private unowned let navcoordinator: CustomNavCoordinator;
+    var coordinator: UJCoordinator;
     
-    init(content: Content, coordinator: CustomNavCoordinator) {
+    init(content: Content, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator) {
         self.content = content
         self.coordinator = coordinator
+        self.navcoordinator = navcoordinator
     }
     
     var body: some View {
@@ -69,7 +76,7 @@ struct UserJourneyNavigationPage<Content> : View where Content : PRegulationChec
             HStack {
                 Spacer().frame(width: 290)
                 Button(action: {
-                    coordinator.renderStepPage = true
+                    navcoordinator.renderStepPage = true
                 }) {
                     Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 15, height: 15).padding()
                 }.background(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1)).cornerRadius(13).frame(width: 16, height: 16).padding()
@@ -82,19 +89,19 @@ struct UserJourneyNavigationPage<Content> : View where Content : PRegulationChec
             VStack {
                 Text("And here the navigation controls")
                 HStack {
-                    CustomNavigationLink(tag: "back", selection: $selectionTag, destination: UserJourney()) {
+                    CustomNavigationLink(coordinator: self.coordinator,tag: "back", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
                         Button("Retour") {
                             // coordinator check
                             selectionTag  = "back"
                         }.buttonStyle(ButtonStyle())
                     }
-                    CustomNavigationLink(tag: "finished", selection: $selectionTag, destination: UserJourney()) {
+                    CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
                         Button("Finir l'audit") {
                             // coordinator check
                             selectionTag  = "finished"
                         }.buttonStyle(ButtonStyle())
                     }
-                    CustomNavigationLink(tag: "skip", selection: $selectionTag, destination: UserJourney()) {
+                    CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
                         Button("Etape suivante") {
                             // coordinator check
                             // call coordinator to load the next page
@@ -117,23 +124,26 @@ struct UserJourneyNavigationWrapper<Content> : View where Content : PRegulationC
     let content: Content;
     //@State private var selectionTag: String?;
     //@State private var renderStepPage: Bool = false;
-    @ObservedObject var coordinator = CustomNavCoordinator();
+    @ObservedObject var navcoordinator = CustomNavCoordinator();
+    var coordinator: UJCoordinator;
     
-    init(content: Content) {
+    init(coordinator: UJCoordinator, content: Content) {
         self.content = content
+        self.coordinator = coordinator
     }
     
-    init(@ViewBuilder content: () -> Content) {
+    init(coordinator: UJCoordinator, @ViewBuilder content: () -> Content) {
         self.content = content()
+        self.coordinator = coordinator
     }
     
     var body: some View {
         VStack {
-            if coordinator.renderStepPage {
-                AccessibilityRegulationsPage(coordinator: coordinator)
+            if navcoordinator.renderStepPage {
+                AccessibilityRegulationsPage(coordinator: coordinator, navcoordinator: navcoordinator)
             }
             else {
-                UserJourneyNavigationPage(content: content, coordinator: coordinator)
+                UserJourneyNavigationPage(content: content,navcoordinator: navcoordinator, coordinator: coordinator)
             }
         }.navigationBarHidden(true)
     }
@@ -146,31 +156,35 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
     let tag: String?;
     let selection: Binding<String?>?;
     var isActive: Binding<Bool>?;
+    var coordinator: UJCoordinator;
     
-    init(destination: Destination, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
         constructorNumber = 0
         self.destination = destination
         self.label = label
+        self.coordinator = coordinator
         
         self.selection = nil
         self.tag = nil
         self.isActive = nil
     }
-    init(tag: String, selection: Binding<String?>, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
         self.constructorNumber = 1
         self.selection = selection
         self.tag = tag
         self.destination = destination
         self.label = label
+        self.coordinator = coordinator
         
         self.isActive = nil
     }
 
-    init(isActive: Binding<Bool>, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, isActive: Binding<Bool>, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
         self.constructorNumber = 2
         self.isActive = isActive
         self.destination = destination
         self.label = label
+        self.coordinator = coordinator
         
         self.selection = nil
         self.tag = nil
@@ -180,13 +194,13 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
         if constructorNumber == 0 {
             NavigationLink(
                 destination:
-                UserJourneyNavigationWrapper(content: self.destination),
+                    UserJourneyNavigationWrapper(coordinator: coordinator, content: self.destination),
                 label: label).navigationBarHidden(true)
         }
         if constructorNumber == 1 {
             NavigationLink(
                 destination:
-                UserJourneyNavigationWrapper(content: self.destination),
+                UserJourneyNavigationWrapper(coordinator: coordinator, content: self.destination),
                 tag: self.tag!,
                 selection: self.selection!,
                 label: label).navigationBarHidden(true)
@@ -194,7 +208,7 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
         if constructorNumber == 2 {
             NavigationLink(
                 destination:
-                UserJourneyNavigationWrapper(content: self.destination),
+                UserJourneyNavigationWrapper(coordinator: coordinator,content: self.destination),
                 isActive: self.isActive!,
                 label: label).navigationBarHidden(true)
         }
@@ -205,7 +219,7 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
 struct AccessibilityRegulationsPage_Previews: PreviewProvider {
       static var previews: some View {
         Group {
-            AccessibilityRegulationsPage(coordinator: CustomNavCoordinator())
+            AccessibilityRegulationsPage(coordinator: UJCoordinator(), navcoordinator: CustomNavCoordinator())
         }
       }
   }

@@ -63,14 +63,13 @@ struct MeasureComponent: PRegulationCheckView {
     // TODO: add comment form put it as optional in ctor
     //TODO: add more parameter for that component to specifiy if that field is optional etc...
     let title: String;
-    let action: (Float) -> Void; // used to modified
     @ObservedObject var model: MeasureComponentViewModel;
-    private unowned let coordinator: UJCoordinator;
-    
-    init(coordinator: UJCoordinator, model: MeasureComponentViewModel, action: @escaping (Float) -> Void, title: String = "") {
-        self.action = action
+//    private unowned let coordinator: UJCoordinator;
+    var coordinator: UJCoordinator;
+        
+    init(coordinator: UJCoordinator, title: String = "") {
         self.title = title
-        self.model = model
+        self.model = MeasureComponentViewModel()
         self.coordinator = coordinator
     }
 
@@ -102,7 +101,7 @@ struct MeasureComponent: PRegulationCheckView {
 struct MeasureComponent_Previews: PreviewProvider {
       static var previews: some View {
         Group {
-            MeasureComponent(coordinator: UJCoordinator(), model: MeasureComponentViewModel(), action: {(number) -> Void in print(number)}, title: "Porte hauteur")
+            MeasureComponent(coordinator: UJCoordinator(), title: "Porte hauteur")
             }
       }
   }

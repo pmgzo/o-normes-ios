@@ -33,17 +33,18 @@ class UJCoordinator: ObservableObject {
     }
 }
 
-//TODO: to remove (Main view root)
+//TODO: to remove
 struct UJCoordinatorView: PRegulationCheckView {
-    @ObservedObject var object: UJCoordinator;
+    // wrong coordinator
+    @ObservedObject var coordinator: UJCoordinator;
     
     init() {
-        object = UJCoordinator()
+        coordinator = UJCoordinator()
     }
     // here we will wrapp view with the (+) to had new views
     var body: some View {
         VStack {
-            if object.value {
+            if coordinator.value {
                 Text("first view")
             } else {
                 Text("second view")
@@ -52,7 +53,7 @@ struct UJCoordinatorView: PRegulationCheckView {
             Button("Change view") {
                 print("coucou")
                 withAnimation {
-                    object.value = !object.value
+                    coordinator.value = !coordinator.value
                 
                 }}.buttonStyle(ButtonStyle())
         }
@@ -69,7 +70,8 @@ struct UJCoordinatorView: PRegulationCheckView {
 
 // Dummy page to remove
 struct UserJourney: PRegulationCheckView {
-
+    var coordinator: UJCoordinator;
+    
     var body: some View {
         VStack {
 //            List {

@@ -64,6 +64,11 @@ struct MeasuresVCRepresented : UIViewControllerRepresentable {
 struct HomeMenu: View {
     
     @State private var isShowingDetailView = false
+    @ObservedObject var coordinator: UJCoordinator;
+    
+    init() {
+        self.coordinator = UJCoordinator()
+    }
     
     var body: some View {
         VStack {
@@ -71,7 +76,7 @@ struct HomeMenu: View {
             // Have to handle layout
             //Text(self.value)
             Text("Vous êtes connecté !")
-            CustomNavigationLink(isActive: $isShowingDetailView, destination: UJCoordinatorView()) {
+            CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: UJCoordinatorView()) {
                 Button("Commencer le parcours utilisateur") {
                     print("User jounrey started")
                     isShowingDetailView = true

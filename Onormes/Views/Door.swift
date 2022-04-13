@@ -63,7 +63,9 @@ class DoorViewModel: PRegulationCheckViewModel {
 struct DoorView: PRegulationCheckView {
     // handle form and save in json
     @ObservedObject var viewModel = DoorViewModel();
-    private unowned let coordinator: UJCoordinator;
+//    private unowned let coordinator: UJCoordinator;
+//
+    var coordinator: UJCoordinator;
     
     init(coordinator: UJCoordinator) {
         self.coordinator = coordinator
