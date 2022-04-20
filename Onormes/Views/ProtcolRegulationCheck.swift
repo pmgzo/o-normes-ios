@@ -20,6 +20,16 @@ protocol PRegulationCheckViewModel: ObservableObject, Identifiable {
     func formIsOkay() -> Bool
 }
 
+protocol PRegulationCheckStageDelegate  {
+    var steps: Array<Any> { get };
+    var index: Int {get};
+    //associatedtype PRegulationCheckView
+    
+    init(config: ERP_Config, coordinator: UJCoordinator) // build its stage array
+    func getNextStep<T: PRegulationCheckView>() -> T
+    func stillHaveSteps() -> Bool
+}
+
 //class FirstPage: View, PRegulationCheck {
 //
 //}

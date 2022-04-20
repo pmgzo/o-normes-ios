@@ -14,56 +14,13 @@ class CustomNavCoordinator: ObservableObject {
     // others...
 }
 
-// Page to add Stages
-struct AccessibilityRegulationsPage: PRegulationCheckView {
-    //TODO: update navigation here
-    @State private var selectionTag: String?;
-//    private unowned let coordinator: CustomNavCoordinator;
-//
-    var navcoordinator: CustomNavCoordinator;
-    var coordinator: UJCoordinator;
-    
-    init(coordinator: UJCoordinator, navcoordinator: CustomNavCoordinator) {
-        self.navcoordinator = navcoordinator
-        self.coordinator = coordinator
-    }
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Button("Retour") {
-                    // coordinator check
-                    self.navcoordinator.renderStepPage = false
-                }.buttonStyle(ButtonStyle())
-                Spacer().frame(width: 250)
-            }
-            Spacer()
-            //TODO: DELETE ?
-            Text("Here you will get the accessibility rules you can add to the audit")
-            CustomNavigationLink(coordinator: coordinator, tag: "doorChecking", selection: $selectionTag, destination: AccessibilityRegulationsPage(coordinator: coordinator, navcoordinator: navcoordinator)) {
-                Button("Add external door checking") {
-                    selectionTag = "doorChecking"
-                }
-            }
-            CustomNavigationLink(coordinator: coordinator, tag: "doorChecking2", selection: $selectionTag, destination: AccessibilityRegulationsPage(coordinator: coordinator, navcoordinator: navcoordinator)) {}
-        }
-    }
-    
-    func check() -> Bool {
-        return true
-    }
-    
-    func modify() -> Bool {
-        return true
-    }
-}
-
 struct UserJourneyNavigationPage<Content> : View where Content : PRegulationCheckView {
     @State private var selectionTag: String?;
     
     let content: Content;
     private unowned let navcoordinator: CustomNavCoordinator;
     var coordinator: UJCoordinator;
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>;
     
     init(content: Content, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator) {
         self.content = content
@@ -89,12 +46,18 @@ struct UserJourneyNavigationPage<Content> : View where Content : PRegulationChec
             VStack {
                 Text("And here the navigation controls")
                 HStack {
-                    CustomNavigationLink(coordinator: self.coordinator,tag: "back", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
-                        Button("Retour") {
-                            // coordinator check
-                            selectionTag  = "back"
-                        }.buttonStyle(ButtonStyle())
-                    }
+//                    CustomNavigationLink(coordinator: self.coordinator,tag: "back", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
+//                        Button("Retour") {
+//                            // coordinator check
+//                            selectionTag  = "back"
+//                        }.buttonStyle(ButtonStyle())
+//                    }
+                    Button("Retour") {
+                        // coordinator check
+                        //selectionTag  = "back"
+                        presentationMode.wrappedValue.dismiss()
+                    }.buttonStyle(ButtonStyle())
+                    
                     CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
                         Button("Finir l'audit") {
                             // coordinator check
@@ -214,12 +177,3 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
         }
     }
 }
-
-
-struct AccessibilityRegulationsPage_Previews: PreviewProvider {
-      static var previews: some View {
-        Group {
-            AccessibilityRegulationsPage(coordinator: UJCoordinator(), navcoordinator: CustomNavCoordinator())
-        }
-      }
-  }

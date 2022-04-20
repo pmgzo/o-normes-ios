@@ -12,26 +12,80 @@ import SwiftUI
 // fill form
 // give the drive to UJCoordinator
 
-
 class UJCoordinator: ObservableObject {
-    //@Published var doorView: DoorViewModel?;
-    //@Published var coridorView: CoridorViewModel;
-    //@Published var doorView: ViewModel;
+    //model data
     private var myDictionary: NSMutableDictionary = [:]
-    private var regulationCheckHistory = [String]();
+    
+    // audit, general information
+    private var auditRef: String;
+    var config: ERP_Config;
+    
+    // stages
+    private var stageHistory = [String]();
+    private var stageDelegate: PRegulationCheckStageDelegate?;
+    private var index: Int;
+    
     @Published var value: Bool;
 
     init() {
         print("UJCoordinator initialized")
         value = true
         //self.doorView = DoorViewModel(coordinator: self);
+        self.auditRef = UUID().uuidString;
+        self.config = ERP_Config()
+
+        self.stageHistory = ["porte d'entrée"]
+        self.index = 0
+        //TODO: add initial step here !!
+        //TODO: init stage history + stageDelegate
+        
+        self.stageDelegate = DoorStageDelegate(config: self.config, coordinator: self)
     }
+    
+    // record data
     func addNewRegulationCheck(newObject: NSDictionary, newKey: String) {
         let newGeneratedKey = newKey + UUID().uuidString;
         myDictionary[newGeneratedKey] = newObject
-        regulationCheckHistory.append(newGeneratedKey)
+        stageHistory.append(newGeneratedKey)
+    }
+    
+    // add steps/stages, (id list) as parameters
+    func addRegulationCheckStages(ids: Set<String>) {
+        // set next stages
+        
+    }
+    
+    func getNextStep<T: PRegulationCheckView>() throws -> T {
+        if stageDelegate == nil {
+            throw ViewModelUserJouneyError.stageNotInitialized
+        }
+        
+        if (stageDelegate!.stillHaveSteps()) {
+            return stageDelegate!.getNextStep()
+        }
+        
+        // then we change stage
+        if index == (stageHistory.count - 1) {
+            //TODO: return recap page
+            return UJCoordinatorView() as! T
+        } else {
+            stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
+            return stageDelegate!.getNextStep()
+        }
     }
 }
+
+extension UJCoordinator {
+  // new features here
+    func getStageMap() -> NSDictionary {
+        let stageMap: NSDictionary = [
+            "porte d'entrée" : DoorStageDelegate(config: self.config, coordinator: self),
+        ]
+        return stageMap
+    }
+    
+}
+
 
 //TODO: to remove
 struct UJCoordinatorView: PRegulationCheckView {

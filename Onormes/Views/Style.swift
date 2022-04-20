@@ -24,6 +24,39 @@ struct ButtonStyle: PrimitiveButtonStyle
     }
 }
 
+struct deleteButtonStyle: PrimitiveButtonStyle
+{
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+        .onTapGesture {
+            configuration.trigger()
+        } // TODO: graphical chart for normal, cancel, destructive button + import their police (.configuration.role ==) https://developer.apple.com/documentation/swiftui/primitivebuttonstyleconfiguration/role
+        .padding()
+        .font(.system(size: 20, design: .default))
+        .foregroundColor(Color.white).background(Color.red)
+        .cornerRadius(15)
+        .frame(maxWidth: .infinity)
+        
+    }
+}
+
+
+struct validateButtonStyle: PrimitiveButtonStyle
+{
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+        .onTapGesture {
+            configuration.trigger()
+        } // TODO: graphical chart for normal, cancel, destructive button + import their police (.configuration.role ==) https://developer.apple.com/documentation/swiftui/primitivebuttonstyleconfiguration/role
+        .padding()
+        .font(.system(size: 20, design: .default))
+        .foregroundColor(Color.white).background(Color.green)
+        .cornerRadius(15)
+        .frame(maxWidth: .infinity)
+        
+    }
+}
+
 struct MeasureTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration

@@ -10,8 +10,10 @@ import SwiftUI
 
 enum ViewModelUserJouneyError: Error {
     case missedInitializedVariable
+    case stageNotInitialized
 }
 
+// Entrance door regulation check
 class DoorViewModel: PRegulationCheckViewModel {
     @Published var doorWidth: Float?;
     @Published var doorComment: String?;
@@ -35,7 +37,7 @@ class DoorViewModel: PRegulationCheckViewModel {
     }
     
     func formIsOkay() -> Bool {
-        if doorWidth != nil { return true }
+        if doorWidth != nil && (doorWidth ?? 0) >= 90.0 { return true }
         // to the checking
         // if it is okay
         return false
@@ -84,5 +86,27 @@ struct DoorView: PRegulationCheckView {
     
     func modify() -> Bool {
         return viewModel.addRegulationCheck(coordinator: self.coordinator)
+    }
+}
+
+class DoorStageDelegate: PRegulationCheckStageDelegate {
+    var steps: Array<Any>;
+    var index: Int;
+
+    required init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
+        index = 0;
+        steps = []
+        steps.append(DoorView(coordinator: coordinator))
+    }
+    
+    func getNextStep<T>() -> T where T : PRegulationCheckView {
+        return steps[index] as! T
+    }
+    
+    func stillHaveSteps() -> Bool {
+        if index == (steps.count - 1) {
+            return false
+        }
+        return true
     }
 }
