@@ -22,8 +22,8 @@ class UJCoordinator: ObservableObject {
     
     // stages
     private var stageHistory = [String]();
-    private var stageDelegate: PRegulationCheckStageDelegate?;
     private var index: Int;
+    private var stageDelegate: PRegulationCheckStageDelegate?;
     
     @Published var value: Bool;
 
@@ -41,7 +41,7 @@ class UJCoordinator: ObservableObject {
         
         self.stageDelegate = DoorStageDelegate(config: self.config, coordinator: self)
     }
-    
+
     // record data
     func addNewRegulationCheck(newObject: NSDictionary, newKey: String) {
         let newGeneratedKey = newKey + UUID().uuidString;
@@ -52,7 +52,11 @@ class UJCoordinator: ObservableObject {
     // add steps/stages, (id list) as parameters
     func addRegulationCheckStages(ids: Set<String>) {
         // set next stages
-        
+        stageHistory = stageHistory + Array(ids)
+    }
+    
+    func getFirstStep<T: PRegulationCheckView>() -> T {
+        return self.stageDelegate!.getFirstStep()
     }
     
     func getNextStep<T: PRegulationCheckView>() throws -> T {
@@ -69,6 +73,7 @@ class UJCoordinator: ObservableObject {
             //TODO: return recap page
             return UJCoordinatorView() as! T
         } else {
+            index += 1
             stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
             return stageDelegate!.getNextStep()
         }

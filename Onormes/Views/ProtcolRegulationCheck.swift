@@ -26,6 +26,7 @@ protocol PRegulationCheckStageDelegate  {
     //associatedtype PRegulationCheckView
     
     init(config: ERP_Config, coordinator: UJCoordinator) // build its stage array
+    func getFirstStep<T: PRegulationCheckView>() -> T
     func getNextStep<T: PRegulationCheckView>() -> T
     func stillHaveSteps() -> Bool
 }

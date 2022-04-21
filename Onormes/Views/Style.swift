@@ -64,7 +64,19 @@ struct MeasureTextFieldStyle: TextFieldStyle {
             .cornerRadius(20)
             .foregroundColor(.black)
             .overlay(RoundedRectangle(cornerRadius: 10)
-                        .stroke(.gray, lineWidth: 1))
+                        .stroke(.gray, lineWidth: 0.5))
+                        
+    }
+}
+
+struct CommentTextFieldStyle: TextFieldStyle {
+    func _body(configuration: TextField<Self._Label>) -> some View {
+        configuration
+            .padding(50)
+            .cornerRadius(20)
+            .foregroundColor(.black)
+            .overlay(RoundedRectangle(cornerRadius: 10)
+                        .stroke(.gray, lineWidth: 0.5))
                         
     }
 }

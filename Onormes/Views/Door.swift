@@ -15,9 +15,11 @@ enum ViewModelUserJouneyError: Error {
 
 // Entrance door regulation check
 class DoorViewModel: PRegulationCheckViewModel {
-    @Published var doorWidth: Float?;
-    @Published var doorComment: String?;
-    private var  key = "Door";
+    @Published var doorWidth: String = "";
+    @Published var doorComment: String = "";
+    @Published var displayError: Bool = false;
+    
+    private var  key = "porte d'entrée";
     
     //private unowned let coordinator: UJCoordinator;
     
@@ -37,19 +39,21 @@ class DoorViewModel: PRegulationCheckViewModel {
     }
     
     func formIsOkay() -> Bool {
-        if doorWidth != nil && (doorWidth ?? 0) >= 90.0 { return true }
+        if doorWidth != nil && ((self.doorWidth as NSString).floatValue) >= 90.0 {
+            displayError = false
+            return true
+        }
+        else {
+            displayError = true
+        }
         // to the checking
         // if it is okay
         return false
     }
     
     func addRegulationCheck(coordinator: UJCoordinator) -> Bool {
-        guard doorWidth == nil else {
-            return false
-//            throw ViewModelUserJouneyError.missedInitializedVariable
-        }
         
-        let wrappedObject: NSDictionary = ["doorWidth": self.doorWidth, "doorComment": self.doorComment != nil ? self.doorComment : ""]
+        let wrappedObject: NSDictionary = ["doorWidth": (self.doorWidth as NSString).floatValue, "doorComment": self.doorComment != nil ? self.doorComment : ""]
         
         // send it to coordinator
         coordinator.addNewRegulationCheck(newObject: wrappedObject, newKey: self.key)
@@ -63,8 +67,9 @@ class DoorViewModel: PRegulationCheckViewModel {
 }
 
 struct DoorView: PRegulationCheckView {
+    
     // handle form and save in json
-    @ObservedObject var viewModel = DoorViewModel();
+    @ObservedObject var model = DoorViewModel();
 //    private unowned let coordinator: UJCoordinator;
 //
     var coordinator: UJCoordinator;
@@ -75,17 +80,35 @@ struct DoorView: PRegulationCheckView {
     
     var body: some View {
         VStack {
-            Text("Door model form")
+            Text("Porte principale").font(.title)
             // add form
+            
+            Form {
+                
+                Spacer().frame(height: 130)
+                
+                Section(header: Text("Largeur de la porte").foregroundColor(.black), footer: model.displayError ? Text("*champs obligatoire").foregroundColor(.red) : nil) {
+                    TextField("mesure", text: $model.doorWidth).textFieldStyle(MeasureTextFieldStyle())
+                    
+                    TextField("commentaire", text: $model.doorComment).textFieldStyle(CommentTextFieldStyle())
+                        .multilineTextAlignment(TextAlignment.center)
+                }
+            }
+            .background(Color.white)
+            .onAppear { // ADD THESE
+              UITableView.appearance().backgroundColor = .clear
+            }
+
+            Spacer()
         }
     }
     
     func check() -> Bool {
-        return viewModel.formIsOkay()
+        return model.formIsOkay()
     }
     
     func modify() -> Bool {
-        return viewModel.addRegulationCheck(coordinator: self.coordinator)
+        return model.addRegulationCheck(coordinator: self.coordinator)
     }
 }
 
@@ -99,7 +122,13 @@ class DoorStageDelegate: PRegulationCheckStageDelegate {
         steps.append(DoorView(coordinator: coordinator))
     }
     
+    func getFirstStep<T>() -> T where T : PRegulationCheckView {
+        //return steps[0] as! T
+        return DoorView(coordinator: UJCoordinator()) as! T
+    }
+    
     func getNextStep<T>() -> T where T : PRegulationCheckView {
+        index += 1
         return steps[index] as! T
     }
     
@@ -110,3 +139,12 @@ class DoorStageDelegate: PRegulationCheckStageDelegate {
         return true
     }
 }
+
+
+struct DoorView_Previews: PreviewProvider {
+      static var previews: some View {
+        Group {
+            DoorView(coordinator: UJCoordinator())
+        }
+      }
+  }

@@ -76,7 +76,9 @@ struct HomeMenu: View {
             // Have to handle layout
             //Text(self.value)
             Text("Vous êtes connecté !")
-            CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: UJCoordinatorView()) {
+//            CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: coordinator.getFirstStep()) {
+            CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: DoorView(coordinator: self.coordinator)) {
+
                 Button("Commencer le parcours utilisateur") {
                     print("User jounrey started")
                     isShowingDetailView = true

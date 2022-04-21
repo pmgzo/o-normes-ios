@@ -16,13 +16,14 @@ struct ERP_Config {
 
 // example measure component should inherit of this
 
-// TODO: Have to merge with PRegulationCheckView
+// TODO: REMOVE, Have to merge with PRegulationCheckView
 protocol PRegulationPage {
     var coordinator: UJCoordinator { get };
 
     init(coordinator: UJCoordinator) // params have to think about it
 }
 
+// TODO: REMOVE ?
 protocol PRegulationCheckModel {
     var regChecks: [PRegulationPage] { get }
     var key: String { get }; // key for the saved json field
