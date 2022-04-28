@@ -41,31 +41,15 @@ class SelectedRegulationSet: ObservableObject {
 //TODO: faire une map de norme à verifier qui contient, l'image specific à check étape (porte, escalier, allée structurante/non structurante)
 // https://www.hackingwithswift.com/quick-start/swiftui/how-to-position-views-in-a-grid-using-lazyvgrid-and-lazyhgrid
 
-// Page to add Stages
-struct AccessibilityRegulationsPage: PRegulationCheckView {
-    //TODO: update navigation here
-    @State private var selectionTag: String?;
-//    private unowned let coordinator: CustomNavCoordinator;
-//
-    var navcoordinator: CustomNavCoordinator;
-    var coordinator: UJCoordinator;
-    @ObservedObject var selectedItems: SelectedRegulationSet;
+// regulationPage implementation
+extension GenericRegulationView {
     
-    init(coordinator: UJCoordinator, navcoordinator: CustomNavCoordinator) {
-        self.navcoordinator = navcoordinator
-        self.coordinator = coordinator
-        self.selectedItems = SelectedRegulationSet()
-    }
-    
-    // we only have the door view for now
-    private var gridItemLayout = [GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86))]
-    
-    var body: some View {
+    var regulationsPage: some View {
         VStack {
             HStack {
                 Button("Retour") {
                     // coordinator check
-                    self.navcoordinator.renderStepPage = false
+                    self.navcoordinator?.renderStepPage = false
                 }.buttonStyle(ButtonStyle())
                 Spacer().frame(width: 250)
             }
@@ -102,7 +86,7 @@ struct AccessibilityRegulationsPage: PRegulationCheckView {
                         
                         //
                         selectedItems.items = Set<String>()
-                        navcoordinator.renderStepPage = false
+                        navcoordinator?.renderStepPage = false
                     }.buttonStyle(validateButtonStyle())
                     Spacer().frame(maxWidth: 40)
                     Button("Annuler") {
@@ -116,21 +100,4 @@ struct AccessibilityRegulationsPage: PRegulationCheckView {
             // add validation button
         }
     }
-    
-    func check() -> Bool {
-        return true
-    }
-    
-    func modify() -> Bool {
-        return true
-    }
 }
-
-struct AccessibilityRegulationsPage_Previews: PreviewProvider {
-      static var previews: some View {
-        Group {
-            AccessibilityRegulationsPage(coordinator: UJCoordinator(), navcoordinator: CustomNavCoordinator())
-        }
-      }
-  }
-

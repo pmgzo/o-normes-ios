@@ -8,9 +8,14 @@
 import Foundation
 import SwiftUI
 
+enum UJCoordinatorError: Error {
+    case attributeNotSet(name: String)
+}
+
 //TODO: IntroUJCoordinator
 // fill form
 // give the drive to UJCoordinator
+// place, date, type of establishment, how many floor ? etc...
 
 class UJCoordinator: ObservableObject {
     //model data
@@ -23,7 +28,7 @@ class UJCoordinator: ObservableObject {
     // stages
     private var stageHistory = [String]();
     private var index: Int;
-    private var stageDelegate: PRegulationCheckStageDelegate?;
+    var stageDelegate: PRegulationCheckStageDelegate?;
     
     @Published var value: Bool;
 
@@ -49,34 +54,14 @@ class UJCoordinator: ObservableObject {
         stageHistory.append(newGeneratedKey)
     }
     
-    // add steps/stages, (id list) as parameters
+    // add steps/stages, (id list) s parameters
     func addRegulationCheckStages(ids: Set<String>) {
         // set next stages
         stageHistory = stageHistory + Array(ids)
     }
-    
-    func getFirstStep<T: PRegulationCheckView>() -> T {
-        return self.stageDelegate!.getFirstStep()
-    }
-    
-    func getNextStep<T: PRegulationCheckView>() throws -> T {
-        if stageDelegate == nil {
-            throw ViewModelUserJouneyError.stageNotInitialized
-        }
-        
-        if (stageDelegate!.stillHaveSteps()) {
-            return stageDelegate!.getNextStep()
-        }
-        
-        // then we change stage
-        if index == (stageHistory.count - 1) {
-            //TODO: return recap page
-            return UJCoordinatorView() as! T
-        } else {
-            index += 1
-            stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
-            return stageDelegate!.getNextStep()
-        }
+
+    func changeDelegate() {
+        stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
     }
 }
 
@@ -92,65 +77,65 @@ extension UJCoordinator {
 }
 
 
-//TODO: to remove
-struct UJCoordinatorView: PRegulationCheckView {
-    // wrong coordinator
-    @ObservedObject var coordinator: UJCoordinator;
-    
-    init() {
-        coordinator = UJCoordinator()
-    }
-    // here we will wrapp view with the (+) to had new views
-    var body: some View {
-        VStack {
-            if coordinator.value {
-                Text("first view")
-            } else {
-                Text("second view")
-                
-            }
-            Button("Change view") {
-                print("coucou")
-                withAnimation {
-                    coordinator.value = !coordinator.value
-                
-                }}.buttonStyle(ButtonStyle())
-        }
-    }
-    
-    func check() -> Bool {
-        return true
-    }
-    
-    func modify() -> Bool {
-        return true
-    }
-}
-
-// Dummy page to remove
-struct UserJourney: PRegulationCheckView {
-    var coordinator: UJCoordinator;
-    
-    var body: some View {
-        VStack {
-//            List {
-//                Text("Välkommen till User journey")
-//                Text("Välkommen till User journey")
+////TODO: to remove
+//struct UJCoordinatorView: PRegulationCheckView {
+//    // wrong coordinator
+//    @ObservedObject var coordinator: UJCoordinator;
+//
+//    init() {
+//        coordinator = UJCoordinator()
+//    }
+//    // here we will wrapp view with the (+) to had new views
+//    var body: some View {
+//        VStack {
+//            if coordinator.value {
+//                Text("first view")
+//            } else {
+//                Text("second view")
+//
 //            }
-            // Have to handle layout
-            Text("Simple user journey page that will be deleted")
-        }
-    }
-    
-    func startUserJourney()-> Void {
-        print("jag börjar min User Journey")
-    }
-    
-    func check() -> Bool {
-        return true
-    }
-    
-    func modify() -> Bool {
-        return true
-    }
-}
+//            Button("Change view") {
+//                print("coucou")
+//                withAnimation {
+//                    coordinator.value = !coordinator.value
+//
+//                }}.buttonStyle(ButtonStyle())
+//        }
+//    }
+//
+//    func check() -> Bool {
+//        return true
+//    }
+//
+//    func modify() -> Bool {
+//        return true
+//    }
+//}
+//
+//// Dummy page to remove
+//struct UserJourney: PRegulationCheckView {
+//    var coordinator: UJCoordinator;
+//
+//    var body: some View {
+//        VStack {
+////            List {
+////                Text("Välkommen till User journey")
+////                Text("Välkommen till User journey")
+////            }
+//            // Have to handle layout
+//            Text("Simple user journey page that will be deleted")
+//        }
+//    }
+//
+//    func startUserJourney()-> Void {
+//        print("jag börjar min User Journey")
+//    }
+//
+//    func check() -> Bool {
+//        return true
+//    }
+//
+//    func modify() -> Bool {
+//        return true
+//    }
+//}

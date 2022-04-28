@@ -21,19 +21,6 @@ class DoorViewModel: PRegulationCheckViewModel {
     
     private var  key = "porte d'entrée";
     
-    //private unowned let coordinator: UJCoordinator;
-    
-//    init(coordinator: UJCoordinator) {
-//        self.coordinator = coordinator
-//
-//    }
-    // in case he goes back to the step
-//    init(coordinator: UJCoordinator, data: String) {
-//        self.coordinator = coordinator
-//        // TODO: reload data with the string
-//
-//    }
-    
     func getId() -> String {
         return "external-door"
     }
@@ -66,85 +53,66 @@ class DoorViewModel: PRegulationCheckViewModel {
     }
 }
 
-struct DoorView: PRegulationCheckView {
-    
-    // handle form and save in json
-    @ObservedObject var model = DoorViewModel();
-//    private unowned let coordinator: UJCoordinator;
+// TODO: remove
+//struct DoorView: PRegulationCheckView {
 //
-    var coordinator: UJCoordinator;
-    
-    init(coordinator: UJCoordinator) {
-        self.coordinator = coordinator
-    }
-    
-    var body: some View {
-        VStack {
-            Text("Porte principale").font(.title)
-            // add form
-            
-            Form {
-                
-                Spacer().frame(height: 130)
-                
-                Section(header: Text("Largeur de la porte").foregroundColor(.black), footer: model.displayError ? Text("*champs obligatoire").foregroundColor(.red) : nil) {
-                    TextField("mesure", text: $model.doorWidth).textFieldStyle(MeasureTextFieldStyle())
-                    
-                    TextField("commentaire", text: $model.doorComment).textFieldStyle(CommentTextFieldStyle())
-                        .multilineTextAlignment(TextAlignment.center)
-                }
-            }
-            .background(Color.white)
-            .onAppear { // ADD THESE
-              UITableView.appearance().backgroundColor = .clear
-            }
-
-            Spacer()
-        }
-    }
-    
-    func check() -> Bool {
-        return model.formIsOkay()
-    }
-    
-    func modify() -> Bool {
-        return model.addRegulationCheck(coordinator: self.coordinator)
-    }
-}
+//    // handle form and save in json
+//    @ObservedObject var model = DoorViewModel();
+////    private unowned let coordinator: UJCoordinator;
+////
+//    var coordinator: UJCoordinator;
+//
+//    init(coordinator: UJCoordinator) {
+//        self.coordinator = coordinator
+//    }
+//
+//    var body: some View {
+//        VStack {
+//            Text("Porte principale").font(.title)
+//            // add form
+//
+//            Form {
+//
+//                Spacer().frame(height: 130)
+//
+//                Section(header: Text("Largeur de la porte").foregroundColor(.black), footer: model.displayError ? Text("*champs obligatoire").foregroundColor(.red) : nil) {
+//                    TextField("mesure", text: $model.doorWidth).textFieldStyle(MeasureTextFieldStyle())
+//
+//                    TextField("commentaire", text: $model.doorComment).textFieldStyle(CommentTextFieldStyle())
+//                        .multilineTextAlignment(TextAlignment.center)
+//                }
+//            }
+//            .background(Color.white)
+//            .onAppear { // ADD THESE
+//              UITableView.appearance().backgroundColor = .clear
+//            }
+//
+//            Spacer()
+//        }
+//    }
+//
+//    func check() -> Bool {
+//        return model.formIsOkay()
+//    }
+//
+//    func modify() -> Bool {
+//        return model.addRegulationCheck(coordinator: self.coordinator)
+//    }
+//}
 
 class DoorStageDelegate: PRegulationCheckStageDelegate {
-    var steps: Array<Any>;
-    var index: Int;
-
-    required init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
-        index = 0;
-        steps = []
-        steps.append(DoorView(coordinator: coordinator))
-    }
-    
-    func getFirstStep<T>() -> T where T : PRegulationCheckView {
-        //return steps[0] as! T
-        return DoorView(coordinator: UJCoordinator()) as! T
-    }
-    
-    func getNextStep<T>() -> T where T : PRegulationCheckView {
-        index += 1
-        return steps[index] as! T
-    }
-    
-    func stillHaveSteps() -> Bool {
-        if index == (steps.count - 1) {
-            return false
-        }
-        return true
+    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
+        super.init(config: config, coordinator: coordinator);
+        self.steps.append(GenericRegulationView(title: "Porte d'entrée", content: [RegulationCheckField(key: "portedentrée", type: TypeField.string, text: "Saisissez la largeur de la porte d'entrée", optional: false)], id: "portedentrée"));
+        //steps.append(DoorView(coordinator: coordinator))
     }
 }
-
 
 struct DoorView_Previews: PreviewProvider {
       static var previews: some View {
         Group {
-            DoorView(coordinator: UJCoordinator())
+            //DoorView(coordinator: UJCoordinator())
+            GenericRegulationView(title: "Porte d'entrée", content: [RegulationCheckField(key: "portedentrée", type: TypeField.string, text: "Saisissez la largeur de la porte d'entrée")], id: "portedentrée")
         }
       }
   }

@@ -8,6 +8,9 @@
 import Foundation
 import SwiftUI
 
+
+//TODO: review, and change here
+
 extension String {
     var floatValue: Float {
         return (self as NSString).floatValue
@@ -58,50 +61,50 @@ class MeasureComponentViewModel: PRegulationCheckViewModel {
 
 
 // to use that component you need to pass a view model, the above view is supposed to check the field of each field component before submiting the whole form
-struct MeasureComponent: PRegulationCheckView {
-    // TODO: add binding with AR view
-    // TODO: add comment form put it as optional in ctor
-    //TODO: add more parameter for that component to specifiy if that field is optional etc...
-    let title: String;
-    @ObservedObject var model: MeasureComponentViewModel;
-//    private unowned let coordinator: UJCoordinator;
-    var coordinator: UJCoordinator;
-        
-    init(coordinator: UJCoordinator, title: String = "") {
-        self.title = title
-        self.model = MeasureComponentViewModel()
-        self.coordinator = coordinator
-    }
+//struct MeasureComponent: PRegulationCheckView {
+//    // TODO: add binding with AR view
+//    // TODO: add comment form put it as optional in ctor
+//    //TODO: add more parameter for that component to specifiy if that field is optional etc...
+//    let title: String;
+//    @ObservedObject var model: MeasureComponentViewModel;
+////    private unowned let coordinator: UJCoordinator;
+//    var coordinator: UJCoordinator;
+//
+//    init(coordinator: UJCoordinator, title: String = "") {
+//        self.title = title
+//        self.model = MeasureComponentViewModel()
+//        self.coordinator = coordinator
+//    }
+//
+//    var body: some View {
+//        HStack {
+//            // Formula
+//            VStack {
+//                Form {
+//                    Section(header: Text(title).foregroundColor(.black), footer: model.displayError ? Text("*champs obligatoire").foregroundColor(.red) : nil) {
+//                        TextField(title, text: $model.value).textFieldStyle(MeasureTextFieldStyle())
+//
+//                    }
+//                }.background(Color.gray.opacity(0))
+//            }
+//            // Button to switch to AR view
+//        }
+//    }
+//
+//    func check() -> Bool {
+//        return model.formIsOkay()
+//    }
+//
+//    func modify() -> Bool {
+//        return model.addRegulationCheck(coordinator: self.coordinator);
+//    }
+//}
 
-    var body: some View {
-        HStack {
-            // Formula
-            VStack {
-                Form {
-                    Section(header: Text(title).foregroundColor(.black), footer: model.displayError ? Text("*champs obligatoire").foregroundColor(.red) : nil) {
-                        TextField(title, text: $model.value).textFieldStyle(MeasureTextFieldStyle())
-                        
-                    }
-                }.background(Color.gray.opacity(0))
-            }
-            // Button to switch to AR view
-        }
-    }
-    
-    func check() -> Bool {
-        return model.formIsOkay()
-    }
-    
-    func modify() -> Bool {
-        return model.addRegulationCheck(coordinator: self.coordinator);
-    }
-}
 
-
-struct MeasureComponent_Previews: PreviewProvider {
-      static var previews: some View {
-        Group {
-            MeasureComponent(coordinator: UJCoordinator(), title: "Porte hauteur")
-            }
-      }
-  }
+//struct MeasureComponent_Previews: PreviewProvider {
+//      static var previews: some View {
+//        Group {
+//            MeasureComponent(coordinator: UJCoordinator(), title: "Porte hauteur")
+//            }
+//      }
+//  }

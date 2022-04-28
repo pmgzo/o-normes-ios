@@ -14,15 +14,15 @@ class CustomNavCoordinator: ObservableObject {
     // others...
 }
 
-struct UserJourneyNavigationPage<Content> : View where Content : PRegulationCheckView {
+struct UserJourneyNavigationPage: View {
     @State private var selectionTag: String?;
     
-    let content: Content;
+    let content: GenericRegulationView;
     private unowned let navcoordinator: CustomNavCoordinator;
     var coordinator: UJCoordinator;
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>;
     
-    init(content: Content, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator) {
+    init(content: GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator) {
         self.content = content
         self.coordinator = coordinator
         self.navcoordinator = navcoordinator
@@ -44,35 +44,30 @@ struct UserJourneyNavigationPage<Content> : View where Content : PRegulationChec
             self.content.frame(maxWidth: .infinity, maxHeight: .infinity)
             Spacer()
             VStack {
-                Text("And here the navigation controls")
                 HStack {
-//                    CustomNavigationLink(coordinator: self.coordinator,tag: "back", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
-//                        Button("Retour") {
-//                            // coordinator check
-//                            selectionTag  = "back"
-//                        }.buttonStyle(ButtonStyle())
-//                    }
                     Button("Retour") {
                         // coordinator check
                         //selectionTag  = "back"
                         presentationMode.wrappedValue.dismiss()
                     }.buttonStyle(ButtonStyle())
                     
-                    CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
+                    // TODO: Add Recap page ?
+                    CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: GenericRegulationView(title: "Finished Step", content: [RegulationCheckField(key: "measureTest", type: TypeField.string, text: "Saisissez rien c'est de la grosse anarque ce truc")], id: "portedentrée")) {
                         Button("Finir l'audit") {
                             // coordinator check
                             selectionTag  = "finished"
                         }.buttonStyle(ButtonStyle())
                     }
-                    CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: UserJourney(coordinator: coordinator)) {
+                    
+                    CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: navigateToNextStep(coordinator: coordinator)) {
                         Button("Etape suivante") {
                             // coordinator check
                             // call coordinator to load the next page
-                            if content.check() {
-                                content.modify()
+                            if ((coordinator.stageDelegate?.formIsOkay()) != nil) {
+                                coordinator.stageDelegate?.modify(coordinator: coordinator)
+                                selectionTag  = "skip"
                                 //TODO: handle redirection with coordinator
                             }
-                            selectionTag  = "skip"
                         }.buttonStyle(ButtonStyle())
                     }
                 }
@@ -83,19 +78,19 @@ struct UserJourneyNavigationPage<Content> : View where Content : PRegulationChec
     
 }
 
-struct UserJourneyNavigationWrapper<Content> : View where Content : PRegulationCheckView {
-    let content: Content;
+struct UserJourneyNavigationWrapper: View {
+    let content: GenericRegulationView;
     //@State private var selectionTag: String?;
     //@State private var renderStepPage: Bool = false;
     @ObservedObject var navcoordinator = CustomNavCoordinator();
     var coordinator: UJCoordinator;
     
-    init(coordinator: UJCoordinator, content: Content) {
+    init(coordinator: UJCoordinator, content: GenericRegulationView) {
         self.content = content
         self.coordinator = coordinator
     }
     
-    init(coordinator: UJCoordinator, @ViewBuilder content: () -> Content) {
+    init(coordinator: UJCoordinator, @ViewBuilder content: () -> GenericRegulationView) {
         self.content = content()
         self.coordinator = coordinator
     }
@@ -103,7 +98,7 @@ struct UserJourneyNavigationWrapper<Content> : View where Content : PRegulationC
     var body: some View {
         VStack {
             if navcoordinator.renderStepPage {
-                AccessibilityRegulationsPage(coordinator: coordinator, navcoordinator: navcoordinator)
+                GenericRegulationView(coordinator: coordinator, navcoordinator: navcoordinator)
             }
             else {
                 UserJourneyNavigationPage(content: content,navcoordinator: navcoordinator, coordinator: coordinator)
@@ -112,8 +107,8 @@ struct UserJourneyNavigationWrapper<Content> : View where Content : PRegulationC
     }
 }
 
-struct CustomNavigationLink<Label, Destination> : View where Label : View, Destination : PRegulationCheckView {
-    let destination: Destination;
+struct CustomNavigationLink<Label: View> : View {
+    let destination: GenericRegulationView;
     let label: () -> Label;
     let constructorNumber: Int;
     let tag: String?;
@@ -121,7 +116,7 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
     var isActive: Binding<Bool>?;
     var coordinator: UJCoordinator;
     
-    init(coordinator: UJCoordinator, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, destination: GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
         constructorNumber = 0
         self.destination = destination
         self.label = label
@@ -131,7 +126,7 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
         self.tag = nil
         self.isActive = nil
     }
-    init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
         self.constructorNumber = 1
         self.selection = selection
         self.tag = tag
@@ -142,7 +137,7 @@ struct CustomNavigationLink<Label, Destination> : View where Label : View, Desti
         self.isActive = nil
     }
 
-    init(coordinator: UJCoordinator, isActive: Binding<Bool>, destination: Destination, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, isActive: Binding<Bool>, destination: GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
         self.constructorNumber = 2
         self.isActive = isActive
         self.destination = destination
