@@ -8,6 +8,12 @@
 import Foundation
 import SwiftUI
 
+struct ERP_Config {
+    //TODO: see what check needs to be added
+    let hasMultipleFloor: Bool = true
+    let hasElevator: Bool = true // maybe not usefull
+}
+
 enum TypeField {
     case string
     case float
@@ -45,14 +51,12 @@ protocol PRegulationCheckViewModel: ObservableObject, Identifiable {
     func formIsOkay() -> Bool
 }
 
-//TODO: to complete
 class GenericRegulationViewModel: PRegulationCheckViewModel
 {
-    //@Published var data: [String: String] = [:];
     @Published var data: NSMutableDictionary = [:]
     var mandatoryItems: Set<String>;
     let id: String;
-    
+
     init(content: [RegulationCheckField], id: String) {
         // handle mandatory content
         self.id = id
@@ -84,18 +88,18 @@ class GenericRegulationViewModel: PRegulationCheckViewModel
         
         return true
     }
-    
+
     func addRegulationCheck(coordinator: UJCoordinator) -> Bool {
-        // build a dictionary for coordinator
-        // add id here in the json object
-        
-        
-        return true;
+        if formIsOkay() {
+            coordinator.addNewRegulationCheck(newObject: data as NSDictionary, newKey: self.id)
+            return true;
+        }
+        return false;
     }
     
     func displayError() -> Bool {
         // check mandatory field
-        return true;
+        return !formIsOkay();
     }
 }
 
@@ -153,7 +157,6 @@ struct GenericRegulationView: View
                         
                     List(self.content!) { c in
                             //Text($0.name)
-                        // TODO: to change
                         // model.displayError() ?
                         
                         Section(header: Text(c.text).foregroundColor(.black), footer: Text("*champs obligatoire").foregroundColor(.red)) {
