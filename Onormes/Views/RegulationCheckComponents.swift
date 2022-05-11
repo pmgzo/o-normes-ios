@@ -23,6 +23,7 @@ extension String {
 //    var integer: Int? { Int(self) }
 //}
 
+// TODO: to change
 class MeasureComponentViewModel: PRegulationCheckViewModel {
     //TODO: check la string en details dasn formIsOkay
     @Published var value: String = "";
@@ -35,9 +36,8 @@ class MeasureComponentViewModel: PRegulationCheckViewModel {
         self.optional = optional
     }
     
-    func formIsOkay()->Bool {
+    func formIsOkay(data: [String:Any]) -> Bool {
         if !optional {
-
             if self.value != "" {
                 displayError = false
                 return true
@@ -49,7 +49,7 @@ class MeasureComponentViewModel: PRegulationCheckViewModel {
         return true;
     }
     
-    func addRegulationCheck(coordinator: UJCoordinator) -> Bool {
+    func addRegulationCheck(coordinator: UJCoordinator, data: [String:Any], content: [RegulationCheckField]) -> Bool {
         //
         let wrappedObject: NSDictionary = ["length": (self.value as NSString).floatValue, "comment": self.comment ]
         

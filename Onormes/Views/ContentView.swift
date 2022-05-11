@@ -61,6 +61,8 @@ struct MeasuresVCRepresented : UIViewControllerRepresentable {
   }
 }
 
+
+
 struct HomeMenu: View {
     
     @State private var isShowingDetailView = false
@@ -72,14 +74,17 @@ struct HomeMenu: View {
     }
     
     var body: some View {
-        var nextStep: GenericRegulationView?;
         return VStack {
             // Method with navigation
             // Have to handle layout
             //Text(self.value)
             Text("Vous êtes connecté !")
-            CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: nextStep!) {
+            CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: { () -> GenericRegulationView in
+                let nextStep: GenericRegulationView = navigateToNextStep(coordinator: coordinator)
+                return nextStep
+            }()) {
                 
+                                
                 Button("Commencer le parcours utilisateur") {
 //                    print("User jounrey started")
 //                        do {
@@ -88,7 +93,7 @@ struct HomeMenu: View {
 //                            // TODO: remove
 //                            nextStep = Text("Pas content !")
 //                        }
-                    nextStep = navigateToNextStep(coordinator: coordinator)
+                    //nextStep = navigateToNextStep(coordinator: coordinator)
                     //coordinator.stageDelegate.index += 1
                     isShowingDetailView = true
                 }.buttonStyle(ButtonStyle())
