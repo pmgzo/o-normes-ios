@@ -16,11 +16,12 @@ struct RegulationPageItem {
 
 var regulationPageslist: [RegulationPageItem] = [
     RegulationPageItem(id: "porte d'entrée", imageName: "doorImage"),
-    RegulationPageItem(id: "porte d'entrée2", imageName: "doorImage"),
-    RegulationPageItem(id: "porte d'entrée3", imageName: "doorImage"),
-    RegulationPageItem(id: "porte d'entrée4", imageName: "doorImage"),
-    RegulationPageItem(id: "porte d'entrée5", imageName: "doorImage"),
-    RegulationPageItem(id: "porte d'entrée6", imageName: "doorImage")
+    RegulationPageItem(id: "rampe d'entrée", imageName: "doorImage"),
+    RegulationPageItem(id: "allée structurante", imageName: "doorImage"),
+    RegulationPageItem(id: "allée non structurante", imageName: "doorImage"),
+    RegulationPageItem(id: "escalier", imageName: "doorImage"),
+    RegulationPageItem(id: "ascenseur", imageName: "doorImage"),
+    RegulationPageItem(id: "file d'attente", imageName: "doorImage")
 ]
 
 class SelectedRegulationSet: ObservableObject {
@@ -82,9 +83,7 @@ extension GenericRegulationView {
             if selectedItems.items.count != 0 {
                 HStack {
                     Button("Valider") {
-                        //TODO: add coordinator feature here
-                        
-                        //
+                        coordinator!.addRegulationCheckStages(ids: selectedItems.items)
                         selectedItems.items = Set<String>()
                         navcoordinator?.renderStepPage = false
                     }.buttonStyle(validateButtonStyle())

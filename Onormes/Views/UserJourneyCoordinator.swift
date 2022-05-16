@@ -17,9 +17,33 @@ enum UJCoordinatorError: Error {
 // give the drive to UJCoordinator
 // place, date, type of establishment, how many floor ? etc...
 
+class DataNorm: Identifiable {
+    var id: String {key}
+    
+    let key: String
+    let data: NSDictionary
+    
+    init(key: String, data: NSDictionary) {
+        // data
+        self.key = key
+        self.data = data
+    }
+}
+
 class UJCoordinator: ObservableObject {
     //model data
-    private var myDictionary: NSMutableDictionary = [:]
+    private var myDictionary: [String:NSMutableDictionary] = [:]
+    var dataAudit: [DataNorm] {
+        get {
+            var array: [DataNorm] = []
+            
+            for (key, value) in self.myDictionary {
+                let newValue = NSDictionary(dictionary: value)
+                array.append(DataNorm(key: key, data: newValue))
+            }
+            return array
+        }
+    }
     
     // audit, general information
     private var auditRef: String;
@@ -29,6 +53,7 @@ class UJCoordinator: ObservableObject {
     private var stageHistory = [String]();
     private var index: Int;
     var stageDelegate: PRegulationCheckStageDelegate?;
+    var totalStages: Int = 0;
     
     @Published var value: Bool;
 
@@ -41,6 +66,7 @@ class UJCoordinator: ObservableObject {
 
         self.stageHistory = ["porte d'entrée"]
         self.index = 0
+        myDictionary["porte d'entrée"] = NSMutableDictionary()
         //TODO: add initial step here !!
         //TODO: init stage history + stageDelegate
         
@@ -49,19 +75,27 @@ class UJCoordinator: ObservableObject {
 
     // record data
     func addNewRegulationCheck(newObject: NSDictionary, newKey: String) {
-        let newGeneratedKey = newKey + UUID().uuidString;
-        myDictionary[newGeneratedKey] = newObject
-        stageHistory.append(newGeneratedKey)
+        // let newGeneratedKey = newKey + UUID().uuidString;
+        
+        myDictionary[stageHistory[index]]![newKey]! = newObject
+        
+        //stageHistory.append(newGeneratedKey)
     }
     
     // add steps/stages, (id list) s parameters
     func addRegulationCheckStages(ids: Set<String>) {
         // set next stages
         stageHistory = stageHistory + Array(ids)
+        totalStages = stageHistory.count
     }
 
     func changeDelegate() {
         stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
+        myDictionary[stageHistory[index]] = NSMutableDictionary()
+    }
+    
+    func stillHaveStage() -> Bool {
+        return self.stageHistory.count > (self.index + 1)
     }
 }
 
@@ -70,6 +104,12 @@ extension UJCoordinator {
     func getStageMap() -> NSDictionary {
         let stageMap: NSDictionary = [
             "porte d'entrée" : DoorStageDelegate(config: self.config, coordinator: self),
+            "rampe d'entrée" : RampStageDelegate(config: self.config, coordinator: self),
+            "allée structurante" : CorridorStageDelegate(config: self.config, coordinator: self),
+            "allée non structurante" : NonPublicCorridorStageDelegate(config: self.config, coordinator: self),
+            "escalier" : StairsStageDelegate(config: self.config, coordinator: self),
+            "ascenseur" : ElevatorStageDelegate(config: self.config, coordinator: self),
+            "file d'attente" : WaitingLineStageDelegate(config: self.config, coordinator: self)
         ]
         return stageMap
     }

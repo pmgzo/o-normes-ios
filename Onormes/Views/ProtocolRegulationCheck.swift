@@ -10,6 +10,12 @@
 import Foundation
 import SwiftUI
 
+enum PageType {
+    case regular
+    case addStage
+    case summary
+}
+
 enum ViewModelUserJouneyError: Error {
     case missedInitializedVariable
     case stageNotInitialized
@@ -124,9 +130,8 @@ struct GenericRegulationView: View
     let title: String?;
     let content: [RegulationCheckField]?;
     let id: String?;
-    var isRegulationsPage = false;
-    
-    // for the regs page
+    var pageType = PageType.regular;
+
     //associatedtype View
     //let regulationPageContent: View?;
     var navcoordinator: CustomNavCoordinator?;
@@ -135,11 +140,14 @@ struct GenericRegulationView: View
     @ObservedObject var selectedItems: SelectedRegulationSet;
     var gridItemLayout: [GridItem];
     
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>;
+    
     init(title: String, content: [RegulationCheckField], id: String) {
         self.title = title
         self.content = content
         let new_id = id + "-" + UUID().uuidString
         self.id = new_id
+        self.pageType = PageType.regular
         self.gridItemLayout = []
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
         self.model.changeState(id: new_id, content: content)
@@ -150,21 +158,37 @@ struct GenericRegulationView: View
         self.navcoordinator = navcoordinator
         self.coordinator = coordinator
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
-        //self.regulationPageContent = content
-        self.isRegulationsPage = true
         
-        self.gridItemLayout = [GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86))]
+        //self.isRegulationsPage = true
+        self.pageType = PageType.addStage
+        self.gridItemLayout = [GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86))]
         // self.model = GenericRegulationViewModel(content: [], id:  "")
         self.title = "";
         self.content = [];
         self.id = "";
     }
     
+    // recap page
+    init(coordinator: UJCoordinator) {
+        self.coordinator = coordinator
+        self.navcoordinator = nil
+        self.selectedItems = SelectedRegulationSet(selectedItems: [])
+        self.gridItemLayout = [GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86))]
+        
+        self.pageType = PageType.summary
+        self.title = "";
+        self.content = [];
+        self.id = "";
+        self.gridItemLayout = []
+    }
+    
     var body: some View {
         
-        if self.isRegulationsPage {
-            
+        if self.pageType == PageType.addStage {
             self.regulationsPage
+        }
+        else if self.pageType == PageType.summary {
+            self.summaryPage
         } else {
             VStack {
                 Text(self.title!).font(.title).multilineTextAlignment(.center)
@@ -263,6 +287,11 @@ func navigateToNextStep(coordinator: UJCoordinator) -> GenericRegulationView {
 //    }
 
     coordinator.stageDelegate?.index += 1
+    
+    if (!coordinator.stillHaveStage()) {
+        // redirect to recap page
+        return GenericRegulationView(coordinator: coordinator)
+    }
 
     // change delegate
     if !coordinator.stageDelegate!.stillHaveSteps() {
