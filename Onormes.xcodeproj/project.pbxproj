@@ -34,6 +34,19 @@
 		94996E40272D393B003E6D96 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94996E3F272D393B003E6D96 /* Preview Assets.xcassets */; };
 		94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61EF27674E5B0046B02E /* ProfileView.swift */; };
 		94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F127679D0A0046B02E /* GeometryUtils.swift */; };
+		EA17E3DF282BE7F100F3995F /* Ramp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA17E3DE282BE7F100F3995F /* Ramp.swift */; };
+		EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1D30AF27E20A4F004BCC97 /* UserJourneyCoordinator.swift */; };
+		EA25DC902801EA8700192FFA /* RegulationCheckComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA25DC8F2801EA8700192FFA /* RegulationCheckComponents.swift */; };
+		EA33C409280EA65000E120A1 /* AccessibilityRegulationPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA33C408280EA65000E120A1 /* AccessibilityRegulationPage.swift */; };
+		EA5537CE2828DEBA00780CB8 /* ProtocolRegulationCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537CD2828DEBA00780CB8 /* ProtocolRegulationCheck.swift */; };
+		EA5537D0282A532F00780CB8 /* Corridor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537CF282A532F00780CB8 /* Corridor.swift */; };
+		EA5537D2282A5C7F00780CB8 /* WaitingLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */; };
+		EA5537D4282A85A800780CB8 /* Stairs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537D3282A85A800780CB8 /* Stairs.swift */; };
+		EA6F4D9827E0CD92009CDDAF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6F4D9727E0CD92009CDDAF /* Style.swift */; };
+		EA7F07D227F7231300DFC8CE /* Door.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7F07D127F7231300DFC8CE /* Door.swift */; };
+		EA7F07D427F738AA00DFC8CE /* CustomNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */; };
+		EAAAF480282A8AAC00D7A04B /* Elevator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAAF47F282A8AAB00D7A04B /* Elevator.swift */; };
+		EAB77C09282E574600185C1A /* SummaryPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB77C08282E574600185C1A /* SummaryPage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +79,19 @@
 		949FE4ED272D6B4E008DD273 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		94CD61EF27674E5B0046B02E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		94CD61F127679D0A0046B02E /* GeometryUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryUtils.swift; sourceTree = "<group>"; };
+		EA17E3DE282BE7F100F3995F /* Ramp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ramp.swift; sourceTree = "<group>"; };
+		EA1D30AF27E20A4F004BCC97 /* UserJourneyCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserJourneyCoordinator.swift; sourceTree = "<group>"; };
+		EA25DC8F2801EA8700192FFA /* RegulationCheckComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationCheckComponents.swift; sourceTree = "<group>"; };
+		EA33C408280EA65000E120A1 /* AccessibilityRegulationPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityRegulationPage.swift; sourceTree = "<group>"; };
+		EA5537CD2828DEBA00780CB8 /* ProtocolRegulationCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolRegulationCheck.swift; sourceTree = "<group>"; };
+		EA5537CF282A532F00780CB8 /* Corridor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Corridor.swift; sourceTree = "<group>"; };
+		EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingLine.swift; sourceTree = "<group>"; };
+		EA5537D3282A85A800780CB8 /* Stairs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stairs.swift; sourceTree = "<group>"; };
+		EA6F4D9727E0CD92009CDDAF /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
+		EA7F07D127F7231300DFC8CE /* Door.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Door.swift; sourceTree = "<group>"; };
+		EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigation.swift; sourceTree = "<group>"; };
+		EAAAF47F282A8AAB00D7A04B /* Elevator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Elevator.swift; sourceTree = "<group>"; };
+		EAB77C08282E574600185C1A /* SummaryPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryPage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,7 +153,20 @@
 			children = (
 				944A4B55273672B400811D53 /* LoginView.swift */,
 				94996E3A272D3939003E6D96 /* ContentView.swift */,
+				EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */,
+				EA33C408280EA65000E120A1 /* AccessibilityRegulationPage.swift */,
+				EA1D30AF27E20A4F004BCC97 /* UserJourneyCoordinator.swift */,
 				94CD61EF27674E5B0046B02E /* ProfileView.swift */,
+				EA6F4D9727E0CD92009CDDAF /* Style.swift */,
+				EA7F07D127F7231300DFC8CE /* Door.swift */,
+				EA25DC8F2801EA8700192FFA /* RegulationCheckComponents.swift */,
+				EA5537CD2828DEBA00780CB8 /* ProtocolRegulationCheck.swift */,
+				EA5537CF282A532F00780CB8 /* Corridor.swift */,
+				EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */,
+				EA5537D3282A85A800780CB8 /* Stairs.swift */,
+				EAAAF47F282A8AAB00D7A04B /* Elevator.swift */,
+				EA17E3DE282BE7F100F3995F /* Ramp.swift */,
+				EAB77C08282E574600185C1A /* SummaryPage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -267,27 +306,40 @@
 			buildActionMask = 2147483647;
 			files = (
 				940D381927B72A7900231AD1 /* MDLMesh+Ext.swift in Sources */,
+				EAAAF480282A8AAC00D7A04B /* Elevator.swift in Sources */,
 				940D380927B7249500231AD1 /* DistanceMeasureViewController.swift in Sources */,
 				94996E3B272D3939003E6D96 /* ContentView.swift in Sources */,
+				EA5537D0282A532F00780CB8 /* Corridor.swift in Sources */,
 				94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */,
 				940D380527B7246200231AD1 /* SCNSphere+Init.swift in Sources */,
 				944A4B56273672B400811D53 /* LoginView.swift in Sources */,
+				EA5537D4282A85A800780CB8 /* Stairs.swift in Sources */,
+				EA5537D2282A5C7F00780CB8 /* WaitingLine.swift in Sources */,
 				9412DA25276A0AFF0021A441 /* UserViewModel.swift in Sources */,
+				EA6F4D9827E0CD92009CDDAF /* Style.swift in Sources */,
+				EA5537CE2828DEBA00780CB8 /* ProtocolRegulationCheck.swift in Sources */,
+				EA7F07D427F738AA00DFC8CE /* CustomNavigation.swift in Sources */,
 				944A4B5227366FEB00811D53 /* APIService.swift in Sources */,
 				94996E39272D3939003E6D96 /* OnormesApp.swift in Sources */,
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
+				EA33C409280EA65000E120A1 /* AccessibilityRegulationPage.swift in Sources */,
+				EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */,
 				940D380727B7247B00231AD1 /* AreaViewController.swift in Sources */,
 				940D380327B7244200231AD1 /* MeasureSCNView.swift in Sources */,
+				EA25DC902801EA8700192FFA /* RegulationCheckComponents.swift in Sources */,
 				9412DA232769F31E0021A441 /* User.swift in Sources */,
 				94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */,
 				940D380127B7241700231AD1 /* MeasureViewController.swift in Sources */,
 				940D380B27B724A700231AD1 /* LineNode.swift in Sources */,
+				EAB77C09282E574600185C1A /* SummaryPage.swift in Sources */,
 				940D381527B72A0E00231AD1 /* ARMeshGeometry+Ext.swift in Sources */,
 				940D381027B7283E00231AD1 /* ReconstructionViewController.swift in Sources */,
+				EA7F07D227F7231300DFC8CE /* Door.swift in Sources */,
 				944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */,
 				940D381727B72A5400231AD1 /* ARFrame+Ext.swift in Sources */,
 				940D381B27B72A9400231AD1 /* SCNGeometry+Ext.swift in Sources */,
+				EA17E3DF282BE7F100F3995F /* Ramp.swift in Sources */,
 				944A4B5827367CE300811D53 /* Authentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -420,11 +472,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Onormes/Preview Content\"";
-				DEVELOPMENT_TEAM = 68YJ6858LF;
+				DEVELOPMENT_TEAM = 72MXWMDSCH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Onormes/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "O-Normes";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Using Camera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -436,7 +489,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Zealey.Onormes;
+				PRODUCT_BUNDLE_IDENTIFIER = App.Onormes;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -453,11 +506,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Onormes/Preview Content\"";
-				DEVELOPMENT_TEAM = 68YJ6858LF;
+				DEVELOPMENT_TEAM = 72MXWMDSCH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Onormes/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "O-Normes";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Using Camera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -469,7 +523,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Zealey.Onormes;
+				PRODUCT_BUNDLE_IDENTIFIER = App.Onormes;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
