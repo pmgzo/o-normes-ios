@@ -24,40 +24,40 @@ extension String {
 //}
 
 // TODO: to change
-class MeasureComponentViewModel: PRegulationCheckViewModel {
-    //TODO: check la string en details dasn formIsOkay
-    @Published var value: String = "";
-    @Published var comment: String = "";
-    
-    @Published var displayError: Bool = false;
-    private let optional: Bool;
-
-    init(optional: Bool=false) {
-        self.optional = optional
-    }
-    
-    func formIsOkay(data: [String:Any]) -> Bool {
-        if !optional {
-            if self.value != "" {
-                displayError = false
-                return true
-            } else {
-                displayError = true
-                return false
-            }
-        }
-        return true;
-    }
-    
-    func addRegulationCheck(coordinator: UJCoordinator, data: [String:Any], content: [RegulationCheckField]) -> Bool {
-        //
-        let wrappedObject: NSDictionary = ["length": (self.value as NSString).floatValue, "comment": self.comment ]
-        
-        // send it to coordinator
-        coordinator.addNewRegulationCheck(newObject: wrappedObject, newKey: "measure") //temporary name
-        return true;
-    }
-}
+//class MeasureComponentViewModel: PRegulationCheckViewModel {
+//    //TODO: check la string en details dasn formIsOkay
+//    @Published var value: String = "";
+//    @Published var comment: String = "";
+//
+//    @Published var displayError: Bool = false;
+//    private let optional: Bool;
+//
+//    init(optional: Bool=false) {
+//        self.optional = optional
+//    }
+//
+//    func formIsOkay(data: [String:Any]) -> Bool {
+//        if !optional {
+//            if self.value != "" {
+//                displayError = false
+//                return true
+//            } else {
+//                displayError = true
+//                return false
+//            }
+//        }
+//        return true;
+//    }
+//
+//    func addRegulationCheck(coordinator: UJCoordinator, data: [String:Any], content: [RegulationCheckField]) -> Bool {
+//        //
+//        let wrappedObject: NSDictionary = ["length": (self.value as NSString).floatValue, "comment": self.comment ]
+//
+//        // send it to coordinator
+//        coordinator.addNewRegulationCheck(newObject: wrappedObject, newKey: "measure") //temporary name
+//        return true;
+//    }
+//}
 
 
 // to use that component you need to pass a view model, the above view is supposed to check the field of each field component before submiting the whole form

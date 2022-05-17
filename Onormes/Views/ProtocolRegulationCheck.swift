@@ -60,12 +60,11 @@ struct RegulationCheckField: Identifiable, Equatable {
 }
 
 protocol PRegulationCheckViewModel: ObservableObject, Identifiable {
-    func addRegulationCheck(coordinator: UJCoordinator, data: [String : Any], content: [RegulationCheckField]) -> Bool
-    func formIsOkay(data: [String:Any]) -> Bool
+    func addRegulationCheck(coordinator: UJCoordinator, data: [String:RegulationNorm], content: [RegulationCheckField]) -> Bool
+    func formIsOkay(data: [String:RegulationNorm]) -> Bool
 }
 
-class GenericRegulationViewModel: PRegulationCheckViewModel
-{
+class GenericRegulationViewModel: PRegulationCheckViewModel {
     //@State var data: [String : String] = [:];
     var mandatoryItems: Set<String>;
     var id: String;
@@ -92,7 +91,7 @@ class GenericRegulationViewModel: PRegulationCheckViewModel
 // https://forums.swift.org/t/swiftui-how-to-use-dictionary-as-binding/34967/2
     
     
-    func formIsOkay(data: [String:Any]) -> Bool {
+    func formIsOkay(data: [String:RegulationNorm]) -> Bool {
         // check mandatory field
         if mandatoryItems.isEmpty {
             return true
@@ -108,15 +107,19 @@ class GenericRegulationViewModel: PRegulationCheckViewModel
         return true
     }
 
-    func addRegulationCheck(coordinator: UJCoordinator, data: [String : Any], content: [RegulationCheckField]) -> Bool {
+    func addRegulationCheck(coordinator: UJCoordinator, data: [String:RegulationNorm], content: [RegulationCheckField]) -> Bool {
         if formIsOkay(data: data) {
-            coordinator.addNewRegulationCheck(newObject: data as NSDictionary, newKey: self.id)
+            var newObject = DataNorm(key: self.id, data: [])
+            for (_, value) in data {
+                newObject.data.append(value)
+            }
+            coordinator.addNewRegulationCheck(newObject: newObject, newKey: self.id)
             return true
         }
         return false;
     }
     
-    func displayError(data: [String:String]) -> Bool {
+    func displayError(data: [String:RegulationNorm]) -> Bool {
         // check mandatory field
         return !formIsOkay(data: data)
     }
@@ -125,7 +128,7 @@ class GenericRegulationViewModel: PRegulationCheckViewModel
 struct GenericRegulationView: View
 {
     @StateObject var model: GenericRegulationViewModel = GenericRegulationViewModel()
-    @State var data: [String : Any] = [:];
+    @State var data: [String:RegulationNorm] = [:];
     
     let title: String?;
     let content: [RegulationCheckField]?;
@@ -151,6 +154,14 @@ struct GenericRegulationView: View
         self.gridItemLayout = []
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
         self.model.changeState(id: new_id, content: content)
+        
+        
+//        for (_, reg) in content.enumerated() {
+//            if !reg.optional {
+//                // TODO: fill DATA !!
+//                data[reg.key] = RegulationNorm(key: reg.key, value: "", inst: reg.text, mandatory: reg.optional)
+//            }
+//        }
     }
     
     // for accessibility page
@@ -202,12 +213,12 @@ struct GenericRegulationView: View
                         Section(header: Text(c.type != TypeField.bool ? c.text :  "").foregroundColor(.black).multilineTextAlignment(.center), footer: Text("*champs obligatoire").foregroundColor(.red)) {
                                 // TODO: add check box condition or text
                             if c.type == TypeField.bool {
-                                Toggle(c.text, isOn: self.booleanBinding(for: c.key))
+                                Toggle(c.text, isOn: self.booleanBinding(for: c).valueCheckBox)
                             } else {
-                                TextField("mesure", text: self.binding(for: c.key)).textFieldStyle(MeasureTextFieldStyle())
+                                TextField("mesure", text: self.binding(for: c).valueMetric).textFieldStyle(MeasureTextFieldStyle())
                             }
                                     
-                            TextField("commentaire", text: self.binding(for: c.comment!)).textFieldStyle(CommentTextFieldStyle())
+                            TextField("commentaire", text: self.binding(for: c).comment).textFieldStyle(CommentTextFieldStyle())
                                         .multilineTextAlignment(TextAlignment.center)
                                 }
                         }
@@ -225,16 +236,18 @@ struct GenericRegulationView: View
         }
     }
     
-    func binding(for key: String) -> Binding<String> {
+    //func binding(for key: String) -> Binding<String> {
+    func binding(for field: RegulationCheckField) -> Binding<RegulationNorm> {
+        //RegulationCheckField
         return .init(
-            get: { self.data[key, default: ""] as! String },
-                    set: { self.data[key] = $0 })
+            get: { self.data[field.key, default:  RegulationNorm(key: field.key, inst: field.text, type: TypeField.float,  mandatory: field.optional)]},
+                             set: { self.data[field.key] = $0 })
     }
     
-    func booleanBinding(for key: String) -> Binding<Bool> {
+    func booleanBinding(for field: RegulationCheckField) -> Binding<RegulationNorm> {
         return .init(
-            get: { self.data[key, default: false] as! Bool },
-                    set: { self.data[key] = $0 })
+            get: { self.data[field.key, default:  RegulationNorm(key: field.key, inst: field.text, type: TypeField.bool,  mandatory: field.optional)]},
+                             set: { self.data[field.key] = $0 })
     }
 
     
@@ -271,7 +284,7 @@ class PRegulationCheckStageDelegate  {
     }
 }
 
-func navigateToNextStep(coordinator: UJCoordinator) -> GenericRegulationView {
+func navigateToNextStep(coordinator: UJCoordinator, start: Bool = false) -> GenericRegulationView {
 
 //    if coordinator.stageDelegate == nil {
 //        throw UJCoordinatorError.attributeNotSet(name: "Delegate")
@@ -286,16 +299,18 @@ func navigateToNextStep(coordinator: UJCoordinator) -> GenericRegulationView {
 //        throw UJCoordinatorError.attributeNotSet(name: "Steps")
 //    }
 
-    coordinator.stageDelegate?.index += 1
-    
-    if (!coordinator.stillHaveStage()) {
-        // redirect to recap page
-        return GenericRegulationView(coordinator: coordinator)
-    }
+    if start == false {
+        coordinator.stageDelegate?.index += 1
+        if (!coordinator.stillHaveStage()) {
+            // redirect to recap page
+            return GenericRegulationView(coordinator: coordinator)
+        }
 
-    // change delegate
-    if !coordinator.stageDelegate!.stillHaveSteps() {
-        coordinator.changeDelegate()
+        // change delegate
+        if !coordinator.stageDelegate!.stillHaveSteps() {
+            coordinator.changeDelegate()
+        }
+
     }
 
     let idx = coordinator.stageDelegate?.index

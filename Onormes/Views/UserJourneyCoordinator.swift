@@ -17,13 +17,36 @@ enum UJCoordinatorError: Error {
 // give the drive to UJCoordinator
 // place, date, type of establishment, how many floor ? etc...
 
+struct RegulationNorm {
+    let key: String;
+    var valueMetric: String;
+    var valueCheckBox: Bool;
+    let instruction: String
+    let mandatory: Bool;
+    let type: TypeField;
+    var comment: String;
+    
+    init(key: String, inst: String, type: TypeField, mandatory: Bool = true) {
+        self.key = key
+        
+        self.valueMetric = ""
+        self.valueCheckBox = true
+        self.comment = ""
+        
+        self.instruction = inst
+        self.mandatory = mandatory
+        self.type = type
+    }
+}
+
 class DataNorm: Identifiable {
     var id: String {key}
     
     let key: String
-    let data: NSDictionary
+    //let data: NSDictionary
+    var data: [RegulationNorm]
     
-    init(key: String, data: NSDictionary) {
+    init(key: String, data: [RegulationNorm]) {
         // data
         self.key = key
         self.data = data
@@ -32,21 +55,20 @@ class DataNorm: Identifiable {
 
 class UJCoordinator: ObservableObject {
     //model data
-    private var myDictionary: [String:NSMutableDictionary] = [:]
+    private var myDictionary: [String:DataNorm] = [:]
     var dataAudit: [DataNorm] {
         get {
             var array: [DataNorm] = []
             
-            for (key, value) in self.myDictionary {
-                let newValue = NSDictionary(dictionary: value)
-                array.append(DataNorm(key: key, data: newValue))
+            for (_, value) in self.myDictionary {
+                array.append(value)
             }
             return array
         }
     }
     
     // audit, general information
-    private var auditRef: String;
+    let auditRef: String;
     var config: ERP_Config;
     
     // stages
@@ -66,7 +88,7 @@ class UJCoordinator: ObservableObject {
 
         self.stageHistory = ["porte d'entrée"]
         self.index = 0
-        myDictionary["porte d'entrée"] = NSMutableDictionary()
+        //myDictionary["porte d'entrée"] = DataNorm(key: "porte d'entrée", data: [])
         //TODO: add initial step here !!
         //TODO: init stage history + stageDelegate
         
@@ -74,13 +96,25 @@ class UJCoordinator: ObservableObject {
     }
 
     // record data
-    func addNewRegulationCheck(newObject: NSDictionary, newKey: String) {
-        // let newGeneratedKey = newKey + UUID().uuidString;
-        
-        myDictionary[stageHistory[index]]![newKey]! = newObject
-        
-        //stageHistory.append(newGeneratedKey)
+    func addNewRegulationCheck(newObject: DataNorm, newKey: String) {
+        let newGeneratedKey = newKey + UUID().uuidString;
+        myDictionary[stageHistory[index]] = newObject
+        stageHistory.append(newGeneratedKey)
     }
+    
+    func backToThePreviousStage() {
+        if self.stageDelegate!.index == 0 {
+            self.index -= 1
+        }
+        if self.index > 0 {
+            self.index -= 1
+        }
+    }
+    
+    func goToNextStage() {
+        index += 1
+    }
+
     
     // add steps/stages, (id list) s parameters
     func addRegulationCheckStages(ids: Set<String>) {
@@ -91,7 +125,7 @@ class UJCoordinator: ObservableObject {
 
     func changeDelegate() {
         stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
-        myDictionary[stageHistory[index]] = NSMutableDictionary()
+        myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
     }
     
     func stillHaveStage() -> Bool {
@@ -113,7 +147,6 @@ extension UJCoordinator {
         ]
         return stageMap
     }
-    
 }
 
 

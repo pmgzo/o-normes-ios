@@ -48,6 +48,7 @@ struct UserJourneyNavigationPage: View {
                     Button("Retour") {
                         // coordinator check
                         //selectionTag  = "back"
+                        self.coordinator.backToThePreviousStage()
                         presentationMode.wrappedValue.dismiss()
                     }.buttonStyle(ButtonStyle())
                     
@@ -64,7 +65,9 @@ struct UserJourneyNavigationPage: View {
                             // coordinator check
                             // call coordinator to load the next page
                             if ((coordinator.stageDelegate?.formIsOkay()) != nil) {
-                                coordinator.stageDelegate?.modify(coordinator: coordinator)
+                                //self.coordinator = goToNextStage()
+                                //coordinator.stageDelegate?.modify(coordinator: coordinator)
+                                //navigateToNextStep(coordinator: self.coordinator)
                                 selectionTag  = "skip"
                                 //TODO: handle redirection with coordinator
                             }

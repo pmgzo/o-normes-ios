@@ -80,7 +80,7 @@ struct HomeMenu: View {
             //Text(self.value)
             Text("Vous êtes connecté !")
             CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: { () -> GenericRegulationView in
-                let nextStep: GenericRegulationView = navigateToNextStep(coordinator: coordinator)
+                let nextStep: GenericRegulationView = navigateToNextStep(coordinator: coordinator, start: true)
                 return nextStep
             }()) {
                 

@@ -43,9 +43,9 @@ struct DataNormRow: View {
 }
 
 struct DataNormDetails: View {
-    var data: NSDictionary;
+    var data: [RegulationNorm];
 
-    init(data: NSDictionary) {
+    init(data: [RegulationNorm]) {
         self.data = data
     }
     
@@ -54,12 +54,12 @@ struct DataNormDetails: View {
         VStack {
             ForEach(0...(data.count), id: \.self) { i in
                 HStack {
-                    Text(data.allKeys[i] as! String)
+                    Text(data[i].key)
                     Spacer()
-                    if (data.allKeys[i] is Bool) {
-                            Text((data[data.allKeys[i]] != nil) == true ? "Oui" : "Non")
+                    if (data[i].type == TypeField.bool) {
+                        Text((data[i].valueCheckBox == true ? "Oui" : "Non"))
                     } else {
-                        Text(data[data.allKeys[i]] as! String)
+                        Text(data[i].valueMetric)
                     }
                 }
             }
@@ -108,37 +108,53 @@ extension GenericRegulationView {
             
             DataNormList(list: self.coordinator!.dataAudit)
             
-            // TODO: validation button
-            Button("Valider et Envoyer") {
-                // send requests
-                // TODO: Loading button once we're sending the infos
+            NavigationLink(
+                destination:HomeMenu()) {
+                    Button("Valider et Envoyer") {
+                    // send requests
+                    // TODO: Loading button once we're sending the infos
+                    print("Start sending information")
+                    
+                    let res = APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: "pas d'info")
+                    
+                    sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
+                    
+                    print("End sending information")
+                    
+                    self.selectionTag = "backToTheMenu"
+                    
+                    // TODO: create json file in local also, with the audit's name
+                    // back to the menu
+                }.buttonStyle(validateButtonStyle()).navigationBarHidden(true)
                 
-                // TODO: create json file in local also, with the audit's name
-                // back to the menu
-            }.buttonStyle(validateButtonStyle())
+                // TODO: validation button
+                
+            }
         }
     }
 }
 
 // FOR TESTING
 
-var coo = UJCoordinator()
+// TODO: remove
 
-func instanciateUJCoo() -> UJCoordinator {
-    coo.addNewRegulationCheck(newObject: NSDictionary(dictionary: ["est ce que pm c'est bogoss ?": "oui"]), newKey: "rampe d'entrée")
-    return coo
-}
+//var coo = UJCoordinator()
 
-struct Summary_Previews: PreviewProvider {
-    
-    //var coo = UJCoordinator()
-    
-    init() {
-        coo.addNewRegulationCheck(newObject: NSDictionary(dictionary: ["est ce que pm c'est bogoss ?": "oui"]), newKey: "rampe d'entrée")
-    }
-    
-    static var previews: some View {
-        GenericRegulationView(coordinator: instanciateUJCoo())
-    }
-}
+//func instanciateUJCoo() -> UJCoordinator {
+//    coo.addNewRegulationCheck(newObject: NSDictionary(dictionary: ["est ce que pm c'est bogoss ?": "oui"]), newKey: "rampe d'entrée")
+//    return coo
+//}
+//
+//struct Summary_Previews: PreviewProvider {
+//
+//    //var coo = UJCoordinator()
+//
+//    init() {
+//        coo.addNewRegulationCheck(newObject: NSDictionary(dictionary: ["est ce que pm c'est bogoss ?": "oui"]), newKey: "rampe d'entrée")
+//    }
+//
+//    static var previews: some View {
+//        GenericRegulationView(coordinator: instanciateUJCoo())
+//    }
+//}
 
