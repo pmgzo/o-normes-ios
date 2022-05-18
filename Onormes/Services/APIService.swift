@@ -17,7 +17,7 @@ class APIService {
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
     // Check the URL, if the URL isn't correctly formated return an error
-    guard let url = URL(string: "http://212.25.139.196:3001/api/users/connect") else {
+    guard let url = URL(string: "http://51.103.72.63:3001/api/users/login") else {
       completion(.failure(.custom(errorMessage: "Url is not correct")))
       return
     }
@@ -41,19 +41,13 @@ class APIService {
       }
 
       // Get the data from the template class LoginReponse
-      guard let loginResponse = try? JSONDecoder().decode(LoginResponse.self, from: data) else {
-        completion(.failure(.invalidCredentials))
-        return
-      }
-
-      // If the data do not contain the token throw an error
-      guard let token = loginResponse.token else {
+      guard let loginResponse = try? JSONDecoder().decode(String.self, from: data) else {
         completion(.failure(.invalidCredentials))
         return
       }
 
       // Return the token
-      completion(.success(token))
+      completion(.success(loginResponse))
       
     }.resume()
   }
@@ -62,7 +56,7 @@ class APIService {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
 
-        guard let url = URL(string: "http://212.25.137.55:3001/api/users/?email=\(email)") else { return }
+        guard let url = URL(string: "http://51.103.72.63:3001/api/users/?email=\(email)") else { return }
         
         // Build the request, set the method, the value and the body of the request
         var request = URLRequest(url: url)
@@ -90,7 +84,7 @@ class APIService {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
         
-        guard let url = URL(string: "http://212.25.137.55:3001/api/audit/?email=\(email)") else { return "error mail" }
+        guard let url = URL(string: "http://51.103.72.63:3001/api/audit/?email=\(email)") else { return "error mail" }
         
         var request = URLRequest(url: url)
 
@@ -130,7 +124,7 @@ class APIService {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
         
-        guard let url = URL(string: "http://212.25.137.55:3001/api/measure/?email=\(email)") else { return }
+        guard let url = URL(string: "http://51.103.72.63:3001/api/measure/?email=\(email)") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
