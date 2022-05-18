@@ -129,7 +129,9 @@ extension GenericRegulationView {
             DataNormList(list: self.coordinator!.dataAudit)
             
             NavigationLink(
-                destination:HomeMenu()) {
+                destination: HomeMenu(),
+                tag: "backToTheMenu",
+                selection: $selectionTag) {
                     Button("Valider et Envoyer") {
                     // send requests
                     // TODO: Loading button once we're sending the infos
@@ -146,7 +148,6 @@ extension GenericRegulationView {
                     // TODO: create json file in local also, with the audit's name
                     // back to the menu
                 }.buttonStyle(validateButtonStyle()).navigationBarHidden(true)
-                
                 // TODO: validation button
                 
             }
