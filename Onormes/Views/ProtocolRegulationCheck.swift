@@ -293,8 +293,10 @@ class PRegulationCheckStageDelegate  {
     var steps: [GenericRegulationView] = []
     var index: Int = 0
     var coordinator: UJCoordinator;
+    var id: String
     
-    init(config: ERP_Config, coordinator: UJCoordinator) {
+    init(config: ERP_Config, coordinator: UJCoordinator, key: String) {
+        self.id = key + "-" + UUID().uuidString
         print("pStageDelegate ctor")
         self.index = 0
         self.coordinator = coordinator

@@ -10,8 +10,8 @@ import SwiftUI
 
 class RampStageDelegate: PRegulationCheckStageDelegate {
     
-    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
-        super.init(config: config, coordinator: coordinator)
+    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
+        super.init(config: config, coordinator: coordinator, key: "rampe")
         
         self.steps.append(GenericRegulationView(title: "Choisissez le type de Rampe", content: [
             RegulationCheckField(key: "permanente", type: TypeField.bool, text: "Permanente", optional: false),
@@ -19,7 +19,7 @@ class RampStageDelegate: PRegulationCheckStageDelegate {
             RegulationCheckField(key: "posée", type: TypeField.bool, text: "Posée", optional: false),
             RegulationCheckField(key: "intégré", type: TypeField.bool, text: "Intégré (à justifier si la rampe n'est pas intégrée)", optional: false),
             RegulationCheckField(key: "automatique", type: TypeField.bool, text: "Automatique", optional: false)
-            ], id: "rampe")
+        ], id: self.id)
         )
     }
     

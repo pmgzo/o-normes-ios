@@ -10,18 +10,19 @@ import SwiftUI
 
 struct RegulationPageItem {
     let id: String // for navigation but i think we will delete navigation
+    let name: String
     let imageName: String
     var selected: Bool = false
 }
 
 var regulationPageslist: [RegulationPageItem] = [
-    RegulationPageItem(id: "porte d'entrée", imageName: "doorImage"),
-    RegulationPageItem(id: "rampe d'entrée", imageName: "doorImage"),
-    RegulationPageItem(id: "allée structurante", imageName: "doorImage"),
-    RegulationPageItem(id: "allée non structurante", imageName: "doorImage"),
-    RegulationPageItem(id: "escalier", imageName: "doorImage"),
-    RegulationPageItem(id: "ascenseur", imageName: "doorImage"),
-    RegulationPageItem(id: "file d'attente", imageName: "doorImage")
+    RegulationPageItem(id: "portedentrée", name: "porte d'entrée", imageName: "doorImage"),
+    RegulationPageItem(id: "rampe", name: "rampe d'entrée", imageName: "doorImage"),
+    RegulationPageItem(id: "alléestructurante", name: "allée structurante", imageName: "doorImage"),
+    RegulationPageItem(id: "alléenonstructurante", name: "allée non structurante", imageName: "doorImage"),
+    RegulationPageItem(id: "escalier", name: "escalier", imageName: "doorImage"),
+    RegulationPageItem(id: "ascenseur", name: "ascenseur", imageName: "doorImage"),
+    RegulationPageItem(id: "filedattente", name: "file d'attente", imageName: "doorImage")
 ]
 
 class SelectedRegulationSet: ObservableObject {
@@ -62,7 +63,7 @@ extension GenericRegulationView {
             ScrollView {
                 LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
                     ForEach(0..<regulationPageslist.count, id: \.self) { i in
-                        Button(regulationPageslist[i].id) {
+                        Button(regulationPageslist[i].name) {
                             regulationPageslist[i].selected = !regulationPageslist[i].selected
                             print(regulationPageslist[i].id + " selected")
                             if regulationPageslist[i].selected {

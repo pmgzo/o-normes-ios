@@ -10,17 +10,17 @@ import SwiftUI
 
 class CorridorStageDelegate: PRegulationCheckStageDelegate {
     
-    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
-        super.init(config: config, coordinator: coordinator)
+    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
+        super.init(config: config, coordinator: coordinator, key: "alléestructurante")
         self.steps.append(GenericRegulationView(title: "Page allée structurante", content: [RegulationCheckField(key: "alléestructurante", type: TypeField.string, text: "Saisissez la largeur du couloir, (le couloir doit avoir au minimum 1.20m de largeur)", optional: false)], id: "alléestructurante"))
     }
 }
 
 class NonPublicCorridorStageDelegate: PRegulationCheckStageDelegate {
     
-    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
-        super.init(config: config, coordinator: coordinator)
-        self.steps.append(GenericRegulationView(title: "Page allée non structurante", content: [RegulationCheckField(key: "alléenonstructurante", type: TypeField.string, text: "Saisissez la largeur du couloir, (le couloir doit avoir au minimum 1.05m de largeur au sol et 90cm à partir de 0.2m de hauteur)", optional: false)], id: "alléenonstructurante"))
+    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
+        super.init(config: config, coordinator: coordinator, key: "alléenonstructurante")
+        self.steps.append(GenericRegulationView(title: "Page allée non structurante", content: [RegulationCheckField(key: "alléenonstructurante", type: TypeField.string, text: "Saisissez la largeur du couloir, (le couloir doit avoir au minimum 1.05m de largeur au sol et 90cm à partir de 0.2m de hauteur)", optional: false)], id: self.id))
     }
 }
 

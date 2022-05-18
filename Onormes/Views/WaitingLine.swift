@@ -10,9 +10,9 @@ import SwiftUI
 
 class WaitingLineStageDelegate: PRegulationCheckStageDelegate {
     
-    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
-        super.init(config: config, coordinator: coordinator)
-        self.steps.append(GenericRegulationView(title: "File d'attente", content: [RegulationCheckField(key: "filedattente", type: TypeField.bool, text: "L'appuis ischiatique est à une hauteur d'environ 0.70m ", optional: true)], id: "filedattente"))
+    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
+        super.init(config: config, coordinator: coordinator, key: "filedattente")
+        self.steps.append(GenericRegulationView(title: "File d'attente", content: [RegulationCheckField(key: "filedattente", type: TypeField.bool, text: "L'appuis ischiatique est à une hauteur d'environ 0.70m ", optional: true)], id: self.id))
     }
 }
 

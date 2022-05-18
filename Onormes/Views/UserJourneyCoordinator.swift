@@ -101,20 +101,24 @@ class UJCoordinator: ObservableObject {
         //TODO: add initial step here !!
         //TODO: init stage history + stageDelegate
         
-        self.stageDelegate = DoorStageDelegate(config: self.config, coordinator: self)
+        self.stageDelegate = self.getStageMap()["portedentrée"] as! PRegulationCheckStageDelegate
+        self.stageHistory = [self.stageDelegate!.id]
+        self.myDictionary[self.stageHistory[index]] = DataNorm(key: self.stageHistory[index], data: [])
     }
 
     // record data
     func addNewRegulationCheck(newObject: DataNorm, newKey: String) {
         
-        let newGeneratedKey = newKey
+        // let newGeneratedKey = newKey
+        // TODO: maybe to remove
         // if it's the first stage
-        if stageHistory.count == 1 {
-            stageHistory[0] = newGeneratedKey
-        } else {
-            stageHistory.append(newGeneratedKey)
-        }
-        myDictionary[stageHistory[index]] = newObject
+//        if stageHistory.count == 1 {
+//            stageHistory[0] = self.stageDelegate!.id
+//        } else {
+//            stageHistory.append(self.stageDelegate!.id)
+//        }
+        
+        myDictionary[self.stageDelegate!.id]!.data += newObject.data
     }
     
     func backToThePreviousStage() {
@@ -145,7 +149,12 @@ class UJCoordinator: ObservableObject {
     // add steps/stages, (id list) s parameters
     func addRegulationCheckStages(ids: Set<String>) {
         // set next stages
-        stageHistory = stageHistory + Array(ids)
+        // stageHistory = stageHistory + Array(ids)
+        // totalStages = stageHistory.count
+        for id in ids {
+            // tmpporary ids
+            stageHistory.append(id + "-" + UUID().uuidString)
+        }
         totalStages = stageHistory.count
     }
 
@@ -159,6 +168,7 @@ class UJCoordinator: ObservableObject {
             print(stageHistory[index])
             print(trueId)
             self.stageDelegate = getStageMap()[trueId] as! PRegulationCheckStageDelegate
+            self.stageHistory[index] = self.stageDelegate!.id
             myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
         }
     }
