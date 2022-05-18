@@ -21,11 +21,13 @@ struct UserJourneyNavigationPage: View {
     private unowned let navcoordinator: CustomNavCoordinator;
     var coordinator: UJCoordinator;
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>;
+    var navigationButton = false;
     
-    init(content: GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator) {
+    init(content: GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator, navigationButton: Bool) {
         self.content = content
         self.coordinator = coordinator
         self.navcoordinator = navcoordinator
+        self.navigationButton = navigationButton
     }
     
     var body: some View {
@@ -42,39 +44,41 @@ struct UserJourneyNavigationPage: View {
             // own content
             Spacer()
             self.content.frame(maxWidth: .infinity, maxHeight: .infinity)
-            Spacer()
-            VStack {
-                HStack {
-                    Button("Retour") {
-                        // coordinator check
-                        //selectionTag  = "back"
-                        self.coordinator.backToThePreviousStage()
-                        presentationMode.wrappedValue.dismiss()
-                    }.buttonStyle(ButtonStyle())
-                    
-                    // TODO: Add Recap page ?
-                    CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: GenericRegulationView(title: "Finished Step", content: [RegulationCheckField(key: "measureTest", type: TypeField.string, text: "Saisissez rien c'est de la grosse anarque ce truc")], id: "portedentrée")) {
-                        Button("Finir l'audit") {
+            if navigationButton {
+                Spacer()
+                VStack {
+                    HStack {
+                        Button("Retour") {
                             // coordinator check
-                            selectionTag  = "finished"
+                            //selectionTag  = "back"
+                            self.coordinator.backToThePreviousStage()
+                            presentationMode.wrappedValue.dismiss()
                         }.buttonStyle(ButtonStyle())
-                    }
-                    
-                    CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: self.coordinator.nextStep()) {
-                        Button("Etape suivante") {
-                            // coordinator check
-                            // call coordinator to load the next page
-                            if coordinator.stageDelegate!.formIsOkay() {
-                                print("step approved, modify data object")
-                                self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
-                                navigateToNextStep(coordinator: coordinator)
-                                //self.coordinator = goToNextStage()
-                                //coordinator.stageDelegate?.modify(coordinator: coordinator)
-                                //navigateToNextStep(coordinator: self.coordinator)
-                                selectionTag  = "skip"
-                                //TODO: handle redirection with coordinator
-                            }
-                        }.buttonStyle(ButtonStyle())
+                        
+                        // TODO: Add Recap page ?
+                        CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: self.coordinator.nextStep(forceQuit: true), navigationButton: false) {
+                            Button("Finir l'audit") {
+                                // coordinator check
+                                selectionTag  = "finished"
+                            }.buttonStyle(ButtonStyle())
+                        }
+                        
+                        CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: self.coordinator.nextStep(), navigationButton: !self.coordinator.done) {
+                            Button("Etape suivante") {
+                                // coordinator check
+                                // call coordinator to load the next page
+                                if coordinator.stageDelegate!.formIsOkay() {
+                                    print("step approved, modify data object")
+                                    self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
+                                    navigateToNextStep(coordinator: coordinator)
+                                    //self.coordinator = goToNextStage()
+                                    //coordinator.stageDelegate?.modify(coordinator: coordinator)
+                                    //navigateToNextStep(coordinator: self.coordinator)
+                                    selectionTag  = "skip"
+                                    //TODO: handle redirection with coordinator
+                                }
+                            }.buttonStyle(ButtonStyle())
+                        }
                     }
                 }
             }
@@ -90,10 +94,12 @@ struct UserJourneyNavigationWrapper: View {
     //@State private var renderStepPage: Bool = false;
     @ObservedObject var navcoordinator = CustomNavCoordinator();
     var coordinator: UJCoordinator;
+    var navigationButton = false
     
-    init(coordinator: UJCoordinator, content: GenericRegulationView) {
+    init(coordinator: UJCoordinator, content: GenericRegulationView, navigationButton: Bool) {
         self.content = content
         self.coordinator = coordinator
+        self.navigationButton = navigationButton
     }
     
     init(coordinator: UJCoordinator, @ViewBuilder content: () -> GenericRegulationView) {
@@ -107,7 +113,7 @@ struct UserJourneyNavigationWrapper: View {
                 GenericRegulationView(coordinator: coordinator, navcoordinator: navcoordinator)
             }
             else {
-                UserJourneyNavigationPage(content: content,navcoordinator: navcoordinator, coordinator: coordinator)
+                UserJourneyNavigationPage(content: content,navcoordinator: navcoordinator, coordinator: coordinator, navigationButton: self.navigationButton)
             }
         }.navigationBarHidden(true)
     }
@@ -121,6 +127,7 @@ struct CustomNavigationLink<Label: View> : View {
     let selection: Binding<String?>?;
     var isActive: Binding<Bool>?;
     var coordinator: UJCoordinator;
+    var navigationButton = true;
     
     init(coordinator: UJCoordinator, destination: GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
         constructorNumber = 0
@@ -132,14 +139,16 @@ struct CustomNavigationLink<Label: View> : View {
         self.tag = nil
         self.isActive = nil
     }
-    init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: GenericRegulationView, navigationButton: Bool, @ViewBuilder label: @escaping () -> Label) {
         self.constructorNumber = 1
         self.selection = selection
+        
+        self.navigationButton = navigationButton
+        
         self.tag = tag
         self.destination = destination
         self.label = label
         self.coordinator = coordinator
-        
         self.isActive = nil
     }
 
@@ -158,13 +167,13 @@ struct CustomNavigationLink<Label: View> : View {
         if constructorNumber == 0 {
             NavigationLink(
                 destination:
-                    UserJourneyNavigationWrapper(coordinator: coordinator, content: self.destination),
+                    UserJourneyNavigationWrapper(coordinator: coordinator, content: self.destination, navigationButton: self.navigationButton),
                 label: label).navigationBarHidden(true)
         }
         if constructorNumber == 1 {
             NavigationLink(
                 destination:
-                UserJourneyNavigationWrapper(coordinator: coordinator, content: self.destination),
+                UserJourneyNavigationWrapper(coordinator: coordinator, content: self.destination, navigationButton: self.navigationButton),
                 tag: self.tag!,
                 selection: self.selection!,
                 label: label).navigationBarHidden(true)
@@ -172,7 +181,7 @@ struct CustomNavigationLink<Label: View> : View {
         if constructorNumber == 2 {
             NavigationLink(
                 destination:
-                UserJourneyNavigationWrapper(coordinator: coordinator,content: self.destination),
+                UserJourneyNavigationWrapper(coordinator: coordinator,content: self.destination, navigationButton: self.navigationButton),
                 isActive: self.isActive!,
                 label: label).navigationBarHidden(true)
         }

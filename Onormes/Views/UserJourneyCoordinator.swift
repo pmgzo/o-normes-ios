@@ -69,6 +69,11 @@ class UJCoordinator: ObservableObject {
             return array
         }
     }
+    var done: Bool {
+        get {
+            return !self.stillHaveStage() && !self.stageDelegate!.stillHaveSteps()
+        }
+    }
     
     // audit, general information
     let auditRef: String;
@@ -140,9 +145,10 @@ class UJCoordinator: ObservableObject {
         return self.stageHistory.count > (self.index + 1)
     }
     
-    func nextStep() -> GenericRegulationView {
+    func nextStep(forceQuit: Bool = false) -> GenericRegulationView {
         
-        if index >= stageHistory.count {
+        if forceQuit == true || index >= stageHistory.count {
+            // summary page
             return GenericRegulationView(coordinator: self)
         } else {
             return stageDelegate!.steps[index]

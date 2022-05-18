@@ -119,7 +119,7 @@ class GenericRegulationViewModel: PRegulationCheckViewModel {
             coordinator.addNewRegulationCheck(newObject: newObject, newKey: self.id)
             return true
         }
-        return false;
+        return false
     }
     
     func displayError(data: [String:RegulationNorm]) -> Bool {
@@ -230,7 +230,7 @@ struct GenericRegulationView: View
                                     
                             TextField("commentaire", text: self.binding(for: c, comment: true)).textFieldStyle(CommentTextFieldStyle())
                                         .multilineTextAlignment(TextAlignment.center)
-                                }
+                            }
                         }
                 }
                 .background(Color.white)
@@ -312,32 +312,17 @@ class PRegulationCheckStageDelegate  {
     }
 }
 
-//func navigateToNextStep(coordinator: UJCoordinator, start: Bool = false) -> GenericRegulationView {
-
 func navigateToNextStep(coordinator: UJCoordinator, start: Bool = false) {
     
     print("go next step")
-//        throw UJCoordinatorError.attributeNotSet(name: //
-//        throw UJCoordinatorError.attributeNotSet(name: "Index")
-//        throw UJCoordinatorError.attributeNotSet(name: "Steps")
-
     if start == false {
         coordinator.stageDelegate?.index += 1
-//        if (!coordinator.stillHaveStage()) {
-            // redirect to recap page
             coordinator.goToNextStage()
-            //return GenericRegulationView(coordinator: coordinator)
-//        }
-
-        // change delegate
         if !coordinator.stageDelegate!.stillHaveSteps() {
             coordinator.changeDelegate()
         }
 
     }
 
-//    let idx = coordinator.stageDelegate?.index
-//
-//    return coordinator.stageDelegate!.steps[idx!]
 }
 
