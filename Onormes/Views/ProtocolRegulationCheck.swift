@@ -134,7 +134,8 @@ class DataNormContainer: ObservableObject {
     init(content: [RegulationCheckField]) {
         for (_, reg) in content.enumerated() {
             data[reg.key] = RegulationNorm(key: reg.key, inst: reg.text, type: reg.type, mandatory: reg.optional)
-            data[reg.key + "-comment"] = RegulationNorm(key: reg.key, inst: reg.text, type: TypeField.string, mandatory: reg.optional)
+            let commentId = reg.key + "-comment";
+            data[commentId] = RegulationNorm(key: commentId, inst: reg.text, type: TypeField.string, mandatory: reg.optional)
         }
     }
 }
@@ -227,8 +228,8 @@ struct GenericRegulationView: View
                                 TextField("mesure", text: self.binding(for: c)).textFieldStyle(MeasureTextFieldStyle())
                             }
                                     
-//                            TextField("commentaire", text: self.binding(for: c)).textFieldStyle(CommentTextFieldStyle())
-//                                        .multilineTextAlignment(TextAlignment.center)
+                            TextField("commentaire", text: self.binding(for: c, comment: true)).textFieldStyle(CommentTextFieldStyle())
+                                        .multilineTextAlignment(TextAlignment.center)
                                 }
                         }
                 }
@@ -246,20 +247,24 @@ struct GenericRegulationView: View
     }
     
     //func binding(for key: String) -> Binding<String> {
-    func binding(for field: RegulationCheckField) -> Binding<String> {
-        
+    func binding(for field: RegulationCheckField, comment: Bool = false) -> Binding<String> {
+        var key = field.key
+        if comment {
+            key += "-comment"
+        }
         return .init(
             get: {
-                if self.dataContainer.data[field.key] == nil {
+                
+                if self.dataContainer.data[key] == nil {
                     return ""
                 }
-                return self.dataContainer.data[field.key]!.valueMetric
+                return self.dataContainer.data[key]!.valueMetric
             },
             set: {
                 print("la valeur est")
-                print(self.dataContainer.data[field.key]!.valueMetric)
+                print(self.dataContainer.data[key]!.valueMetric)
                 print($0)
-                self.dataContainer.data[field.key]!.valueMetric = $0
+                self.dataContainer.data[key]!.valueMetric = $0
                 
             })
     }
