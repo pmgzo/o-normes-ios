@@ -11,6 +11,7 @@ import SwiftUI
 class DoorStageDelegate: PRegulationCheckStageDelegate {
     override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
         super.init(config: config, coordinator: coordinator);
+        
         self.steps.append(GenericRegulationView(title: "Porte d'entrée", content: [RegulationCheckField(key: "portedentrée", type: TypeField.string, text: "Saisissez la largeur de la porte d'entrée", optional: false)], id: "portedentrée"));
         //steps.append(DoorView(coordinator: coordinator))
     }

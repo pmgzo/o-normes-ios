@@ -17,7 +17,9 @@ enum UJCoordinatorError: Error {
 // give the drive to UJCoordinator
 // place, date, type of establishment, how many floor ? etc...
 
-struct RegulationNorm {
+struct RegulationNorm: Identifiable {
+    var id: String {get {return key}}
+    
     let key: String;
     var valueMetric: String;
     var valueCheckBox: Bool;
@@ -26,11 +28,12 @@ struct RegulationNorm {
     let type: TypeField;
     var comment: String;
     
-    init(key: String, inst: String, type: TypeField, mandatory: Bool = true) {
+    init(key: String, inst: String, type: TypeField, mandatory: Bool = true, valueString: String = "", valueBool: Bool = false) {
         self.key = key
         
-        self.valueMetric = ""
-        self.valueCheckBox = true
+        
+        self.valueMetric = valueString
+        self.valueCheckBox = valueBool
         self.comment = ""
         
         self.instruction = inst
@@ -97,12 +100,14 @@ class UJCoordinator: ObservableObject {
 
     // record data
     func addNewRegulationCheck(newObject: DataNorm, newKey: String) {
+        
         let newGeneratedKey = newKey + UUID().uuidString;
         myDictionary[stageHistory[index]] = newObject
         stageHistory.append(newGeneratedKey)
     }
     
     func backToThePreviousStage() {
+        // TODO: check
         if self.stageDelegate!.index == 0 {
             self.index -= 1
         }
@@ -124,12 +129,24 @@ class UJCoordinator: ObservableObject {
     }
 
     func changeDelegate() {
-        stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
-        myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
+        self.index += 1
+        if self.index < self.stageHistory.count {
+            self.stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
+            myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
+        }
     }
     
     func stillHaveStage() -> Bool {
         return self.stageHistory.count > (self.index + 1)
+    }
+    
+    func nextStep() -> GenericRegulationView {
+        
+        if index >= stageHistory.count {
+            return GenericRegulationView(coordinator: self)
+        } else {
+            return stageDelegate!.steps[index]
+        }
     }
 }
 

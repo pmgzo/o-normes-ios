@@ -27,7 +27,7 @@ class RampStageDelegate: PRegulationCheckStageDelegate {
         // check to lead the next steps
         // retrieve answers from the first step
         if index == 0 {
-            if steps[0].data["automatique"] as! Bool == true && steps[0].data["amovible"] as! Bool == true {
+            if steps[0].dataContainer.data["automatique"]!.valueCheckBox == true && steps[0].dataContainer.data["amovible"]!.valueCheckBox == true {
                 // TODO: missed something here check PLD
                 self.steps.append(GenericRegulationView(title: "Rampe (pour automatique et amovible)", content: [RegulationCheckField(key: "dispositif", type: TypeField.bool, text: "Hauteur comprise entre 0,90 m et 1,30 m (mesurée depuis l'espace d'emprise de la rampe)", optional: false)], id: "rampe"))
                 
@@ -36,7 +36,7 @@ class RampStageDelegate: PRegulationCheckStageDelegate {
                 self.steps.append(GenericRegulationView(title: "Rampe (pour automatique et amovible)", content: [RegulationCheckField(key: "dispositif", type: TypeField.bool, text: "Les employés de l'établissement sont formés à la manipulation et au deploiement de la rampe", optional: false)], id: "rampe"))
             }
             
-            if steps[0].data["permanente"] as! Bool == true || steps[0].data["posée"] as! Bool == true {
+            if steps[0].dataContainer.data["permanente"]!.valueCheckBox == true || steps[0].dataContainer.data["posée"]!.valueCheckBox == true {
                 self.steps.append(GenericRegulationView(title: "Rampe (pour permanente ou posée)", content: [
                     RegulationCheckField(key: "dispositif", type: TypeField.bool, text: "La rampe ne présente pas de vide latéraux", optional: false)], id: "rampe"))
             }

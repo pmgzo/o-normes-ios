@@ -8,17 +8,36 @@
 import Foundation
 import SwiftUI
 
+extension String {
+    subscript (bounds: CountableClosedRange<Int>) -> String {
+        let start = index(startIndex, offsetBy: bounds.lowerBound)
+        let end = index(startIndex, offsetBy: bounds.upperBound)
+        return String(self[start...end])
+    }
+
+    subscript (bounds: CountableRange<Int>) -> String {
+        let start = index(startIndex, offsetBy: bounds.lowerBound)
+        let end = index(startIndex, offsetBy: bounds.upperBound)
+        return String(self[start..<end])
+    }
+}
+
 func getImageName(id: String) -> String {
+    print("fetch id")
+    let index = id.count - (36 + 1)
+    //let newId = id[..<index]
+    let newId = String(id[0..<index])
+    print(newId)
     let stageMap: [String:String] = [
-        "porte d'entrée" : "Door",
-        "rampe d'entrée" : "Ramp",
-        "allée structurante" : "Ruler",
-        "allée non structurante": "Ruler",
+        "portedentrée" : "Door",
+        "rampe": "Ramp",
+        "alléestructurante" : "Ruler",
+        "alléenonstructurante": "Ruler",
         "escalier" : "Stairs",
         "ascenseur" : "Elevator",
-        "file d'attente" : "WaitingLine"
+        "filedattente" : "WaitingLine"
     ]
-    return stageMap[id]!
+    return stageMap[newId]!
 }
 
 struct DataNormRow: View {
@@ -47,19 +66,21 @@ struct DataNormDetails: View {
 
     init(data: [RegulationNorm]) {
         self.data = data
+        print("count")
+        print(data.count)
     }
     
     var body: some View {
         // details about the stage
         VStack {
-            ForEach(0...(data.count), id: \.self) { i in
+            List(self.data) { value in
                 HStack {
-                    Text(data[i].key)
+                    Text(value.key)
                     Spacer()
-                    if (data[i].type == TypeField.bool) {
-                        Text((data[i].valueCheckBox == true ? "Oui" : "Non"))
+                    if (value.type == TypeField.bool) {
+                        Text((value.valueCheckBox == true ? "Oui" : "Non"))
                     } else {
-                        Text(data[i].valueMetric)
+                        Text(value.valueMetric == "" ? "vide" :  value.valueMetric)
                     }
                 }
             }
@@ -76,15 +97,14 @@ struct DataNormList: View {
     }
     
     var body: some View {
-        ScrollView {
-            List(self.list, id: \.id) { norm in
-                Text("Ici")
-                NavigationLink {
-                    DataNormDetails(data: norm.data)
-                } label: {
-                    DataNormRow(stageName: norm.key)
+        VStack {
+                List(self.list) { norm in
+                    NavigationLink {
+                        DataNormDetails(data: norm.data)
+                    } label: {
+                        DataNormRow(stageName: norm.key)
+                    }
                 }
-            }
         }
     }
 }

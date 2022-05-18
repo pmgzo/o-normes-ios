@@ -60,11 +60,14 @@ struct UserJourneyNavigationPage: View {
                         }.buttonStyle(ButtonStyle())
                     }
                     
-                    CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: navigateToNextStep(coordinator: coordinator)) {
+                    CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: self.coordinator.nextStep()) {
                         Button("Etape suivante") {
                             // coordinator check
                             // call coordinator to load the next page
-                            if ((coordinator.stageDelegate?.formIsOkay()) != nil) {
+                            if coordinator.stageDelegate!.formIsOkay() {
+                                print("step approved, modify data object")
+                                self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
+                                navigateToNextStep(coordinator: coordinator)
                                 //self.coordinator = goToNextStage()
                                 //coordinator.stageDelegate?.modify(coordinator: coordinator)
                                 //navigateToNextStep(coordinator: self.coordinator)
