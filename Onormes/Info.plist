@@ -4,8 +4,6 @@
 <dict>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Using Camera</string>
 	<key>UIUserInterfaceStyle
 UIUserInterfaceStyle
 </key>
