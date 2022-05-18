@@ -292,10 +292,16 @@ struct GenericRegulationView: View
 class PRegulationCheckStageDelegate  {
     var steps: [GenericRegulationView] = []
     var index: Int = 0
+    var coordinator: UJCoordinator;
     
     init(config: ERP_Config, coordinator: UJCoordinator) {
         print("pStageDelegate ctor")
         self.index = 0
+        self.coordinator = coordinator
+    }
+    
+    func getNextStep() -> GenericRegulationView {
+        return steps[index]
     }
     
     func stillHaveSteps()  -> Bool {
@@ -304,6 +310,7 @@ class PRegulationCheckStageDelegate  {
     
     func formIsOkay() -> Bool {
         print("form is okay ")
+        print(index)
         return steps[index].formIsOkay()
     }
     func modify(coordinator: UJCoordinator) -> Bool {
@@ -317,7 +324,7 @@ func navigateToNextStep(coordinator: UJCoordinator, start: Bool = false) {
     print("go next step")
     if start == false {
         coordinator.stageDelegate?.index += 1
-            coordinator.goToNextStage()
+        //coordinator.goToNextStage()
         if !coordinator.stageDelegate!.stillHaveSteps() {
             coordinator.changeDelegate()
         }

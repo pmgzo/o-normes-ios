@@ -22,11 +22,15 @@ extension String {
     }
 }
 
+func parseNormId(_ rawId: String) -> String {
+    let index = rawId.count - (36 + 1)
+    return String(rawId[0..<index])
+}
+
 func getImageName(id: String) -> String {
     print("fetch id")
-    let index = id.count - (36 + 1)
-    //let newId = id[..<index]
-    let newId = String(id[0..<index])
+
+    let newId = parseNormId(id)
     print(newId)
     let stageMap: [String:String] = [
         "portedentrée" : "Door",
@@ -115,6 +119,7 @@ extension GenericRegulationView {
         VStack {
             HStack {
                 Button("Retour") {
+                    self.coordinator!.backToThePreviousStage()
                     presentationMode.wrappedValue.dismiss()
                 }.buttonStyle(ButtonStyle())
                 Spacer().frame(width: 250)

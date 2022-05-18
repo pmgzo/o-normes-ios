@@ -97,6 +97,7 @@ class UJCoordinator: ObservableObject {
         self.stageHistory = ["porte d'entrée"]
         self.index = 0
         //myDictionary["porte d'entrée"] = DataNorm(key: "porte d'entrée", data: [])
+        
         //TODO: add initial step here !!
         //TODO: init stage history + stageDelegate
         
@@ -106,18 +107,33 @@ class UJCoordinator: ObservableObject {
     // record data
     func addNewRegulationCheck(newObject: DataNorm, newKey: String) {
         
-        let newGeneratedKey = newKey + UUID().uuidString;
+        let newGeneratedKey = newKey
+        // if it's the first stage
+        if stageHistory.count == 1 {
+            stageHistory[0] = newGeneratedKey
+        } else {
+            stageHistory.append(newGeneratedKey)
+        }
         myDictionary[stageHistory[index]] = newObject
-        stageHistory.append(newGeneratedKey)
     }
     
     func backToThePreviousStage() {
-        // TODO: check
+        // TODO: check, maybe move the index of the previous delegate, maybe it will erase when we go to previous stage, add stg to load in the next features
         if self.stageDelegate!.index == 0 {
+            // if first step we back to the previous stage
             self.index -= 1
+            
+            self.stageDelegate = getStageMap()[parseNormId(stageHistory[index])] as! PRegulationCheckStageDelegate
+            print("beforeBack")
+            print(self.stageDelegate!.index)
+            //myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
         }
         if self.index > 0 {
             self.index -= 1
+            self.stageDelegate = getStageMap()[parseNormId(stageHistory[index])] as! PRegulationCheckStageDelegate
+            print("beforeBack")
+            print(self.stageDelegate!.index)
+            //myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
         }
     }
     
@@ -135,8 +151,14 @@ class UJCoordinator: ObservableObject {
 
     func changeDelegate() {
         self.index += 1
+        print("changeDelegate")
+        
         if self.index < self.stageHistory.count {
-            self.stageDelegate = getStageMap()[stageHistory[index]] as! PRegulationCheckStageDelegate
+            print("inside")
+            let trueId = parseNormId(stageHistory[index])
+            print(stageHistory[index])
+            print(trueId)
+            self.stageDelegate = getStageMap()[trueId] as! PRegulationCheckStageDelegate
             myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
         }
     }
@@ -146,12 +168,15 @@ class UJCoordinator: ObservableObject {
     }
     
     func nextStep(forceQuit: Bool = false) -> GenericRegulationView {
+        print("NextStep")
+        print(index)
+        print(stageHistory.count)
         
         if forceQuit == true || index >= stageHistory.count {
             // summary page
             return GenericRegulationView(coordinator: self)
         } else {
-            return stageDelegate!.steps[index]
+            return stageDelegate!.getNextStep()
         }
     }
 }
@@ -160,13 +185,13 @@ extension UJCoordinator {
   // new features here
     func getStageMap() -> NSDictionary {
         let stageMap: NSDictionary = [
-            "porte d'entrée" : DoorStageDelegate(config: self.config, coordinator: self),
-            "rampe d'entrée" : RampStageDelegate(config: self.config, coordinator: self),
-            "allée structurante" : CorridorStageDelegate(config: self.config, coordinator: self),
-            "allée non structurante" : NonPublicCorridorStageDelegate(config: self.config, coordinator: self),
+            "portedentrée" : DoorStageDelegate(config: self.config, coordinator: self),
+            "rampe" : RampStageDelegate(config: self.config, coordinator: self),
+            "alléestructurante" : CorridorStageDelegate(config: self.config, coordinator: self),
+            "alléenonstructurante" : NonPublicCorridorStageDelegate(config: self.config, coordinator: self),
             "escalier" : StairsStageDelegate(config: self.config, coordinator: self),
             "ascenseur" : ElevatorStageDelegate(config: self.config, coordinator: self),
-            "file d'attente" : WaitingLineStageDelegate(config: self.config, coordinator: self)
+            "filedattente" : WaitingLineStageDelegate(config: self.config, coordinator: self)
         ]
         return stageMap
     }
