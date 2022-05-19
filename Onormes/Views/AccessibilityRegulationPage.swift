@@ -72,12 +72,11 @@ extension GenericRegulationView {
                             } else {
                                 // remove
                                 self.selectedItems.removeItem(id: regulationPageslist[i].id)
-
                             }
-                        }.frame(width: 100).foregroundColor(regulationPageslist[i].selected ? .black : .gray)
+                        }.foregroundColor(regulationPageslist[i].selected ? .black : .gray)
                     }
                 }.padding(.horizontal)
-            }.frame(maxWidth: 350).background(Image("Logo")
+            }.frame(maxWidth: 550).background(Image("Logo")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
             

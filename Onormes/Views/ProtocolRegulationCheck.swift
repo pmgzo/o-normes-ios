@@ -175,7 +175,7 @@ struct GenericRegulationView: View
         
         //self.isRegulationsPage = true
         self.pageType = PageType.addStage
-        self.gridItemLayout = [GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86))]
+        self.gridItemLayout = [GridItem(.adaptive(minimum: 100))]
         // self.model = GenericRegulationViewModel(content: [], id:  "")
         self.title = "";
         self.content = [];
