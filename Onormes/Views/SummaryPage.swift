@@ -141,10 +141,19 @@ extension GenericRegulationView {
                     // TODO: Loading button once we're sending the infos
                     print("Start sending information")
                     
-                    let res = APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: "pas d'info")
-                    
-                    sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
-                    
+                    Task {
+                       do {
+                           let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: "pas d'info")
+                           sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
+                           
+                           print("End sending information")
+                           
+                           self.selectionTag = "backToTheMenu"
+                       } catch {
+                           print(error)
+                       }
+                    }
+                                            
                     print("End sending information")
                     
                     self.selectionTag = "backToTheMenu"

@@ -13,6 +13,17 @@ struct LoginResponse: Codable {
   let success: String?
 }
 
+func convertToDictionary(text: String) -> [String: Any]? {
+    if let data = text.data(using: .utf8) {
+        do {
+            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    return nil
+}
+
 class APIService {  
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
@@ -80,13 +91,14 @@ class APIService {
     }
     
     // TODO: Add parameters in body, have to return the audit id
-    func createAudit(name: String, location: String, comment: String, owner_phone: String, owner_email: String) -> String {
+    func createAudit(name: String, location: String, comment: String, owner_phone: String, owner_email: String) async -> String {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
         
         guard let url = URL(string: "http://51.103.72.63:3001/api/audit/?email=\(email)") else { return "error mail" }
         
         var request = URLRequest(url: url)
+        var auditId: String = ""
 
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -94,25 +106,60 @@ class APIService {
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
         // fill the body
-        let json: [String: Any] = ["name": name, "place": location, "global_comment": comment, "place_owner_phone": owner_phone, "place_owner_mail": owner_email]
+        let json: [String: Any] = ["name": name[0..<20], "place": location, "global_comment": comment, "place_owner_phone": owner_phone, "place_owner_mail": owner_email]
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
         request.httpBody = jsonData
 
-        URLSession.shared.dataTask(with: request) {(data, response, error) in
-          guard let data = data, error == nil else {
-            print(error?.localizedDescription ?? "No data")
-            return
-          }
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            print(data)
+            let string: String = String(data: data, encoding: .utf8)!
 
-          guard let userResponse = try? JSONDecoder().decode(User.self, from: data) else {
-            print("Error audit not created")
-            return
-          }
-          //completion(userResponse)
-        }.resume()
-        // return body
+            print("data")
+            print(data)
+            
+            let dic = convertToDictionary(text: string)
+            
+            print(dic)
+            
+            auditId = String(dic!["id"]! as! Int)
+            return auditId
+        } catch {
+            print(error)
+        }
+                
+//
+//        let dataTask = URLSession.shared.dataTask(with: request) {(data, response, error) in
+//          guard let data = data, error == nil else {
+//            print(error?.localizedDescription ?? "No data")
+//            return
+//          }
+//
+//            print(response)
+//            print(data)
+//            let string: String = String(data: data, encoding: .utf8)!
+//
+//            print("data")
+//            print(data)
+//
+//            let dic = convertToDictionary(text: string)
+//
+//            auditId = String(dic!["id"]! as! Int)
+//
+//
+//          guard let userResponse = try? JSONDecoder().decode(User.self, from: data) else {
+//            print("Error audit not created")
+//            return
+//          }
+//          //completion(userResponse)
+//        }
         
-        return ""
+        //dataTask.resume()
+        // return body
+        print("auditId")
+        print(auditId)
+        
+        return auditId
     }
 
     func createMeasure(params: NSDictionary) {
@@ -132,6 +179,8 @@ class APIService {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
+        print("audit_fk")
+        print(params["audit_fk"])
         //fill body
         let json: [String: Any] = [
             "metric_fk": 0,
@@ -164,6 +213,8 @@ class APIService {
  }
 
 func sendAllDataAudit(auditId: String, data: [DataNorm]) -> Bool {
+    print("send audit id")
+    print(auditId)
     for norm in data {
         for regulation in norm.data {
             var value = regulation.valueMetric
