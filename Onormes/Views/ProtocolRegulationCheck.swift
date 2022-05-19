@@ -88,14 +88,9 @@ class GenericRegulationViewModel: PRegulationCheckViewModel {
     }
 
     
-// https://forums.swift.org/t/swiftui-how-to-use-dictionary-as-binding/34967/2
-    
-    
     func formIsOkay(data: [String:RegulationNorm]) -> Bool {
         // check mandatory field
-        print("form is okay:")
-        print(data)
-        
+
         if mandatoryItems.isEmpty {
             return true
         }
@@ -261,11 +256,7 @@ struct GenericRegulationView: View
                 return self.dataContainer.data[key]!.valueMetric
             },
             set: {
-                print("la valeur est")
-                print(self.dataContainer.data[key]!.valueMetric)
-                print($0)
                 self.dataContainer.data[key]!.valueMetric = $0
-                
             })
     }
     
@@ -284,7 +275,6 @@ struct GenericRegulationView: View
     func modify(coordinator: UJCoordinator) -> Bool {
         //TODO: att byta
         return self.model.addRegulationCheck(coordinator: coordinator, data: self.dataContainer.data, content: self.content!)
-        //modify the coordinator here
     }
         
 }
@@ -316,7 +306,6 @@ class PRegulationCheckStageDelegate  {
         return steps[index].formIsOkay()
     }
     func modify(coordinator: UJCoordinator) -> Bool {
-        // to modify it is conditional
         return steps[index].modify(coordinator: coordinator)
     }
 }
@@ -326,7 +315,6 @@ func navigateToNextStep(coordinator: UJCoordinator, start: Bool = false) {
     print("go next step")
     if start == false {
         coordinator.stageDelegate?.index += 1
-        //coordinator.goToNextStage()
         if !coordinator.stageDelegate!.stillHaveSteps() {
             coordinator.changeDelegate()
         }

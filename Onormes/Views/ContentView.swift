@@ -67,7 +67,6 @@ struct HomeMenu: View {
     
     @State private var isShowingDetailView = false
     @ObservedObject var coordinator: UJCoordinator;
-    //var nextStep: GenericRegulationView?;
     
     init() {
         self.coordinator = UJCoordinator()
@@ -75,9 +74,6 @@ struct HomeMenu: View {
     
     var body: some View {
         return VStack {
-            // Method with navigation
-            // Have to handle layout
-            //Text(self.value)
             Text("Vous êtes connecté !")
             CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: { () -> GenericRegulationView in
                 return self.coordinator.nextStep()
@@ -86,15 +82,6 @@ struct HomeMenu: View {
                                 
                 Button("Commencer le parcours utilisateur") {
                     navigateToNextStep(coordinator: coordinator, start: true)
-//                    print("User jounrey started")
-//                        do {
-//                            try nextStep = navigateToNextStep(coordinator: coordinator)
-//                        } catch UJCoordinatorError.attributeNotSet {
-//                            // TODO: remove
-//                            nextStep = Text("Pas content !")
-//                        }
-                    //nextStep = navigateToNextStep(coordinator: coordinator)
-                    //coordinator.stageDelegate.index += 1
                     isShowingDetailView = true
                 }.buttonStyle(ButtonStyle())
             }

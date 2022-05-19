@@ -33,7 +33,3 @@ struct Stairs_Previews: PreviewProvider {
         }
       }
   }
-
-let a = RegulationCheckField(key: "largeurmaincourante", type: TypeField.string, text: "Saisissez la largeur entre main courant (La largeur minimum à respecter est de 1m)", optional: false)
-
-let b = RegulationCheckField(key: "gironmarche", type: TypeField.string, text: "Saisissez la mesure du giron (g) (cette mesure doit respecter la relation Blondel : 60 cm < 2 h + g < 64cm)", optional: false)

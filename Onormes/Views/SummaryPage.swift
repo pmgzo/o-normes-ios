@@ -129,7 +129,6 @@ extension GenericRegulationView {
             Text("Resumé de l'audit").font(.system(size: 20.0))
             Spacer()
                    .frame(height: 30)
-            // have to be an array of objects
             
             DataNormList(list: self.coordinator!.dataAudit)
             
@@ -160,12 +159,11 @@ extension GenericRegulationView {
     }
 }
 
-// FOR TESTING
-
 // TODO: remove
 
-//var coo = UJCoordinator()
+// FOR TESTING
 
+//var coo = UJCoordinator()
 //func instanciateUJCoo() -> UJCoordinator {
 //    coo.addNewRegulationCheck(newObject: NSDictionary(dictionary: ["est ce que pm c'est bogoss ?": "oui"]), newKey: "rampe d'entrée")
 //    return coo

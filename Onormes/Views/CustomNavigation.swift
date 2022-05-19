@@ -49,8 +49,6 @@ struct UserJourneyNavigationPage: View {
                 VStack {
                     HStack {
                         Button("Retour") {
-                            // coordinator check
-                            //selectionTag  = "back"
                             self.coordinator.backToThePreviousStage()
                             presentationMode.wrappedValue.dismiss()
                         }.buttonStyle(ButtonStyle())
@@ -65,15 +63,10 @@ struct UserJourneyNavigationPage: View {
                         
                         CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: self.coordinator.nextStep(), navigationButton: !self.coordinator.done) {
                             Button("Etape suivante") {
-                                // coordinator check
-                                // call coordinator to load the next page
                                 if coordinator.stageDelegate!.formIsOkay() {
                                     print("step approved, modify data object")
                                     self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
                                     navigateToNextStep(coordinator: coordinator)
-                                    //self.coordinator = goToNextStage()
-                                    //coordinator.stageDelegate?.modify(coordinator: coordinator)
-                                    //navigateToNextStep(coordinator: self.coordinator)
                                     selectionTag  = "skip"
                                     //TODO: handle redirection with coordinator
                                 }
@@ -90,8 +83,6 @@ struct UserJourneyNavigationPage: View {
 
 struct UserJourneyNavigationWrapper: View {
     let content: GenericRegulationView;
-    //@State private var selectionTag: String?;
-    //@State private var renderStepPage: Bool = false;
     @ObservedObject var navcoordinator = CustomNavCoordinator();
     var coordinator: UJCoordinator;
     var navigationButton = false

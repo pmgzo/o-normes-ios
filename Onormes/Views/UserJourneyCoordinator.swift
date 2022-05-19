@@ -12,10 +12,8 @@ enum UJCoordinatorError: Error {
     case attributeNotSet(name: String)
 }
 
-//TODO: IntroUJCoordinator
+//TODO: IntroUJCoordinator Page (place, date, type of establishment, how many floor ? etc...)
 // fill form
-// give the drive to UJCoordinator
-// place, date, type of establishment, how many floor ? etc...
 
 struct RegulationNorm: Identifiable {
     var id: String {get {return key}}
@@ -46,7 +44,6 @@ class DataNorm: Identifiable {
     var id: String {key}
     
     let key: String
-    //let data: NSDictionary
     var data: [RegulationNorm]
     
     init(key: String, data: [RegulationNorm]) {
@@ -90,17 +87,10 @@ class UJCoordinator: ObservableObject {
     init() {
         print("UJCoordinator initialized")
         value = true
-        //self.doorView = DoorViewModel(coordinator: self);
         self.auditRef = UUID().uuidString;
         self.config = ERP_Config()
 
-        self.stageHistory = ["porte d'entrée"]
         self.index = 0
-        //myDictionary["porte d'entrée"] = DataNorm(key: "porte d'entrée", data: [])
-        
-        //TODO: add initial step here !!
-        //TODO: init stage history + stageDelegate
-        
         self.stageDelegate = self.getStageMap()["portedentrée"] as! PRegulationCheckStageDelegate
         self.stageHistory = [self.stageDelegate!.id]
         self.myDictionary[self.stageHistory[index]] = DataNorm(key: self.stageHistory[index], data: [])
@@ -108,16 +98,6 @@ class UJCoordinator: ObservableObject {
 
     // record data
     func addNewRegulationCheck(newObject: DataNorm, newKey: String) {
-        
-        // let newGeneratedKey = newKey
-        // TODO: maybe to remove
-        // if it's the first stage
-//        if stageHistory.count == 1 {
-//            stageHistory[0] = self.stageDelegate!.id
-//        } else {
-//            stageHistory.append(self.stageDelegate!.id)
-//        }
-        
         myDictionary[self.stageDelegate!.id]!.data += newObject.data
     }
     
@@ -126,7 +106,6 @@ class UJCoordinator: ObservableObject {
         if self.stageDelegate!.index == 0 {
             // if first step we back to the previous stage
             self.index -= 1
-            
             self.stageDelegate = getStageMap()[parseNormId(stageHistory[index])] as! PRegulationCheckStageDelegate
             print("beforeBack")
             print(self.stageDelegate!.index)
@@ -148,11 +127,7 @@ class UJCoordinator: ObservableObject {
     
     // add steps/stages, (id list) s parameters
     func addRegulationCheckStages(ids: Set<String>) {
-        // set next stages
-        // stageHistory = stageHistory + Array(ids)
-        // totalStages = stageHistory.count
         for id in ids {
-            // tmpporary ids
             stageHistory.append(id + "-" + UUID().uuidString)
         }
         totalStages = stageHistory.count
@@ -206,67 +181,3 @@ extension UJCoordinator {
         return stageMap
     }
 }
-
-
-////TODO: to remove
-//struct UJCoordinatorView: PRegulationCheckView {
-//    // wrong coordinator
-//    @ObservedObject var coordinator: UJCoordinator;
-//
-//    init() {
-//        coordinator = UJCoordinator()
-//    }
-//    // here we will wrapp view with the (+) to had new views
-//    var body: some View {
-//        VStack {
-//            if coordinator.value {
-//                Text("first view")
-//            } else {
-//                Text("second view")
-//
-//            }
-//            Button("Change view") {
-//                print("coucou")
-//                withAnimation {
-//                    coordinator.value = !coordinator.value
-//
-//                }}.buttonStyle(ButtonStyle())
-//        }
-//    }
-//
-//    func check() -> Bool {
-//        return true
-//    }
-//
-//    func modify() -> Bool {
-//        return true
-//    }
-//}
-//
-//// Dummy page to remove
-//struct UserJourney: PRegulationCheckView {
-//    var coordinator: UJCoordinator;
-//
-//    var body: some View {
-//        VStack {
-////            List {
-////                Text("Välkommen till User journey")
-////                Text("Välkommen till User journey")
-////            }
-//            // Have to handle layout
-//            Text("Simple user journey page that will be deleted")
-//        }
-//    }
-//
-//    func startUserJourney()-> Void {
-//        print("jag börjar min User Journey")
-//    }
-//
-//    func check() -> Bool {
-//        return true
-//    }
-//
-//    func modify() -> Bool {
-//        return true
-//    }
-//}
