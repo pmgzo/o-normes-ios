@@ -48,11 +48,13 @@ struct UserJourneyNavigationPage: View {
                 Spacer()
                 VStack {
                     HStack {
-                        Button("Retour") {
-                            self.coordinator.backToThePreviousStage()
-                            presentationMode.wrappedValue.dismiss()
-                        }.buttonStyle(ButtonStyle())
-                        
+                        if (self.coordinator.canGoBack()) {
+                            Button("Retour") {
+                                self.coordinator.backToThePreviousStage()
+                                presentationMode.wrappedValue.dismiss()
+                            }.buttonStyle(ButtonStyle())
+                        }
+                                                
                         // TODO: Add Recap page ?
                         CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: self.coordinator.nextStep(forceQuit: true), navigationButton: false) {
                             Button("Finir l'audit") {

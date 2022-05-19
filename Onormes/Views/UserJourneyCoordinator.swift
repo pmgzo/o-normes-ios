@@ -123,6 +123,10 @@ class UJCoordinator: ObservableObject {
     func goToNextStage() {
         index += 1
     }
+    
+    func canGoBack() -> Bool {
+        return !(index == 0 && stageDelegate!.index == 0)
+    }
 
     
     // add steps/stages, (id list) s parameters
