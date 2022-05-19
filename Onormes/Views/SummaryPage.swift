@@ -134,7 +134,7 @@ extension GenericRegulationView {
             DataNormList(list: self.coordinator!.dataAudit)
             
             NavigationLink(
-                destination: ContentView(),
+                destination: ContentView().navigationBarBackButtonHidden(true),
                 tag: "backToTheMenu",
                 selection: $selectionTag) {
                     Button("Valider et Envoyer") {
