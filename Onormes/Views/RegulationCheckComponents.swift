@@ -24,7 +24,7 @@ extension String {
 //}
 
 // TODO: to change
-//class MeasureComponentViewModel: PRegulationCheckViewModel {
+// class MeasureComponentViewModel: PRegulationCheckViewModel {
 //    //TODO: check la string en details dasn formIsOkay
 //    @Published var value: String = "";
 //    @Published var comment: String = "";

@@ -180,3 +180,28 @@ struct CustomNavigationLink<Label: View> : View {
         }
     }
 }
+
+struct QuitingNavigationLink<Label: View> : View {
+    let label: () -> Label;
+    let constructorNumber: Int;
+    let tag: String?;
+    let selection: Binding<String?>?;
+    var isActive: Binding<Bool>;
+    
+    init(isActive: Binding<Bool>, @ViewBuilder label: @escaping () -> Label) {
+        constructorNumber = 0
+        self.label = label
+        
+        self.selection = nil
+        self.tag = nil
+        self.isActive = isActive
+    }
+    
+    public var body: some View {
+        // back to home menu
+        NavigationLink(
+            destination: HomeMenu().navigationBarHidden(true),
+            isActive: self.isActive,
+            label: label)
+    }
+}

@@ -9,8 +9,7 @@
 
   struct ContentView: View {
         var body: some View {
-        VStack(alignment: .center, content: {
-            NavigationView {
+            VStack(alignment: .center, content: {
                 TabView {
                   MeasuresVCRepresented()
                     .tabItem {
@@ -36,10 +35,9 @@
                       Text("Profil")
                     }
                 }.accentColor(Color(hex: 0x282359))
-            }
-        })
-        .preferredColorScheme(.light)
-      }
+            }).preferredColorScheme(.light).navigationBarHidden(true)
+
+        }
   }
 
 struct ReconstructionVCRepresented : UIViewControllerRepresentable {
@@ -73,18 +71,18 @@ struct HomeMenu: View {
     }
     
     var body: some View {
-        return VStack {
-            Text("Vous êtes connecté !")
-            CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: { () -> GenericRegulationView in
-                return self.coordinator.nextStep()
-            }()) {
-                
-                                
-                Button("Commencer le parcours utilisateur") {
-                    navigateToNextStep(coordinator: coordinator, start: true)
-                    isShowingDetailView = true
-                }.buttonStyle(ButtonStyle())
-            }
+        return NavigationView {
+            VStack {
+                Text("Vous êtes connecté !")
+                CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: { () -> GenericRegulationView in
+                    return self.coordinator.nextStep()
+                }()) {
+                    Button("Commencer le parcours utilisateur") {
+                        navigateToNextStep(coordinator: coordinator, start: true)
+                        isShowingDetailView = true
+                    }.buttonStyle(ButtonStyle())
+                }
+            }.navigationBarBackButtonHidden(true)
         }
     }
 };

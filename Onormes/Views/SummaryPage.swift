@@ -117,54 +117,44 @@ extension GenericRegulationView {
     // Summary page
     var summaryPage: some View {
         VStack {
-            HStack {
-                Button("Retour") {
-                    self.coordinator!.backToThePreviousStage()
-                    presentationMode.wrappedValue.dismiss()
-                }.buttonStyle(ButtonStyle())
-                Spacer().frame(width: 250)
-            }
-            Spacer()
-                   .frame(height: 40)
-            Text("Resumé de l'audit").font(.system(size: 20.0))
-            Spacer()
-                   .frame(height: 30)
-            
-            DataNormList(list: self.coordinator!.dataAudit)
-            
-            NavigationLink(
-                destination: ContentView().navigationBarBackButtonHidden(true),
-                tag: "backToTheMenu",
-                selection: $selectionTag) {
-                    Button("Valider et Envoyer") {
-                    // send requests
-                    // TODO: Loading button once we're sending the infos
-                    print("Start sending information")
-                    
-                    Task {
-                       do {
-                           let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: "pas d'info")
-                           sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
-                           
-                           print("End sending information")
-                           
-                           self.selectionTag = "backToTheMenu"
-                       } catch {
-                           print(error)
-                       }
-                    }
-                                            
-                    print("End sending information")
-                    
-                    self.selectionTag = "backToTheMenu"
-                    
-                    // TODO: create json file in local also, with the audit's name
-                    // back to the menu
-                }.buttonStyle(validateButtonStyle()).navigationBarHidden(true)
-                // TODO: validation button
+                HStack {
+                    Button("Retour") {
+                        self.coordinator!.backToThePreviousStage()
+                        presentationMode.wrappedValue.dismiss()
+                    }.buttonStyle(ButtonStyle())
+                    Spacer().frame(width: 250)
+                }
+                Spacer()
+                       .frame(height: 40)
+                Text("Resumé de l'audit").font(.system(size: 20.0))
+                Spacer()
+                       .frame(height: 30)
                 
+                DataNormList(list: self.coordinator!.dataAudit)
+                
+                QuitingNavigationLink(isActive: $isActive) {
+                            Button("Valider et Envoyer") {
+                            // TODO: Loading button once we're sending the infos
+                            print("Start sending information")
+                            Task {
+                               do {
+                                   let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: "pas d'info")
+                                   sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
+                                   
+                                   print("End sending information")
+                                   self.isActive = true
+                                   
+                                   self.selectionTag = "backToTheMenu"
+                               } catch {
+                                   print(error)
+                               }
+                            }
+                            print("End sending information")
+                            // TODO: create json file in local also, with the audit's name
+                        }.buttonStyle(validateButtonStyle())
+                    }
             }
-        }
+
     }
 }
 
