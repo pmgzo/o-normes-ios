@@ -20,7 +20,6 @@ struct UserJourneyNavigationPage: View {
     let content: GenericRegulationView;
     private unowned let navcoordinator: CustomNavCoordinator;
     var coordinator: UJCoordinator;
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>;
     var navigationButton = false;
     
     init(content: GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator, navigationButton: Bool) {
@@ -49,26 +48,29 @@ struct UserJourneyNavigationPage: View {
                 VStack {
                     HStack {
                         if (self.coordinator.canGoBack()) {
-                            Button("Retour") {
-                                self.coordinator.backToThePreviousStage()
-                                presentationMode.wrappedValue.dismiss()
-                            }.buttonStyle(ButtonStyle())
+                            CustomNavigationLink(coordinator: coordinator,tag: "goback", selection: $selectionTag, destination: self.coordinator.getPreviousView(), navigationButton: false) {
+                                Button("Retour") {
+                                    self.coordinator.backToThePreviousStage()
+                                    selectionTag = "goback"
+                                }.buttonStyle(ButtonStyle())
+                            }
                         }
                                                 
                         // TODO: Add Recap page ?
-                        CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: self.coordinator.nextStep(forceQuit: true), navigationButton: false) {
+                        CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: self.coordinator.getNextView(forceQuit: true), navigationButton: false) {
                             Button("Finir l'audit") {
                                 // coordinator check
                                 selectionTag  = "finished"
                             }.buttonStyle(ButtonStyle())
                         }
                         
-                        CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: self.coordinator.nextStep(), navigationButton: !self.coordinator.done) {
+                        CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: self.coordinator.getNextView(), navigationButton: !self.coordinator.done) {
                             Button("Etape suivante") {
                                 if coordinator.stageDelegate!.formIsOkay() {
                                     print("step approved, modify data object")
+                                    // save data
                                     self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
-                                    navigateToNextStep(coordinator: coordinator)
+                                    self.coordinator.nextStep()
                                     selectionTag  = "skip"
                                     //TODO: handle redirection with coordinator
                                 }

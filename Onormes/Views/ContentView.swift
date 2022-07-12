@@ -75,14 +75,14 @@ struct HomeMenu: View {
             VStack {
                 Text("Vous êtes connecté !")
                 CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: { () -> GenericRegulationView in
-                    return self.coordinator.nextStep()
+                    return self.coordinator.getNextView()
                 }()) {
                     Button("Commencer le parcours utilisateur") {
-                        navigateToNextStep(coordinator: coordinator, start: true)
+                        self.coordinator.nextStep(start: true)
                         isShowingDetailView = true
                     }.buttonStyle(ButtonStyle())
                 }
-            }.navigationBarBackButtonHidden(true)
+            }
         }
     }
 };

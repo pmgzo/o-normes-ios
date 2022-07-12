@@ -15,60 +15,27 @@ enum UJCoordinatorError: Error {
 //TODO: IntroUJCoordinator Page (place, date, type of establishment, how many floor ? etc...)
 // fill form
 
-struct RegulationNorm: Identifiable {
-    var id: String {get {return key}}
-    
-    let key: String;
-    var valueMetric: String;
-    var valueCheckBox: Bool;
-    let instruction: String
-    let mandatory: Bool;
-    let type: TypeField;
-    var comment: String;
-    
-    init(key: String, inst: String, type: TypeField, mandatory: Bool = true, valueString: String = "", valueBool: Bool = false) {
-        self.key = key
-        
-        
-        self.valueMetric = valueString
-        self.valueCheckBox = valueBool
-        self.comment = ""
-        
-        self.instruction = inst
-        self.mandatory = mandatory
-        self.type = type
-    }
-}
-
-class DataNorm: Identifiable {
-    var id: String {key}
-    
-    let key: String
-    var data: [RegulationNorm]
-    
-    init(key: String, data: [RegulationNorm]) {
-        // data
-        self.key = key
-        self.data = data
-    }
-}
 
 class UJCoordinator: ObservableObject {
     //model data
-    private var myDictionary: [String:DataNorm] = [:]
+    private var myDictionary: [String:[DataNorm]] = [:]
     var dataAudit: [DataNorm] {
         get {
             var array: [DataNorm] = []
             
-            for (_, value) in self.myDictionary {
-                array.append(value)
+            for (_, steps) in self.myDictionary {
+                for subStep in steps {
+                    array.append(subStep)
+                }
             }
             return array
         }
     }
+    // nav properties
+    
     var done: Bool {
         get {
-            return !self.stillHaveStage() && !self.stageDelegate!.stillHaveSteps()
+            return self.stageDelegate == nil || (!self.stillHaveStage() && !self.stageDelegate!.stillHaveSteps() && self.wentBack == false)
         }
     }
     
@@ -77,6 +44,7 @@ class UJCoordinator: ObservableObject {
     var config: ERP_Config;
     
     // stages
+    private var wentBack: Bool = false;
     private var stageHistory = [String]();
     private var index: Int;
     var stageDelegate: PRegulationCheckStageDelegate?;
@@ -93,41 +61,57 @@ class UJCoordinator: ObservableObject {
         self.index = 0
         self.stageDelegate = self.getStageMap()["portedentrée"] as! PRegulationCheckStageDelegate
         self.stageHistory = [self.stageDelegate!.id]
-        self.myDictionary[self.stageHistory[index]] = DataNorm(key: self.stageHistory[index], data: [])
+        self.myDictionary[self.stageHistory[index]] = []
     }
 
     // record data
     func addNewRegulationCheck(newObject: DataNorm, newKey: String) {
-        myDictionary[self.stageDelegate!.id]!.data += newObject.data
+        
+        if wentBack {
+            let fetchId = newObject.subStepId
+            for (i,value) in myDictionary[self.stageDelegate!.id]!.enumerated() {
+                if value.subStepId == fetchId {
+                    myDictionary[self.stageDelegate!.id]![i] = newObject
+                    break
+                }
+            }
+        }
+        else {
+            myDictionary[self.stageDelegate!.id]!.append(newObject)
+        }
+        // TODO: when we go back and revalidate a step
     }
     
     func backToThePreviousStage() {
         // TODO: check, maybe move the index of the previous delegate, maybe it will erase when we go to previous stage, add stg to load in the next features
-        if self.stageDelegate!.index == 0 {
-            // if first step we back to the previous stage
+        
+        self.wentBack = true
+        
+        if self.stageDelegate == nil || (self.stageDelegate!.index == 0 && self.index > 0) {// go previous stage
             self.index -= 1
-            self.stageDelegate = getStageMap()[parseNormId(stageHistory[index])] as! PRegulationCheckStageDelegate
-            print("beforeBack")
-            print(self.stageDelegate!.index)
-            //myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
+            // reload data
+            self.stageDelegate = (getStageMap()[parseNormId(stageHistory[index])] as! PRegulationCheckStageDelegate)
+            let previousId = self.stageHistory[index]
+
+            // reload saved data for data model
+            self.stageDelegate?.reloadPreviousStage(previousId: previousId,newSavedData: myDictionary[previousId]!)
+            self.stageDelegate?.loadPreviousStep()
         }
-        if self.index > 0 {
-            self.index -= 1
-            self.stageDelegate = getStageMap()[parseNormId(stageHistory[index])] as! PRegulationCheckStageDelegate
-            print("beforeBack")
-            print(self.stageDelegate!.index)
-            //myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
+        
+        else if self.stageDelegate!.index > 0 { // go previous stage's substep
+
+            self.stageDelegate?.reloadDuringTheStage(newSavedData: myDictionary[self.stageDelegate!.id]!)
+            self.stageDelegate?.loadPreviousStep()
         }
     }
-    
-    func goToNextStage() {
-        index += 1
-    }
-    
+        
     func canGoBack() -> Bool {
         return !(index == 0 && stageDelegate!.index == 0)
     }
 
+    func resetWentBack() -> Void {
+        self.wentBack = false
+    }
     
     // add steps/stages, (id list) s parameters
     func addRegulationCheckStages(ids: Set<String>) {
@@ -142,13 +126,12 @@ class UJCoordinator: ObservableObject {
         print("changeDelegate")
         
         if self.index < self.stageHistory.count {
-            print("inside")
             let trueId = parseNormId(stageHistory[index])
-            print(stageHistory[index])
-            print(trueId)
             self.stageDelegate = getStageMap()[trueId] as! PRegulationCheckStageDelegate
             self.stageHistory[index] = self.stageDelegate!.id
-            myDictionary[stageHistory[index]] = DataNorm(key: stageHistory[index], data: [])
+            myDictionary[stageHistory[index]] = []
+        } else {
+            self.stageDelegate = nil
         }
     }
     
@@ -156,16 +139,38 @@ class UJCoordinator: ObservableObject {
         return self.stageHistory.count > (self.index + 1)
     }
     
-    func nextStep(forceQuit: Bool = false) -> GenericRegulationView {
-        print("NextStep")
-        print(index)
-        print(stageHistory.count)
+    func getNextView(forceQuit: Bool = false) -> GenericRegulationView {
         
-        if forceQuit == true || index >= stageHistory.count {
+        if forceQuit == true || index == stageHistory.count || !(stageDelegate!.stillHaveSteps()) {
             // summary page
             return GenericRegulationView(coordinator: self)
         } else {
             return stageDelegate!.getNextStep()
+        }
+    }
+    
+    func getPreviousView() -> GenericRegulationView {
+        //TODO: check if we can load the previous step otherwise, we keep the current scene
+        
+        if self.stageDelegate == nil {
+            return GenericRegulationView(title: "Empty Page", content: [], id: "emptypage", subStepId: "emptypage")
+        }
+        
+        return  self.stageDelegate!.getPreviousStep()
+    }
+    
+    func nextStep(start: Bool = false) {
+        print("go next step")
+
+        self.resetWentBack()
+
+        if start == false {
+
+            self.stageDelegate?.index += 1
+
+            if !self.stageDelegate!.stillHaveSteps() {
+                self.changeDelegate()
+            }
         }
     }
 }

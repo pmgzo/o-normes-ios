@@ -34,17 +34,20 @@
 		94996E40272D393B003E6D96 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94996E3F272D393B003E6D96 /* Preview Assets.xcassets */; };
 		94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61EF27674E5B0046B02E /* ProfileView.swift */; };
 		94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CD61F127679D0A0046B02E /* GeometryUtils.swift */; };
+		EA02F75B287B2F5400954209 /* StageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA02F75A287B2F5400954209 /* StageDelegate.swift */; };
 		EA17E3DF282BE7F100F3995F /* Ramp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA17E3DE282BE7F100F3995F /* Ramp.swift */; };
 		EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1D30AF27E20A4F004BCC97 /* UserJourneyCoordinator.swift */; };
 		EA25DC902801EA8700192FFA /* RegulationCheckComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA25DC8F2801EA8700192FFA /* RegulationCheckComponents.swift */; };
 		EA33C409280EA65000E120A1 /* AccessibilityRegulationPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA33C408280EA65000E120A1 /* AccessibilityRegulationPage.swift */; };
-		EA5537CE2828DEBA00780CB8 /* ProtocolRegulationCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537CD2828DEBA00780CB8 /* ProtocolRegulationCheck.swift */; };
 		EA5537D0282A532F00780CB8 /* Corridor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537CF282A532F00780CB8 /* Corridor.swift */; };
 		EA5537D2282A5C7F00780CB8 /* WaitingLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */; };
 		EA5537D4282A85A800780CB8 /* Stairs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5537D3282A85A800780CB8 /* Stairs.swift */; };
 		EA6F4D9827E0CD92009CDDAF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6F4D9727E0CD92009CDDAF /* Style.swift */; };
 		EA7F07D227F7231300DFC8CE /* Door.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7F07D127F7231300DFC8CE /* Door.swift */; };
 		EA7F07D427F738AA00DFC8CE /* CustomNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */; };
+		EA87EBFD287C1A2900140E30 /* ReferencedSubSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA87EBFC287C1A2900140E30 /* ReferencedSubSteps.swift */; };
+		EA8974D7287C56CC001DF892 /* RegulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8974D6287C56CC001DF892 /* RegulationView.swift */; };
+		EA8974D9287C56F1001DF892 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8974D8287C56F0001DF892 /* DataType.swift */; };
 		EAAAF480282A8AAC00D7A04B /* Elevator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAAF47F282A8AAB00D7A04B /* Elevator.swift */; };
 		EAB77C09282E574600185C1A /* SummaryPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB77C08282E574600185C1A /* SummaryPage.swift */; };
 /* End PBXBuildFile section */
@@ -79,17 +82,20 @@
 		949FE4ED272D6B4E008DD273 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		94CD61EF27674E5B0046B02E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		94CD61F127679D0A0046B02E /* GeometryUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryUtils.swift; sourceTree = "<group>"; };
+		EA02F75A287B2F5400954209 /* StageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageDelegate.swift; sourceTree = "<group>"; };
 		EA17E3DE282BE7F100F3995F /* Ramp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ramp.swift; sourceTree = "<group>"; };
 		EA1D30AF27E20A4F004BCC97 /* UserJourneyCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserJourneyCoordinator.swift; sourceTree = "<group>"; };
 		EA25DC8F2801EA8700192FFA /* RegulationCheckComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationCheckComponents.swift; sourceTree = "<group>"; };
 		EA33C408280EA65000E120A1 /* AccessibilityRegulationPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityRegulationPage.swift; sourceTree = "<group>"; };
-		EA5537CD2828DEBA00780CB8 /* ProtocolRegulationCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolRegulationCheck.swift; sourceTree = "<group>"; };
 		EA5537CF282A532F00780CB8 /* Corridor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Corridor.swift; sourceTree = "<group>"; };
 		EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingLine.swift; sourceTree = "<group>"; };
 		EA5537D3282A85A800780CB8 /* Stairs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stairs.swift; sourceTree = "<group>"; };
 		EA6F4D9727E0CD92009CDDAF /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		EA7F07D127F7231300DFC8CE /* Door.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Door.swift; sourceTree = "<group>"; };
 		EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigation.swift; sourceTree = "<group>"; };
+		EA87EBFC287C1A2900140E30 /* ReferencedSubSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferencedSubSteps.swift; sourceTree = "<group>"; };
+		EA8974D6287C56CC001DF892 /* RegulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationView.swift; sourceTree = "<group>"; };
+		EA8974D8287C56F0001DF892 /* DataType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataType.swift; sourceTree = "<group>"; };
 		EAAAF47F282A8AAB00D7A04B /* Elevator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Elevator.swift; sourceTree = "<group>"; };
 		EAB77C08282E574600185C1A /* SummaryPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryPage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -160,13 +166,16 @@
 				EA6F4D9727E0CD92009CDDAF /* Style.swift */,
 				EA7F07D127F7231300DFC8CE /* Door.swift */,
 				EA25DC8F2801EA8700192FFA /* RegulationCheckComponents.swift */,
-				EA5537CD2828DEBA00780CB8 /* ProtocolRegulationCheck.swift */,
 				EA5537CF282A532F00780CB8 /* Corridor.swift */,
 				EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */,
 				EA5537D3282A85A800780CB8 /* Stairs.swift */,
 				EAAAF47F282A8AAB00D7A04B /* Elevator.swift */,
 				EA17E3DE282BE7F100F3995F /* Ramp.swift */,
 				EAB77C08282E574600185C1A /* SummaryPage.swift */,
+				EA02F75A287B2F5400954209 /* StageDelegate.swift */,
+				EA87EBFC287C1A2900140E30 /* ReferencedSubSteps.swift */,
+				EA8974D6287C56CC001DF892 /* RegulationView.swift */,
+				EA8974D8287C56F0001DF892 /* DataType.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -314,20 +323,23 @@
 				940D380527B7246200231AD1 /* SCNSphere+Init.swift in Sources */,
 				944A4B56273672B400811D53 /* LoginView.swift in Sources */,
 				EA5537D4282A85A800780CB8 /* Stairs.swift in Sources */,
+				EA87EBFD287C1A2900140E30 /* ReferencedSubSteps.swift in Sources */,
 				EA5537D2282A5C7F00780CB8 /* WaitingLine.swift in Sources */,
 				9412DA25276A0AFF0021A441 /* UserViewModel.swift in Sources */,
 				EA6F4D9827E0CD92009CDDAF /* Style.swift in Sources */,
-				EA5537CE2828DEBA00780CB8 /* ProtocolRegulationCheck.swift in Sources */,
+				EA02F75B287B2F5400954209 /* StageDelegate.swift in Sources */,
 				EA7F07D427F738AA00DFC8CE /* CustomNavigation.swift in Sources */,
 				944A4B5227366FEB00811D53 /* APIService.swift in Sources */,
 				94996E39272D3939003E6D96 /* OnormesApp.swift in Sources */,
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
 				EA33C409280EA65000E120A1 /* AccessibilityRegulationPage.swift in Sources */,
+				EA8974D9287C56F1001DF892 /* DataType.swift in Sources */,
 				EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */,
 				940D380727B7247B00231AD1 /* AreaViewController.swift in Sources */,
 				940D380327B7244200231AD1 /* MeasureSCNView.swift in Sources */,
 				EA25DC902801EA8700192FFA /* RegulationCheckComponents.swift in Sources */,
+				EA8974D7287C56CC001DF892 /* RegulationView.swift in Sources */,
 				9412DA232769F31E0021A441 /* User.swift in Sources */,
 				94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */,
 				940D380127B7241700231AD1 /* MeasureViewController.swift in Sources */,

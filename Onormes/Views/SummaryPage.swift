@@ -28,10 +28,8 @@ func parseNormId(_ rawId: String) -> String {
 }
 
 func getImageName(id: String) -> String {
-    print("fetch id")
 
     let newId = parseNormId(id)
-    print(newId)
     let stageMap: [String:String] = [
         "portedentrée" : "Door",
         "rampe": "Ramp",
@@ -70,8 +68,6 @@ struct DataNormDetails: View {
 
     init(data: [RegulationNorm]) {
         self.data = data
-        print("count")
-        print(data.count)
     }
     
     var body: some View {
@@ -118,10 +114,12 @@ extension GenericRegulationView {
     var summaryPage: some View {
         VStack {
                 HStack {
-                    Button("Retour") {
-                        self.coordinator!.backToThePreviousStage()
-                        presentationMode.wrappedValue.dismiss()
-                    }.buttonStyle(ButtonStyle())
+                    CustomNavigationLink(coordinator: self.coordinator!,tag: "goback", selection: $selectionTag, destination: self.coordinator!.getPreviousView(), navigationButton: true) {
+                        Button("Retour") {
+                            self.coordinator!.backToThePreviousStage()
+                            selectionTag = "goback"
+                        }.buttonStyle(ButtonStyle())
+                    }
                     Spacer().frame(width: 250)
                 }
                 Spacer()
@@ -138,7 +136,7 @@ extension GenericRegulationView {
                             print("Start sending information")
                             Task {
                                do {
-                                   let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: "pas d'info")
+                                   let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
                                    sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
                                    
                                    print("End sending information")

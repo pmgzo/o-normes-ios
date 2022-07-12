@@ -11,12 +11,6 @@ import SwiftUI
 
 //TODO: review, and change here
 
-extension String {
-    var floatValue: Float {
-        return (self as NSString).floatValue
-    }
-}
-
 //extension StringProtocol {
 //    var double: Double? { Double(self) }
 //    var float: Float? { Float(self) }
