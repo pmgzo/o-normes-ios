@@ -62,7 +62,7 @@ class GenericRegulationViewModel: PRegulationCheckViewModel {
                 newObject.data.append(value)
             }
             // TODO: to modify
-            coordinator.addNewRegulationCheck(newObject: newObject, newKey: self.id)
+            coordinator.addNewRegulationCheck(newObject: newObject)
             
             return true
         }

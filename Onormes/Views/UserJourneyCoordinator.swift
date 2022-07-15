@@ -65,7 +65,7 @@ class UJCoordinator: ObservableObject {
     }
 
     // record data
-    func addNewRegulationCheck(newObject: DataNorm, newKey: String) {
+    func addNewRegulationCheck(newObject: DataNorm) {
         
         if wentBack {
             let fetchId = newObject.subStepId
