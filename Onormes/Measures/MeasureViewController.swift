@@ -8,6 +8,19 @@
 import UIKit
 import ARKit
 
+/**
+ 
+    View controller of the **Measure** storyboard.
+        
+    **Properties**:
+    - lineWidth: width of the line between the two selected points
+    - nodeRadius: radius of the selected points
+    - realTimeLineNode: line component in the **Measure** storyboard
+    - centerPointImageView: cursor component
+    - sceneView: **MeasureSCNView** component
+ 
+ */
+
 class MeasureViewController: UIViewController {
   
   let lineWidth = CGFloat(0.005)
@@ -23,11 +36,29 @@ class MeasureViewController: UIViewController {
     return centerPointImageView.center
   }()
   
+    /**
+            Add an animation once this is getting back to the foreground
+     
+     - Parameters:
+        - animated: once this variable is set to true, this view will be animated once it gets put into the foreground
+        
+        
+     */
+    
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     sceneView.run()
   }
   
+/**
+ Needed when the scene has changed and this view is put into the background
+ 
+ - Parameters:
+    - animated: once this variable is set to true, the current is being animated to go the next view
+    
+    
+ */
+    
   override func viewWillDisappear(_ animated: Bool) {
     sceneView.pause()
     super.viewWillDisappear(animated)
@@ -37,7 +68,18 @@ class MeasureViewController: UIViewController {
     return true
   }
   
-  //MARK: - Helper methods
+    //MARK: - Helper methods
+    
+    
+    /**
+        This function enables us to remove nodes and measure from this view.
+    - Parameters:
+    - nodes: array of nodes to be removed
+     
+     
+     */
+    
+  
   
   func removeNodes(fromNodeList nodes: NSMutableArray) {
     for node in nodes {

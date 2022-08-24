@@ -1,5 +1,5 @@
 //
-//  AccessibilityRegulationPage.swift
+//  RegulationsSelection.swift
 //  Onormes
 //
 //  Created by gonzalo on 19/04/2022.
@@ -8,6 +8,12 @@
 import Foundation
 import SwiftUI
 
+/**
+ This structure is used in the **RegulationSelection** page.
+ Enables us to identify which items has been selected by the user.
+ 
+ */
+
 struct RegulationPageItem {
     let id: String // for navigation but i think we will delete navigation
     let name: String
@@ -15,7 +21,13 @@ struct RegulationPageItem {
     var selected: Bool = false
 }
 
+/**
+ This global variable is used in the **RegulationSelection** page. Usually when we add a new stage in the app, we have to add it in this global variable as well.
+ 
+ */
+
 var regulationPageslist: [RegulationPageItem] = [
+    // TODO: to move within the class (GenericRegulationView)
     RegulationPageItem(id: "portedentrée", name: "porte d'entrée", imageName: "doorImage"),
     RegulationPageItem(id: "rampe", name: "rampe d'entrée", imageName: "doorImage"),
     RegulationPageItem(id: "alléestructurante", name: "allée structurante", imageName: "doorImage"),
@@ -24,6 +36,11 @@ var regulationPageslist: [RegulationPageItem] = [
     RegulationPageItem(id: "ascenseur", name: "ascenseur", imageName: "doorImage"),
     RegulationPageItem(id: "filedattente", name: "file d'attente", imageName: "doorImage")
 ]
+
+/**
+ This is a custom ObservableObject to handle item selection in the **RegulationSelection** page.
+ 
+ */
 
 class SelectedRegulationSet: ObservableObject {
     @Published var items: Set<String>;
@@ -47,7 +64,11 @@ class SelectedRegulationSet: ObservableObject {
 //TODO: faire une map de norme à verifier qui contient, l'image specific à check étape (porte, escalier, allée structurante/non structurante)
 // https://www.hackingwithswift.com/quick-start/swiftui/how-to-position-views-in-a-grid-using-lazyvgrid-and-lazyhgrid
 
-// regulationPage implementation
+/**
+ This is an extension of the class **GenericRegulationView**. It defines the **RegulationsSelection** page.
+ 
+ */
+
 extension GenericRegulationView {
     
     var regulationsPage: some View {
@@ -109,7 +130,7 @@ extension GenericRegulationView {
             } else {
                 Spacer().frame(height: 64)
             }
-            // add validation button
         }
     }
 }
+

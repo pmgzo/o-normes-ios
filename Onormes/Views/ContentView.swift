@@ -7,6 +7,12 @@
 
   import SwiftUI
 
+/**
+ 
+ This class handles the bar navigation view, redirect the user according to what he has clicked
+ 
+ */
+
   struct ContentView: View {
         var body: some View {
             VStack(alignment: .center, content: {
@@ -59,7 +65,16 @@ struct MeasuresVCRepresented : UIViewControllerRepresentable {
   }
 }
 
-
+/**
+ This structure render the home page. From this page we can access to the user journey.
+ 
+ This is here where the **UJCoordinator** is created, before starting the user journey.
+ 
+ **Properties**:
+ - coordinator: user journey handler
+ - isShowingDetailView: variable used to trigger the user journey 's **NavigationLink** button
+ 
+ */
 
 struct HomeMenu: View {
     
@@ -76,12 +91,12 @@ struct HomeMenu: View {
                 Text("Vous êtes connecté !")
                 CustomNavigationLink(coordinator: coordinator, isActive: $isShowingDetailView, destination: { () -> GenericRegulationView in
                     return self.coordinator.getNextView()
-                }()) {
+                },label: {
                     Button("Commencer le parcours utilisateur") {
                         self.coordinator.nextStep(start: true)
                         isShowingDetailView = true
                     }.buttonStyle(ButtonStyle())
-                }
+                })
             }
         }
     }

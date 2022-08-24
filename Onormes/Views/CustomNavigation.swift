@@ -14,15 +14,29 @@ class CustomNavCoordinator: ObservableObject {
     // others...
 }
 
+/**
+ This class wrapp up the whole journey navigation page, it manages the buttons navigation display, as well as the button to add new stages/regulations.
+ 
+**Constructor**
+ ```swift
+ init(content: @escaping () -> GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator, navigationButton: Bool)
+ ```
+ **Parameters**
+ - content: closure to return the next view
+ - navcoordinator: navigation coordinator
+ - coordinator: user journey coordinator
+ - navigationButton: variable indicating whether displaying the nav button or not
+ */
+
 struct UserJourneyNavigationPage: View {
     @State private var selectionTag: String?;
     
-    let content: GenericRegulationView;
+    let content: () -> GenericRegulationView;
     private unowned let navcoordinator: CustomNavCoordinator;
     var coordinator: UJCoordinator;
     var navigationButton = false;
     
-    init(content: GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator, navigationButton: Bool) {
+    init(content: @escaping () -> GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator, navigationButton: Bool) {
         self.content = content
         self.coordinator = coordinator
         self.navcoordinator = navcoordinator
@@ -42,13 +56,13 @@ struct UserJourneyNavigationPage: View {
             
             // own content
             Spacer()
-            self.content.frame(maxWidth: .infinity, maxHeight: .infinity)
+            self.content().frame(maxWidth: .infinity, maxHeight: .infinity)
             if navigationButton {
                 Spacer()
                 VStack {
                     HStack {
                         if (self.coordinator.canGoBack()) {
-                            CustomNavigationLink(coordinator: coordinator,tag: "goback", selection: $selectionTag, destination: self.coordinator.getPreviousView(), navigationButton: false) {
+                            CustomNavigationLink(coordinator: coordinator,tag: "goback", selection: $selectionTag, destination: self.coordinator.getPreviousView, navigationButton: !self.coordinator.done) {
                                 Button("Retour") {
                                     self.coordinator.backToThePreviousStage()
                                     selectionTag = "goback"
@@ -57,14 +71,14 @@ struct UserJourneyNavigationPage: View {
                         }
                                                 
                         // TODO: Add Recap page ?
-                        CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: self.coordinator.getNextView(forceQuit: true), navigationButton: false) {
+                        CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: {() -> GenericRegulationView in return self.coordinator.getNextView(forceQuit: true)}, navigationButton: false) {
                             Button("Finir l'audit") {
                                 // coordinator check
                                 selectionTag  = "finished"
                             }.buttonStyle(ButtonStyle())
                         }
                         
-                        CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: self.coordinator.getNextView(), navigationButton: !self.coordinator.done) {
+                        CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: {() -> GenericRegulationView in return self.coordinator.getNextView()}, navigationButton: !self.coordinator.done) {
                             Button("Etape suivante") {
                                 if coordinator.stageDelegate!.formIsOkay() {
                                     print("step approved, modify data object")
@@ -85,20 +99,21 @@ struct UserJourneyNavigationPage: View {
     
 }
 
+/// This class manages RegulationsSelection page and the Substep page view
 struct UserJourneyNavigationWrapper: View {
-    let content: GenericRegulationView;
+    let content: () -> GenericRegulationView;
     @ObservedObject var navcoordinator = CustomNavCoordinator();
     var coordinator: UJCoordinator;
     var navigationButton = false
     
-    init(coordinator: UJCoordinator, content: GenericRegulationView, navigationButton: Bool) {
+    init(coordinator: UJCoordinator, content: @escaping () -> GenericRegulationView, navigationButton: Bool) {
         self.content = content
         self.coordinator = coordinator
         self.navigationButton = navigationButton
     }
     
-    init(coordinator: UJCoordinator, @ViewBuilder content: () -> GenericRegulationView) {
-        self.content = content()
+    init(coordinator: UJCoordinator, @ViewBuilder content: @escaping () -> GenericRegulationView) {
+        self.content = content
         self.coordinator = coordinator
     }
     
@@ -114,8 +129,33 @@ struct UserJourneyNavigationWrapper: View {
     }
 }
 
+/**
+ This is class is a custom navigation link, it alter the native effect of the standard navigationLink.
+ Thanks to that class we can retrieve and keep track of the data in the next steps. It allows us to have our own custom navigation bar with our own buttons
+ 
+    **Constructors**:
+ *Those constructor handle 3 different to build a navigation link:*
+    - from **tag**  and **selection**: indicate on which tag the **NavigationLink** should be triggered
+    - from **isActive**: if this variable turn to **True** the **NavigationLink** is triggered
+ 
+```swift
+ init(coordinator: UJCoordinator, destination: @escaping () -> GenericRegulationView, @ViewBuilder label: @escaping () -> Label)
+```
+ 
+```swift
+ init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: @escaping () -> GenericRegulationView, navigationButton: Bool, @ViewBuilder label: @escaping () -> Label)
+ ```
+  
+```swift
+ init(coordinator: UJCoordinator, isActive: Binding<Bool>, destination: @escaping () -> GenericRegulationView, @ViewBuilder label: @escaping () -> Label)
+```
+
+ 
+ 
+ */
+
 struct CustomNavigationLink<Label: View> : View {
-    let destination: GenericRegulationView;
+    let destination: () -> GenericRegulationView;
     let label: () -> Label;
     let constructorNumber: Int;
     let tag: String?;
@@ -124,7 +164,7 @@ struct CustomNavigationLink<Label: View> : View {
     var coordinator: UJCoordinator;
     var navigationButton = true;
     
-    init(coordinator: UJCoordinator, destination: GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, destination: @escaping () -> GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
         constructorNumber = 0
         self.destination = destination
         self.label = label
@@ -134,7 +174,7 @@ struct CustomNavigationLink<Label: View> : View {
         self.tag = nil
         self.isActive = nil
     }
-    init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: GenericRegulationView, navigationButton: Bool, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, tag: String, selection: Binding<String?>, destination: @escaping () -> GenericRegulationView, navigationButton: Bool, @ViewBuilder label: @escaping () -> Label) {
         self.constructorNumber = 1
         self.selection = selection
         
@@ -147,7 +187,7 @@ struct CustomNavigationLink<Label: View> : View {
         self.isActive = nil
     }
 
-    init(coordinator: UJCoordinator, isActive: Binding<Bool>, destination: GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
+    init(coordinator: UJCoordinator, isActive: Binding<Bool>, destination: @escaping () -> GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
         self.constructorNumber = 2
         self.isActive = isActive
         self.destination = destination
@@ -183,18 +223,24 @@ struct CustomNavigationLink<Label: View> : View {
     }
 }
 
+/**
+ This is class helps us to quite the current user journey and going back at the home menu, it remove also the native navigation top bar.
+ 
+ **Parameters**
+    - isActive: needed variable to trigger the **NavigationLink**
+    - label: Button component of the **NavigationLink**
+ */
+
 struct QuitingNavigationLink<Label: View> : View {
     let label: () -> Label;
     let constructorNumber: Int;
     let tag: String?;
-    let selection: Binding<String?>?;
     var isActive: Binding<Bool>;
     
     init(isActive: Binding<Bool>, @ViewBuilder label: @escaping () -> Label) {
         constructorNumber = 0
         self.label = label
         
-        self.selection = nil
         self.tag = nil
         self.isActive = isActive
     }

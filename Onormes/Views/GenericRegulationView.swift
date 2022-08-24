@@ -1,80 +1,47 @@
 //
-//  RegulationView.swift
+//  GenericRegulationView.swift
 //  Onormes
 //
-//  Created by gonzalo on 11/07/2022.
+//  Created by gonzalo on 06/08/2022.
 //
 
 import Foundation
 import SwiftUI
 
-protocol PRegulationCheckViewModel: ObservableObject, Identifiable {
-    func addRegulationCheck(coordinator: UJCoordinator, data: [String:RegulationNorm], content: [RegulationCheckField], subStepId: String) -> Bool
-    func formIsOkay(data: [String:RegulationNorm]) -> Bool
-}
-
-class GenericRegulationViewModel: PRegulationCheckViewModel {
-    //@State var data: [String : String] = [:];
-    var mandatoryItems: Set<String>;
-    var id: String;
-
-    init() {
-        self.id = ""
-        self.mandatoryItems = []
-    }
-    
-    func changeState(id: String, content: [RegulationCheckField]) -> Void {
-        self.id = id
-        for (_, reg) in content.enumerated() {
-            if !reg.optional {
-                mandatoryItems.insert(reg.key)
-            }
-        }
-    }
-    
-    func changeId(id: String) -> Void {
-        self.id = id
-    }
-
-    
-    func formIsOkay(data: [String:RegulationNorm]) -> Bool {
-        // check mandatory field
-
-        if mandatoryItems.isEmpty {
-            return true
-        }
-        
-        for (_, regname) in mandatoryItems.enumerated() {
-            
-            if data[regname]!.type != TypeField.bool &&  data[regname]!.valueMetric == "" {
-                return false
-            }
-        }
-        
-        return true
-    }
-
-    func addRegulationCheck(coordinator: UJCoordinator, data: [String:RegulationNorm], content: [RegulationCheckField], subStepId: String) -> Bool {
-        if formIsOkay(data: data) {
-            // TODO: maybe to change because we need the key if we need to go back to the previous state
-            var newObject = DataNorm(key: self.id, data: [], subStepId: subStepId)
-            for (_, value) in data {
-                newObject.data.append(value)
-            }
-            // TODO: to modify
-            coordinator.addNewRegulationCheck(newObject: newObject)
-            
-            return true
-        }
-        return false
-    }
-    
-    func displayError(data: [String:RegulationNorm]) -> Bool {
-        // check mandatory field
-        return !formIsOkay(data: data)
-    }
-}
-
+/**
+ This class is the main view of the user journey navigation. It handles the summary page, the regulations selection page, and substeps pages.
+ 
+ **Properties**
+ 
+- General properties:
+    - navcoordinator: handle substep and regulations selections page.
+    - coordinator: user journey coordinator
+    - selectionTag: tags to handle event for navigation buttons
+- Regulations Selection properties:
+    - selectedItems:  selected stages
+    - gridItemLayout: grid for the regulations selection
+- SubSteps properties:
+    - title: top title name
+    - content: list of the forms in the current substeps
+    - substep: current substep id
+    - dataContainer: forms's data
+ 
+ **Constructors**
+ 
+ - SubStep constructor:
+ ```swift
+ init(title: String, content: [RegulationCheckField], id: String, subStepId: String)
+ ```
+ - Regulations Selection constructor:
+ ```swift
+ init(coordinator: UJCoordinator, navcoordinator: CustomNavCoordinator)
+ ```
+ - Summary constructor:
+ ```swift
+ init(coordinator: UJCoordinator)
+ ```
+ 
+ */
 struct GenericRegulationView: View
 {
     var model: GenericRegulationViewModel = GenericRegulationViewModel()
@@ -94,8 +61,6 @@ struct GenericRegulationView: View
     @ObservedObject var selectedItems: SelectedRegulationSet;
     var gridItemLayout: [GridItem];
     @State var isActive = false
-    
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>;
     
     init(title: String, content: [RegulationCheckField], id: String, subStepId: String) {
         self.title = title
@@ -142,7 +107,7 @@ struct GenericRegulationView: View
         self.gridItemLayout = []
         self.dataContainer = DataNormContainer(content: [])
     }
-    
+        
     var body: some View {
         
         if self.pageType == PageType.addStage {
@@ -217,11 +182,23 @@ struct GenericRegulationView: View
         return self.model.formIsOkay(data: self.dataContainer.data)
     }
     
+    /**
+     This function acts as a bridge to access the **GenericRegulationViewModel** and ask to save the data (usually after clicking on the next button.
+     
+    - Parameters:
+        - coordinator: user journey coordinator (used to change the data)
+     */
+    
     func modify(coordinator: UJCoordinator) -> Bool {
         //TODO: att byta
         return self.model.addRegulationCheck(coordinator: coordinator, data: self.dataContainer.data, content: self.content!, subStepId: self.subStepId!)
     }
     
+    /**
+     This function reload the view and the data written. This function is called if the user decide to going back, and change some data.
+    - Parameters:
+     - savedData: saved data to be reloaded
+     */
     func reloadSavedData(savedData: DataNorm) {
         for value in savedData.data {
             if value.type == TypeField.bool {
@@ -233,4 +210,3 @@ struct GenericRegulationView: View
         }
     }
 }
-

@@ -8,6 +8,17 @@
 import RealityKit
 import ARKit
 
+/**
+        View controller of the **Reconstruction** storyboard, it handle event handlers and interface rendering,
+        It inherits from **UIViewController** to act as a View Controller, and to be recognize by the storyboard once we connect to it.
+         As the **Reconstruction** story board use the AR technology to scan and load a 3D object, to interact with the recognized element, this class also inherits from **ARSesssionDelegate**.
+ 
+        **Properties:**
+        - arView: rendered AR view in the controlled story board
+    
+ *@IBOutlet is a present component in the story board like **UIButton** for instance*
+ */
+
 class ReconstructionViewController: UIViewController, ARSessionDelegate {
   
   @IBOutlet var arView: ARView!
@@ -23,6 +34,11 @@ class ReconstructionViewController: UIViewController, ARSessionDelegate {
     CGSize(width: view.bounds.size.width, height: imageViewHeight.constant)
   }()
   
+    /**
+            Once this class has loaded its view (storyBoard), the ARScene needs to be set up
+     
+     */
+    
   override func viewDidLoad() {
     func setARViewOptions() {
       arView.debugOptions.insert(.showSceneUnderstanding)
@@ -48,6 +64,10 @@ class ReconstructionViewController: UIViewController, ARSessionDelegate {
     initARView()
   }
   
+    /**
+            Event handler for the Reconstruction View, when we click on the export button, have to link the UIButton with the Reconstruction storyboard
+    */
+    
   @IBAction func tappedExportButton(_ sender: UIButton) {
     guard let camera = arView.session.currentFrame?.camera else {return}
     

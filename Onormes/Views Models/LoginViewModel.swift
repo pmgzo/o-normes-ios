@@ -7,6 +7,11 @@
 
 import Foundation
 
+/**
+    This class handle the data entered within the login forms and send it to then backend to get the user authentified
+ 
+ */
+
 class LoginViewModel: ObservableObject {
   @Published var credentials = Credentials()
   @Published var showProgressView = false

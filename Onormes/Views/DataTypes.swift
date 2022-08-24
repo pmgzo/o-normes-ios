@@ -1,5 +1,5 @@
 //
-//  DataType.swift
+//  DataTypes.swift
 //  Onormes
 //
 //  Created by gonzalo on 11/07/2022.
@@ -7,11 +7,10 @@
 
 import Foundation
 
-//extension String {
-//    var floatValue: Float {
-//        return (self as NSString).floatValue
-//    }
-//}
+/**
+ This enum type is used in **UserJourneyNavigationWrapper**, to see the current state of the page, and acts accordingly to which button the user has clicked on.
+ 
+ */
 
 enum PageType {
     case regular
@@ -30,6 +29,15 @@ struct ERP_Config {
     let hasElevator: Bool = true // maybe not usefull
 }
 
+/**
+ This enum type is used to see what kind of form is it render on the **GenericRegulationView**.
+ - string: is usually a grand box of free text typing
+ - float: is dedicated for measures
+ - bool: represent a checkbox
+ 
+ This type is import for the **DataNorm** type which is the user journey's saved data
+ */
+
 enum TypeField {
     case string
     case float
@@ -43,13 +51,28 @@ class IntegerRef {
     }
 }
 
+/**
+ This is the structure used as data which is filled during the user journey navigation.
+ It is filled in the GenericRegulationViewModel once the user has clicked to the next button. The data is thereafter send to the UserJourneyCoordinator class.
+ 
+ - Properties:
+    - id: regulation's identifier
+    - key: same as **id**
+    - valueMetric: writted value by the user  (if the field is not a checkbox)
+    - valueCheckBox: checkBox value (if the field is a checkbox)
+    - mandatory:indicate whether the value must be fieled
+    - type:type of the value (Bool, Text, Metric)
+    - comment: comment in a addiction to the value
+ 
+ */
+
 struct RegulationNorm: Identifiable {
     var id: String {get {return key}}
     
     let key: String;
     var valueMetric: String;
     var valueCheckBox: Bool;
-    let instruction: String
+    let instruction: String // useless
     let mandatory: Bool;
     let type: TypeField;
     var comment: String;
@@ -68,6 +91,18 @@ struct RegulationNorm: Identifiable {
     }
 }
 
+/**
+ This is class is like a **RegulationNorm** container.
+ This class is used to save data dynamicaly in the **UserJourneyCoordinator** class
+ This class contain all the data of one stage.
+ 
+ - Properties:
+    - id: identifier
+    - key: same as **id**
+    - data: array of **RegulationNorm** (regulation checks in a stage)
+ 
+ */
+
 class DataNorm: Identifiable {
     var id: String {key}
     
@@ -76,7 +111,6 @@ class DataNorm: Identifiable {
     let subStepId: String
     
     init(key: String, data: [RegulationNorm], subStepId: String) {
-        // data
         self.key = key
         self.data = data
         self.subStepId = subStepId
@@ -94,6 +128,19 @@ class DataNormContainer: ObservableObject {
         }
     }
 }
+
+/**
+ This struct is used to define form within **GenericRegulationView** that is substep.
+ 
+ - Properties:
+    - id: key
+    - key: same as id
+    - type: type of the field
+    - text: form's label
+    - optional: if this form is optional
+    - comment: comment
+ 
+ */
 
 struct RegulationCheckField: Identifiable, Equatable {
     var id: ObjectIdentifier
@@ -113,3 +160,4 @@ struct RegulationCheckField: Identifiable, Equatable {
         self.id = ObjectIdentifier(IntegerRef(UUID().uuidString))
     }
 }
+

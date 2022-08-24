@@ -10,10 +10,10 @@ import SwiftUI
 
 class RampStageDelegate: PRegulationCheckStageDelegate {
     
-    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
-        super.init(config: config, coordinator: coordinator, key: "rampe")
+    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
+        super.init(config: config, coordinator: coordinator)
         
-        self.steps.append(subStepsMap["rampe-1"]!)
+        self.steps.append(getSubSteps(id: "rampe-1"))
     }
     
     override func modify(coordinator: UJCoordinator) -> Bool {
@@ -22,35 +22,37 @@ class RampStageDelegate: PRegulationCheckStageDelegate {
         if index == 0 {
             if steps[0].dataContainer.data["automatique"]!.valueCheckBox == true && steps[0].dataContainer.data["amovible"]!.valueCheckBox == true {
                 // TODO: missed something here check PLD
-                self.steps.append(subStepsMap["rampe-2"]!)
+                self.steps.append(getSubSteps(id: "rampe-2"))
                 
-                self.steps.append(subStepsMap["rampe-3"]!)
+                self.steps.append(getSubSteps(id: "rampe-3"))
                 
-                self.steps.append(subStepsMap["rampe-4"]!)
+                self.steps.append(getSubSteps(id: "rampe-4"))
+                self.steps.append(getSubSteps(id: "rampe-14"))
             }
             
-            if steps[0].dataContainer.data["permanente"]!.valueCheckBox == true || steps[0].dataContainer.data["posée"]!.valueCheckBox == true {
-                self.steps.append(subStepsMap["rampe-18"]!)
+            if steps[0].dataContainer.data["permanente"]!.valueCheckBox != true {
+                self.steps.append(getSubSteps(id: "rampe-18"))
             }
             
-            self.steps.append(subStepsMap["rampe-5"]!)
-            self.steps.append(subStepsMap["rampe-6"]!)
-            self.steps.append(subStepsMap["rampe-7"]!)
-            self.steps.append(subStepsMap["rampe-8"]!)
-            self.steps.append(subStepsMap["rampe-9"]!)
-            self.steps.append(subStepsMap["rampe-10"]!)
-            self.steps.append(subStepsMap["rampe-11"]!)
-            self.steps.append(subStepsMap["rampe-12"]!)
-            self.steps.append(subStepsMap["rampe-13"]!)
+            self.steps.append(getSubSteps(id: "rampe-5"))
+            self.steps.append(getSubSteps(id: "rampe-6"))
+            self.steps.append(getSubSteps(id: "rampe-7"))
+            self.steps.append(getSubSteps(id: "rampe-8"))
+            self.steps.append(getSubSteps(id: "rampe-9"))
+            self.steps.append(getSubSteps(id: "rampe-10"))
+            self.steps.append(getSubSteps(id: "rampe-11"))
+            self.steps.append(getSubSteps(id: "rampe-12"))
+            self.steps.append(getSubSteps(id: "rampe-13"))
             
             // handle permanente ou posée
-            self.steps.append(subStepsMap["rampe-14"]!)
             
-            self.steps.append(subStepsMap["rampe-15"]!)
             
-            self.steps.append(subStepsMap["rampe-16"]!)
             
-            self.steps.append(subStepsMap["rampe-17"]!)
+            self.steps.append(getSubSteps(id: "rampe-15"))
+            
+            self.steps.append(getSubSteps(id: "rampe-16"))
+            
+            self.steps.append(getSubSteps(id: "rampe-17"))
         }
         return true
     }

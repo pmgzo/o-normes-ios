@@ -10,17 +10,17 @@ import SwiftUI
 
 class CorridorStageDelegate: PRegulationCheckStageDelegate {
     
-    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
-        super.init(config: config, coordinator: coordinator, key: "alléestructurante")
-        self.steps.append(subStepsMap["alléestructurante-1"]!)
+    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
+        super.init(config: config, coordinator: coordinator)
+        self.steps.append(getSubSteps(id: "alléestructurante-1"))
     }
 }
 
 class NonPublicCorridorStageDelegate: PRegulationCheckStageDelegate {
     
-    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
-        super.init(config: config, coordinator: coordinator, key: "alléenonstructurante")
-        self.steps.append(subStepsMap["alléenonstructurante-1"]!)
+    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
+        super.init(config: config, coordinator: coordinator)
+        self.steps.append(getSubSteps(id: "alléenonstructurante-1"))
     }
 }
 
@@ -28,7 +28,7 @@ struct Coridor_Previews: PreviewProvider {
       static var previews: some View {
         Group {
             //DoorView(coordinator: UJCoordinator())
-            subStepsMap["alléestructurante-1"]!
+            getSubSteps(id: "alléestructurante-1")
         }
       }
   }

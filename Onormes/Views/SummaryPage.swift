@@ -21,6 +21,16 @@ extension String {
         return String(self[start..<end])
     }
 }
+/**
+ 
+ This function remove the uuid string from the id, and filter out only the stage's id
+ 
+ - Parameters:
+- rawId: id containing the uuid string whithin it
+ 
+ - Returns: return parsed id
+ 
+ */
 
 func parseNormId(_ rawId: String) -> String {
     let index = rawId.count - (36 + 1)
@@ -114,7 +124,7 @@ extension GenericRegulationView {
     var summaryPage: some View {
         VStack {
                 HStack {
-                    CustomNavigationLink(coordinator: self.coordinator!,tag: "goback", selection: $selectionTag, destination: self.coordinator!.getPreviousView(), navigationButton: true) {
+                    CustomNavigationLink(coordinator: self.coordinator!, tag: "goback", selection: $selectionTag, destination: self.coordinator!.getPreviousView, navigationButton: true) {
                         Button("Retour") {
                             self.coordinator!.backToThePreviousStage()
                             selectionTag = "goback"
@@ -137,13 +147,14 @@ extension GenericRegulationView {
                             Task {
                                do {
                                    let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
-                                   sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
+                                   APIService().sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
                                    
                                    print("End sending information")
                                    self.isActive = true
                                    
                                    self.selectionTag = "backToTheMenu"
                                } catch {
+                                   // TODO: to fix warning (line above)
                                    print(error)
                                }
                             }
@@ -155,27 +166,3 @@ extension GenericRegulationView {
 
     }
 }
-
-// TODO: remove
-
-// FOR TESTING
-
-//var coo = UJCoordinator()
-//func instanciateUJCoo() -> UJCoordinator {
-//    coo.addNewRegulationCheck(newObject: NSDictionary(dictionary: ["est ce que pm c'est bogoss ?": "oui"]), newKey: "rampe d'entrée")
-//    return coo
-//}
-//
-//struct Summary_Previews: PreviewProvider {
-//
-//    //var coo = UJCoordinator()
-//
-//    init() {
-//        coo.addNewRegulationCheck(newObject: NSDictionary(dictionary: ["est ce que pm c'est bogoss ?": "oui"]), newKey: "rampe d'entrée")
-//    }
-//
-//    static var previews: some View {
-//        GenericRegulationView(coordinator: instanciateUJCoo())
-//    }
-//}
-

@@ -9,12 +9,12 @@ import Foundation
 import SwiftUI
 
 class StairsStageDelegate: PRegulationCheckStageDelegate {
-    override init(config: ERP_Config, coordinator: UJCoordinator, key: String = "empty") {  // build its stage array
-        super.init(config: config, coordinator: coordinator, key: "escalier")
-        
-        self.steps.append(subStepsMap["escalier-1"]!)
-        self.steps.append(subStepsMap["escalier-2"]!)
-        self.steps.append(subStepsMap["escalier-3"]!)
+    override init(config: ERP_Config, coordinator: UJCoordinator) {  // build its stage array
+        super.init(config: config, coordinator: coordinator)
+
+        self.steps.append(getSubSteps(id: "escalier-1"))
+        self.steps.append(getSubSteps(id: "escalier-2"))
+        self.steps.append(getSubSteps(id: "escalier-3"))
     }
 }
 

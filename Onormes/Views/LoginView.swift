@@ -8,7 +8,11 @@
 import SwiftUI
 
 let lightGreyColor = Color(red: 239.0/255.0, green: 243.0/255.0, blue: 244.0/255.0, opacity: 1.0)
-
+/**
+ This is the LoginView structure where the user have to authenticate himself to access to the application
+ This class contains the class **LoginForm**. It sends to the LoginForm class the state object **loginVM** to retrieve what the user has typed.
+ 
+ */
 struct LoginView: View {
   @StateObject private var loginVM = LoginViewModel()
   @EnvironmentObject var authentication: Authentication
@@ -52,7 +56,9 @@ struct LoginView_Previews: PreviewProvider {
     LoginView()
   }
 }
-
+/**
+ This class display both username and password forms in the **LoginView** page.
+ */
 struct LoginForm: View {
   enum Field: Hashable {
     case emailAddress
@@ -72,7 +78,6 @@ struct LoginForm: View {
     
   }
 }
-
 
 struct LogoImage: View {
   var body: some View {
@@ -176,6 +181,20 @@ struct LoginButtonContent: View {
       .cornerRadius(15.0)
   }
 }
+
+/**
+ 
+ Class to build spaced label component
+
+ **Constructor**:
+ ```swift
+ init(label: String, horizontalPadding: CGFloat = 20, color: Color = .gray)
+ ```
+ **Parameters:**
+ - label: string label
+- horizontalPadding: the wanted spaces around the label
+- color: text's color
+ */
 
 struct LabelledDivider: View {
   

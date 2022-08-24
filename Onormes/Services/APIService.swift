@@ -13,6 +13,13 @@ struct LoginResponse: Codable {
   let success: String?
 }
 
+/**
+    Convert string json to a dictionary
+    - Parameters:
+        - text: string http's response
+    - Returns: dictionary
+ */
+
 func convertToDictionary(text: String) -> [String: Any]? {
     if let data = text.data(using: .utf8) {
         do {
@@ -24,7 +31,23 @@ func convertToDictionary(text: String) -> [String: Any]? {
     return nil
 }
 
-class APIService {  
+
+/**
+ 
+    Class to call backend api, each method is a dedicated request
+ 
+ */
+
+class APIService {
+    
+    /**
+     
+        Method to call the login route
+        - Parameters:
+            - credentials: user's credentials
+            - completion: callback function to handle the request's response
+     
+     */
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
     // Check the URL, if the URL isn't correctly formated return an error
@@ -63,6 +86,14 @@ class APIService {
     }.resume()
   }
   
+    /**
+     
+        Method to get user data
+        - Parameters:
+            - completion: callback function to handle the request's response
+     
+     */
+    
     func getUser(completion: @escaping (User) -> Void) {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
@@ -89,6 +120,18 @@ class APIService {
           completion(userResponse)
         }.resume()
     }
+    
+    /**
+     
+        Method to create an audit
+        - Parameters:
+            - name: audit's id
+            - location: audit's place
+            - comment: comment
+            - owner_phone: phone number
+            - owner_email: email
+        - Returns: the created audit's id (as confirmation)
+     */
     
     // TODO: Add parameters in body, have to return the audit id
     func createAudit(name: String, location: String, comment: String, owner_phone: String, owner_email: String) async -> String {
@@ -125,6 +168,13 @@ class APIService {
 
         return auditId
     }
+    
+    /**
+     
+        Method to create a measure
+        - Parameters:
+        - params: request's parameters
+     */
 
     func createMeasure(params: NSDictionary) {
         // more info here: http://51.103.72.63:3001/api-docs/#/Measure/post_api_measure_
@@ -172,22 +222,33 @@ class APIService {
           //completion(userResponse)
         }.resume()
     }
+    
+    /**
+     
+        Method to send all the substeps's data filled during the user journey
+        
+     **Parameters**
+     
+        - auditId: id
+        - Returns: confirm whether the request has been successfully processed
+     */
+
+    func sendAllDataAudit(auditId: String, data: [DataNorm]) -> Bool {
+        print("send audit id")
+        print(auditId)
+        for norm in data {
+            for regulation in norm.data {
+                var value = regulation.valueMetric
+                if regulation.type == TypeField.bool {
+                    value = regulation.valueCheckBox == true ? "True" : "False"
+                }
+                self.createMeasure(params: ["audit_fk": auditId, "kitName": "", "name": regulation.key, "value": value, "comment": regulation.comment, "details": regulation.instruction])
+            }
+            print("norm " + norm.key + " done.")
+        }
+        
+        return true
+    }
+
 
  }
-
-func sendAllDataAudit(auditId: String, data: [DataNorm]) -> Bool {
-    print("send audit id")
-    print(auditId)
-    for norm in data {
-        for regulation in norm.data {
-            var value = regulation.valueMetric
-            if regulation.type == TypeField.bool {
-                value = regulation.valueCheckBox == true ? "True" : "False"
-            }
-            APIService().createMeasure(params: ["audit_fk": auditId, "kitName": "", "name": regulation.key, "value": value, "comment": regulation.comment, "details": regulation.instruction])
-        }
-        print("norm " + norm.key + " done.")
-    }
-    
-    return true
-}

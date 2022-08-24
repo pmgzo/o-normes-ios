@@ -8,6 +8,18 @@
 import UIKit
 import ARKit
 
+/**
+ 
+This class inherits from **MeasureViewController**
+This class is directly connected to the **Measure** storyboard.
+
+**Properties**:
+- areaLabel: debugging property to calculate the area beteen two in x and y axis
+- breadthLabel: length between two points
+- lengthLabel: equivalent to **breadthLabel**
+
+ */
+
 class AreaViewController: MeasureViewController {
   
   enum MeasureState {
@@ -63,7 +75,16 @@ class AreaViewController: MeasureViewController {
     }
   }
   
-  
+  /**
+        Private method to get all the nodes created by the user.
+   
+        - Parameters:
+            - state: useless paramters as **breadthCalc** and **lengthCalc** get us the same distance
+   
+        - Returns: nodes array
+   
+   */
+    
   private func nodesList(forState state: MeasureState) -> NSMutableArray {
     switch state {
       case .lengthCalc:
@@ -72,6 +93,11 @@ class AreaViewController: MeasureViewController {
         return breadthNodes
     }
   }
+    
+    /**
+            Method to remove all the existing component in the AR scene.
+     
+     */
   
   func clearScene() {
     removeNodes(fromNodeList: nodesList(forState: .lengthCalc))
@@ -79,6 +105,11 @@ class AreaViewController: MeasureViewController {
     removeNodes(fromNodeList: lineNodes)
   }
   
+/**
+    Clearout all the measurement once we reach two line measurements
+
+ */
+    
   private func resetMeasurement() {
     clearScene()
     floorRect = FloorRect(length: 0, breadth: 0)
@@ -91,10 +122,17 @@ class AreaViewController: MeasureViewController {
   
   //MARK: - IBActions
   
+    /**
+    IBAction to build a point object in the scene.
+     
+     - Parameters:
+        - sender: bound button component for this action
+    */
+    
   @IBAction func addPoint(_ sender: UIButton) {
     
     let pointLocation = view.convert(screenCenterPoint, to: sceneView)
-    guard let hitResultPosition = sceneView.hitResult(forPoint: pointLocation)  else {
+    guard let hitResultPosition = sceneView.hitResult(forPoint: pointLocation) else {
       return
     }
     
@@ -165,6 +203,14 @@ class AreaViewController: MeasureViewController {
 
 extension AreaViewController: ARSCNViewDelegate {
   
+/**
+    Method to update the display measurements event
+    - Parameters:
+        - renderer: **SCNSceneRenderer** not used for this function
+        - updateAtTime: time to save, to define the next updating measure
+ 
+ */
+    
   func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
     let dotNodes = allPointNodes as! [SCNNode]
     if dotNodes.count > 0, let currentCameraPosition = self.sceneView.pointOfView {
@@ -184,7 +230,7 @@ extension AreaViewController: ARSCNViewDelegate {
       }
     }
   }
-  
+    
   func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
     switch camera.trackingState {
       case .normal:

@@ -7,10 +7,19 @@
 
 import SwiftUI
 
+/**
+ This structure renders the Profile page.
+ 
+ **Properties**:
+    - userVM: variable who the user info to display on the profile page
+ 
+ */
+
 struct ProfileView: View {
-  let gradient = Gradient(colors: [.blue, .orange])
-  @State private var enableBlogger = true
-  @State var savedEmail = ""
+// TODO: to remove
+//  let gradient = Gradient(colors: [.blue, .orange])
+//  @State private var enableBlogger = true
+//  @State var savedEmail = ""
   @StateObject private var userVM = UserViewModel()
   
     var body: some View {
@@ -65,9 +74,10 @@ struct ProfileView: View {
         userVM.getCurrentUser()
       })
     }
-  func getData() {
-    savedEmail = UserDefaults.standard.string(forKey: "email") ?? ""
-  }
+    //TODO: to remove
+//  func getData() {
+//    savedEmail = UserDefaults.standard.string(forKey: "email") ?? ""
+//  }
 }
 
 struct ProfileView_Previews: PreviewProvider {
