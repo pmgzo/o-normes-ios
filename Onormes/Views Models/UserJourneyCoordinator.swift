@@ -72,7 +72,7 @@ class UJCoordinator: ObservableObject {
 
         self.index = 0
         self.stageHistory = []
-        self.stageDelegate = (self.getStageMap()["portedentrée"] as! PRegulationCheckStageDelegate)
+        self.stageDelegate = (self.getStageMap()["préétape"] as! PRegulationCheckStageDelegate)
         self.stageHistory.append(self.stageDelegate!.id)
         self.myDictionary[self.stageHistory[index]] = []
     }
@@ -87,7 +87,7 @@ class UJCoordinator: ObservableObject {
     
     /**
         This method is used for reset the **wentBack** property once the user clicked on next step button.s
-     
+        
      */
     
     func resetWentBack() -> Void {
@@ -110,7 +110,7 @@ class UJCoordinator: ObservableObject {
     
     func getCurrentStageId() -> String {
         print(self.stageHistory)
-        //print(self.wentBack)
+        // print(self.wentBack)
         
         if self.stageDelegate != nil && self.stageHistory.count > 0 {
             return self.stageHistory[index]
@@ -280,6 +280,7 @@ extension UJCoordinator {
      */
     func getStageMap() -> NSDictionary {
         let stageMap: NSDictionary = [
+            "préétape": PrestageStageDelegate(config: self.config, coordinator: self),
             "portedentrée" : DoorStageDelegate(config: self.config, coordinator: self),
             "rampe" : RampStageDelegate(config: self.config, coordinator: self),
             "alléestructurante" : CorridorStageDelegate(config: self.config, coordinator: self),

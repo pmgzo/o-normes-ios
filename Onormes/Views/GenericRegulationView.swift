@@ -122,14 +122,19 @@ struct GenericRegulationView: View
                     Spacer().frame(minHeight: 70, maxHeight: 130)
                         
                     List(self.content!) { c in
-                            //Text($0.name)
+                        // Text($0.name)
                         // model.displayError() ?
                         
                         Section(header: Text(c.type != TypeField.bool ? c.text :  "").foregroundColor(.black).multilineTextAlignment(.center), footer: Text("*champs obligatoire").foregroundColor(.red)) {
                                 // TODO: add check box condition or text
                             if c.type == TypeField.bool {
                                 Toggle(c.text, isOn: self.booleanBinding(for: c))
-                            } else {
+                            }
+                            else if c.type == TypeField.category {
+                                // drop down menu
+                                DropDownMenu(labelList: c.menusCategories, text: self.bindingCategory(for : c,  categories: c.menusCategories))//.frame(height: 220)
+                            }
+                            else {
                                 TextField("mesure", text: self.binding(for: c)).textFieldStyle(MeasureTextFieldStyle())
                             }
                                     
@@ -160,6 +165,24 @@ struct GenericRegulationView: View
         return .init(
             get: {
                 
+                if self.dataContainer.data[key] == nil {
+                    return ""
+                }
+                return self.dataContainer.data[key]!.valueMetric
+            },
+            set: {
+                self.dataContainer.data[key]!.valueMetric = $0
+            })
+    }
+    
+    func bindingCategory(for field: RegulationCheckField, comment: Bool = false, categories: [String]) -> Binding<String> {
+        var key = field.key
+        if comment {
+            key += "-comment"
+        }
+        return .init(
+            get: {
+                //self.dataContainer.data[key]!.valueMetric = categories[0]
                 if self.dataContainer.data[key] == nil {
                     return ""
                 }

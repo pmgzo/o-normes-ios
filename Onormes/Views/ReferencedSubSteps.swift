@@ -16,6 +16,8 @@ This function is used to call sub steps within stage of the user journey
 */
 func getSubSteps(id: String) -> GenericRegulationView {
     let subStepsMap: [String:GenericRegulationView] =  [
+        "préétape-1": GenericRegulationView(title: "Selection du type de batiment", content: [RegulationCheckField(key: "selectiontypedebatiment", type: TypeField.category, text: "Definir le type de batiment", categories: ["Hôtel", "Piscine", "Restaurant", "2", "4", "5", "6", "7", "8"], optional: false)], id: "selectiontypedebatiment", subStepId: "préétape-1"),
+        "préétape-2": GenericRegulationView(title: "Date du permis de construire", content: [RegulationCheckField(key: "permisdeconstruire", type: TypeField.bool, text: "Est ce que la date du permis de construire est après janvier 2007 ? (Après cette date, le batiment est considéré comme neuf)", optional: false)], id: "permisdeconstruire", subStepId: "préétape-2"),
         
         "alléestructurante-1": GenericRegulationView(title: "Page allée structurante", content: [RegulationCheckField(key: "alléestructurante", type: TypeField.string, text: "Saisissez la largeur du couloir, 1.4m (bâtiment neuf) ou 1.2m (batiment ancien)", optional: false)], id: "alléestructurante", subStepId: "alléestructurante-1"),
         "alléenonstructurante-1": GenericRegulationView(title: "Page allée non structurante", content: [RegulationCheckField(key: "alléenonstructurante", type: TypeField.string, text: "Saisissez la largeur du couloir, (le couloir doit avoir au minimum 1.05m de largeur au sol et 90cm à partir de 0.2m de hauteur)", optional: false)], id: "alléenonstructurante", subStepId: "alléenonstructurante-1"),
@@ -31,10 +33,14 @@ func getSubSteps(id: String) -> GenericRegulationView {
             RegulationCheckField(key: "ascenseurmaincourante", type: TypeField.string, text: "La main courante doit être comprise entre 87.5cm et 92.5cm", optional: false)], id: "ascenseur", subStepId: "ascenseur-2"),
         "ascenseur-3": GenericRegulationView(title: "Ascenseur", content: [
             RegulationCheckField(key: "ascenseurcatune", type: TypeField.bool, text: "L'ascenseur respecte les dimensions minimales suivantes: 1.4m x 1.1m, et peut supporter au minimum 630kg", optional: false)], id: "ascenseur", subStepId: "ascenseur-3"),
+
+// j'ai supprimé puisque l'ascenseur doit respecter les critères minimal à respecter mentionée au dessus (ça depend encore du type du batiment)
 //        "ascenseur-4": GenericRegulationView(title: "Ascenseur", content: [
 //            RegulationCheckField(key: "ascenseurcatdeux", type: TypeField.bool, text: "Ascenseur type 2: 1.10m x 1.40m avec un passage libre de 90cm", optional: false)], id: "ascenseur", subStepId: "ascenseur-4"),
 //        "ascenseur-5": GenericRegulationView(title: "Ascenseur", content: [
 //            RegulationCheckField(key: "ascenseurcattrois", type: TypeField.bool, text: "Ascenseur type 3: 2m x 1.40m avec un passage libre de 1.1m", optional: false)], id: "ascenseur", subStepId: "ascenseur-5"),
+
+        // drop down menu for that step ?
         "rampe-1": GenericRegulationView(title: "Choisissez le type de Rampe", content: [
             RegulationCheckField(key: "permanente", type: TypeField.bool, text: "Permanente", optional: false),
             RegulationCheckField(key: "amovible", type: TypeField.bool, text: "Amovible", optional: false),
@@ -42,6 +48,7 @@ func getSubSteps(id: String) -> GenericRegulationView {
             RegulationCheckField(key: "intégré", type: TypeField.bool, text: "Intégrée (à justifier si la rampe n'est pas intégrée)", optional: false),
             RegulationCheckField(key: "automatique", type: TypeField.bool, text: "Automatique", optional: false)
         ], id: "rampe", subStepId: "rampe-1"),
+
         "rampe-2": GenericRegulationView(title: "Rampe (pour automatique et amovible)", content: [RegulationCheckField(key: "dispositif", type: TypeField.bool, text: "Hauteur comprise entre 0,90 m et 1,30 m (mesurée depuis l'espace d'emprise de la rampe)", optional: false)], id: "rampe", subStepId: "rampe-2"),
         "rampe-3": GenericRegulationView(title: "Rampe (pour automatique et amovible)", content: [RegulationCheckField(key: "dispositif", type: TypeField.bool, text: "L'usager est informé de la prise en compte de son appel", optional: false)], id: "rampe", subStepId: "rampe-3"),
         "rampe-4": GenericRegulationView(title: "Rampe (pour automatique et amovible)", content: [RegulationCheckField(key: "dispositif", type: TypeField.bool, text: "Les employés de l'établissement sont formés à la manipulation et au deploiement de la rampe", optional: false)], id: "rampe", subStepId: "rampe-4"),

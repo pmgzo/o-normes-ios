@@ -42,6 +42,7 @@ enum TypeField {
     case string
     case float
     case bool
+    case category
 }
 
 class IntegerRef {
@@ -136,7 +137,7 @@ class DataNormContainer: ObservableObject {
     - id: key
     - key: same as id
     - type: type of the field
-    - text: form's label
+    - text: form's label, field's description
     - optional: if this form is optional
     - comment: comment
  
@@ -150,11 +151,14 @@ struct RegulationCheckField: Identifiable, Equatable {
     let text: String;
     let optional: Bool;
     let comment: String;
-    init(key: String, type: TypeField, text: String, optional: Bool = false) {
+    let menusCategories: [String];
+    
+    init(key: String, type: TypeField, text: String, categories: [String] = [], optional: Bool = false) {
         self.key = key;
         self.type = type;
         self.text = text;
         self.optional = optional;
+        self.menusCategories = categories;
         self.comment = "";
         
         self.id = ObjectIdentifier(IntegerRef(UUID().uuidString))
