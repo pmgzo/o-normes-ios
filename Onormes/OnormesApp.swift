@@ -13,8 +13,9 @@ struct OnormesApp: App {
 
     var body: some Scene {
         WindowGroup {
+//            DropDownMenu(labelList: ["Yaourt", "fromage", "chaussure", "4", "8", "9", "10", "11", "13", "664"])
           if authentication.isValidated {
-            ContentView()
+              NavigationBarView()
               .environmentObject(authentication)
           } else {
             LoginView()

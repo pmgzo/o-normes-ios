@@ -249,6 +249,45 @@ class APIService {
         
         return true
     }
+    
+    func sendFeedback(feedback: String) -> Bool {
+        
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
+        
+        guard let url = URL(string: "http://51.103.72.63:3001/api/observation/") else { return false }
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        
+        let unserialisedJson: [String: Any] = [
+            "text": feedback
+        ]
+        
+        let json = try? JSONSerialization.data(withJSONObject: unserialisedJson)
+        
+        request.httpBody = json
+        
+        URLSession.shared.dataTask(with: request) {(data, response, error) in
+          guard let data = data, error == nil else {
+            print(error?.localizedDescription ?? "No data")
+            return
+          }
+
+          guard let userResponse = try? JSONDecoder().decode(Observation.self, from: data) else {
+                print("Error feedback haven't saved")
+                return
+          }
+            print("User feedback \(userResponse.id)")
+          //completion(userResponse)
+        }.resume()
+        return true
+    }
 
 
  }

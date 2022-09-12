@@ -20,7 +20,8 @@ struct ProfileView: View {
 //  let gradient = Gradient(colors: [.blue, .orange])
 //  @State private var enableBlogger = true
 //  @State var savedEmail = ""
-  @StateObject private var userVM = UserViewModel()
+    @StateObject private var userVM = UserViewModel()
+    @State private var hasOpenedTheFeedbackPage = false
   
     var body: some View {
       NavigationView {
@@ -69,7 +70,20 @@ struct ProfileView: View {
               Text("N/A")
             }
           }
+            NavigationLink(
+                destination: FeedbackView(),
+                isActive: $hasOpenedTheFeedbackPage,
+                label: {
+                    Button("Donner un feedback") {
+                        hasOpenedTheFeedbackPage = true
+                    }.buttonStyle(ButtonStyle())
+                }
+            )
+            
+            
         }.navigationBarTitle(Text("Profile"))
+          
+          
       }.onAppear(perform: {
         userVM.getCurrentUser()
       })
