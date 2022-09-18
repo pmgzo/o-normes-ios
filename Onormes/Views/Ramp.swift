@@ -20,17 +20,18 @@ class RampStageDelegate: PRegulationCheckStageDelegate {
         // check to lead the next steps
         // retrieve answers from the first step
         if index == 0 {
-            if steps[0].dataContainer.data["automatique"]!.valueCheckBox == true && steps[0].dataContainer.data["amovible"]!.valueCheckBox == true {
-                // TODO: missed something here check PLD
-                self.steps.append(getSubSteps(id: "rampe-2"))
-                
-                self.steps.append(getSubSteps(id: "rampe-3"))
-                
-                self.steps.append(getSubSteps(id: "rampe-4"))
-                self.steps.append(getSubSteps(id: "rampe-14"))
-            }
+            // TODO: le readapter pour differente selection
+//            if steps[0].dataContainer.data["automatique"]!.valueCheckBox == true && steps[0].dataContainer.data["amovible"]!.valueCheckBox == true {
+//                // TODO: missed something here check PLD
+//                self.steps.append(getSubSteps(id: "rampe-2"))
+//
+//                self.steps.append(getSubSteps(id: "rampe-3"))
+//
+//                self.steps.append(getSubSteps(id: "rampe-4"))
+//                self.steps.append(getSubSteps(id: "rampe-14"))
+//            }
             
-            if steps[0].dataContainer.data["permanente"]!.valueCheckBox != true {
+            if steps[0].dataContainer.data["typederampe"]!.valueMetric != "permanente" {
                 self.steps.append(getSubSteps(id: "rampe-18"))
             }
             
