@@ -164,6 +164,7 @@ class APIService {
             return auditId
         } catch {
             print(error)
+            print("audit not created")
         }
 
         return auditId

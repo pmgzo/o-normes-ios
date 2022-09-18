@@ -24,15 +24,13 @@ struct HomeMenu: View {
   
     @State private var hasStartUserJouney = false
     @State private var hasOpenedTheFeedbackPage = false
-    
-    //@State private var hasStartUserJouney = false
-    
+    @State private var hasOpenedNotSentAudit = false
 
     @ObservedObject var coordinator: UJCoordinator;
   
-  init() {
-      self.coordinator = UJCoordinator()
-  }
+      init() {
+          self.coordinator = UJCoordinator()
+      }
   
   var body: some View {
       return NavigationView {
@@ -56,15 +54,26 @@ struct HomeMenu: View {
                       }.buttonStyle(ButtonStyle())
                   }
               )
+              
+              NavigationLink(
+                  destination: SavedAudit(),
+                  isActive: $hasOpenedNotSentAudit,
+                  label: {
+                      Button("Audit sauvegardé") {
+                          hasOpenedNotSentAudit = true
+                      }.buttonStyle(ButtonStyle())
+                  }
+              )
+
           }
       }
   }
 };
 
 struct HomeMenu_Previews: PreviewProvider {
-static var previews: some View {
-  Group {
-      HomeMenu()
-  }
-}
+    static var previews: some View {
+      Group {
+          HomeMenu()
+      }
+    }
 }
