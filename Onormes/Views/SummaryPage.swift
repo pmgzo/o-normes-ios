@@ -43,6 +43,7 @@ func getImageName(id: String) -> String {
     let stageMap: [String:String] = [
         "portedentrée" : "Door",
         "rampe": "Ramp",
+        "préétape": "Ruler",
         "alléestructurante" : "Ruler",
         "alléenonstructurante": "Ruler",
         "escalier" : "Stairs",
