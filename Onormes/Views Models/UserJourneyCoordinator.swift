@@ -146,8 +146,6 @@ class UJCoordinator: ObservableObject {
      */
     
     func addNewRegulationCheck(newObject: DataNorm) {
-        //TODO: to test !!
-        
         if wentBack {
             //
             print("modify")
@@ -155,9 +153,11 @@ class UJCoordinator: ObservableObject {
             for (i,obj_value) in myDictionary[self.stageDelegate!.id]!.enumerated() {
                 if obj_value.subStepId == fetchId {
                     myDictionary[self.stageDelegate!.id]![i] = newObject
-                    break
+                    return
                 }
             }
+            // case which the object is not saved in the current stage
+            self.myDictionary[self.stageDelegate!.id]!.append(newObject)
         }
         else {
             print("create")
@@ -176,14 +176,14 @@ class UJCoordinator: ObservableObject {
     func writeDataIntoJsonFile() -> Void {
         do {
             let obj = convertStepIntoJson(data: myDictionary)
-            print(obj)
-            print(JSONSerialization.isValidJSONObject(obj))
+            //print(obj)
+            //print(JSONSerialization.isValidJSONObject(obj))
             if JSONSerialization.isValidJSONObject(obj) {
                 
-                print("1")
+                //print("1")
                 let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-                print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-                print("2")
+                //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+                //print("2")
                 let pathToSavedAudit = userDirectory!.path + "/savedAudit"
                 
                 
@@ -192,7 +192,7 @@ class UJCoordinator: ObservableObject {
                 
                 // TODO: to remove
                 let allFiles = try FileManager.default.contentsOfDirectory(atPath: pathToSavedAudit)
-                print("before 3")
+                //print("before 3")
                 
                 for file in allFiles {
                     try FileManager.default.removeItem(atPath: pathToSavedAudit + "/" + file)
@@ -200,24 +200,24 @@ class UJCoordinator: ObservableObject {
 
                 try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
 
-                print(FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask))
+                //print(FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask))
                 
                 //jsonData.write(to: )
-                print("4")
+                //print("4")
 
                 let data = try JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted)
-                print("5")
+                //print("5")
 
                 let string = String(data: data, encoding: String.Encoding.utf8)
-                print("6")
-                print(string)
+                //print("6")
+                //print(string)
 
                 let filename = pathToSavedAudit + "/" + self.auditRef + ".json"
-                print(filename)
+                //print(filename)
                 //print(string)
-                print("7")
+                //print("7")
                 try string!.write(to: URL(fileURLWithPath: filename), atomically: true, encoding: String.Encoding.utf8)
-                print("8")
+                //print("8")
                 // TODO: to remove
 //                let allFiles = try FileManager.default.contentsOfDirectory(atPath: pathToSavedAudit)
 //                print("9")
