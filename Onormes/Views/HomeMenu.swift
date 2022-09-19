@@ -59,7 +59,7 @@ struct HomeMenu: View {
                   destination: SavedAudit(),
                   isActive: $hasOpenedNotSentAudit,
                   label: {
-                      Button("Audit sauvegardé") {
+                      Button("Audits sauvegardés") {
                           hasOpenedNotSentAudit = true
                       }.buttonStyle(ButtonStyle())
                   }
