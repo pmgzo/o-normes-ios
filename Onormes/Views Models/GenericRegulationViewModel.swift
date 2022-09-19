@@ -68,7 +68,7 @@ class GenericRegulationViewModel: PRegulationCheckViewModel {
         }
         
         for (_, regname) in mandatoryItems.enumerated() {
-            if data[regname]!.type != TypeField.bool &&  data[regname]!.valueMetric == "" {
+            if data[regname]!.type != TypeField.bool &&  data[regname]!.valueString == "" {
                 return false
             }
         }

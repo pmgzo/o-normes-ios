@@ -31,7 +31,7 @@ class RampStageDelegate: PRegulationCheckStageDelegate {
 //                self.steps.append(getSubSteps(id: "rampe-14"))
 //            }
             
-            if steps[0].dataContainer.data["typederampe"]!.valueMetric != "permanente" {
+            if steps[0].dataContainer.data["typederampe"]!.valueString != "permanente" {
                 self.steps.append(getSubSteps(id: "rampe-18"))
             }
             

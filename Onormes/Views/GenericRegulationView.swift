@@ -42,6 +42,7 @@ import SwiftUI
  ```
  
  */
+
 struct GenericRegulationView: View
 {
     var model: GenericRegulationViewModel = GenericRegulationViewModel()
@@ -168,10 +169,10 @@ struct GenericRegulationView: View
                 if self.dataContainer.data[key] == nil {
                     return ""
                 }
-                return self.dataContainer.data[key]!.valueMetric
+                return self.dataContainer.data[key]!.valueString
             },
             set: {
-                self.dataContainer.data[key]!.valueMetric = $0
+                self.dataContainer.data[key]!.valueString = $0
             })
     }
     
@@ -182,21 +183,20 @@ struct GenericRegulationView: View
         }
         return .init(
             get: {
-                //self.dataContainer.data[key]!.valueMetric = categories[0]
                 if self.dataContainer.data[key] == nil {
                     return ""
                 }
-                return self.dataContainer.data[key]!.valueMetric
+                return self.dataContainer.data[key]!.valueString
             },
             set: {
-                self.dataContainer.data[key]!.valueMetric = $0
+                self.dataContainer.data[key]!.valueString = $0
             })
     }
     
     func booleanBinding(for field: RegulationCheckField) -> Binding<Bool> {
         return .init(
-            get: { self.dataContainer.data[field.key, default:  RegulationNorm(key: field.key, inst: field.text, type: TypeField.bool,  mandatory: field.optional)].valueCheckBox},
-            set: { self.dataContainer.data[field.key] = RegulationNorm(key: field.key, inst: field.text, type: TypeField.bool,  mandatory: field.optional, valueBool: $0) })
+            get: { self.dataContainer.data[field.key]!.valueCheckBox},
+            set: { self.dataContainer.data[field.key]!.valueCheckBox = $0})
     }
 
     
@@ -227,9 +227,9 @@ struct GenericRegulationView: View
             if value.type == TypeField.bool {
                 dataContainer.data[value.key]?.valueCheckBox = value.valueCheckBox
             } else {
-                dataContainer.data[value.key]?.valueMetric = value.valueMetric
+                dataContainer.data[value.key]?.valueString = value.valueString
             }
-            dataContainer.data[value.key]?.comment = value.comment
+            //dataContainer.data[value.key]?.comment = value.comment
         }
     }
 }

@@ -38,6 +38,7 @@ func parseNormId(_ rawId: String) -> String {
 }
 
 func getImageName(id: String) -> String {
+    print(id)
 
     let newId = parseNormId(id)
     let stageMap: [String:String] = [
@@ -91,7 +92,7 @@ struct DataNormDetails: View {
                     if (value.type == TypeField.bool) {
                         Text((value.valueCheckBox == true ? "Oui" : "Non"))
                     } else {
-                        Text(value.valueMetric == "" ? "vide" :  value.valueMetric)
+                        Text(value.valueString == "" ? "vide" :  value.valueString)
                     }
                 }
             }
