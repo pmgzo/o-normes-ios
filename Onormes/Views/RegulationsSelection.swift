@@ -34,7 +34,9 @@ var regulationPageslist: [RegulationPageItem] = [
     RegulationPageItem(id: "alléenonstructurante", name: "allée non structurante", imageName: "doorImage"),
     RegulationPageItem(id: "escalier", name: "escalier", imageName: "doorImage"),
     RegulationPageItem(id: "ascenseur", name: "ascenseur", imageName: "doorImage"),
-    RegulationPageItem(id: "filedattente", name: "file d'attente", imageName: "doorImage")
+    RegulationPageItem(id: "filedattente", name: "file d'attente", imageName: "doorImage"),
+    RegulationPageItem(id: "cheminementexterieur", name: "cheminement exterieur", imageName: "doorImage"),
+    RegulationPageItem(id: "parking", name: "parking", imageName: "doorImage"),
 ]
 
 /**

@@ -55,6 +55,6 @@ class RampStageDelegate: PRegulationCheckStageDelegate {
             
             self.steps.append(getSubSteps(id: "rampe-17"))
         }
-        return true
+        return self.steps[index].modify(coordinator: coordinator)
     }
 }

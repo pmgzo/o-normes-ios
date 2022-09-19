@@ -375,7 +375,9 @@ extension UJCoordinator {
             "alléenonstructurante" : NonPublicCorridorStageDelegate(config: self.config, coordinator: self),
             "escalier" : StairsStageDelegate(config: self.config, coordinator: self),
             "ascenseur" : ElevatorStageDelegate(config: self.config, coordinator: self),
-            "filedattente" : WaitingLineStageDelegate(config: self.config, coordinator: self)
+            "filedattente" : WaitingLineStageDelegate(config: self.config, coordinator: self),
+            "cheminementexterieur" : ExternalPathStageDelegate(config: self.config, coordinator: self),
+            "parking" : ParkingStageDelegate(config: self.config, coordinator: self),
         ]
         return stageMap
     }

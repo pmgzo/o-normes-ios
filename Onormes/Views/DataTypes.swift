@@ -97,6 +97,7 @@ func getCommentFromRegulationNormArray(regNorms: [RegulationNorm]) -> String {
             return norm.valueString
         }
     }
+    return ""
 }
 
 func getRegulationFromRegulationNormArray(regNorms: [RegulationNorm]) -> RegulationNorm {
@@ -105,6 +106,7 @@ func getRegulationFromRegulationNormArray(regNorms: [RegulationNorm]) -> Regulat
             return norm
         }
     }
+    return regNorms[0]
 }
 
 /**

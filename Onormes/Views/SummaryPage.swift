@@ -49,7 +49,9 @@ func getImageName(id: String) -> String {
         "alléenonstructurante": "Ruler",
         "escalier" : "Stairs",
         "ascenseur" : "Elevator",
-        "filedattente" : "WaitingLine"
+        "filedattente" : "WaitingLine",
+        "cheminementexterieur": "Ruler",
+        "parking": "Ruler"
     ]
     return stageMap[newId]!
 }
@@ -110,13 +112,13 @@ struct DataNormList: View {
     
     var body: some View {
         VStack {
-                List(self.list) { norm in
-                    NavigationLink {
-                        DataNormDetails(data: norm.data)
-                    } label: {
-                        DataNormRow(stageName: norm.key)
-                    }
+            List(self.list) { norm in
+                NavigationLink {
+                    DataNormDetails(data: norm.data)
+                } label: {
+                    DataNormRow(stageName: norm.key)
                 }
+            }
         }
     }
 }
