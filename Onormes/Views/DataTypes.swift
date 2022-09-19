@@ -38,8 +38,8 @@ struct ERP_Config {
  This type is import for the **DataNorm** type which is the user journey's saved data
  */
 
-enum TypeField {
-    case string
+enum TypeField: Int {
+    case string = 1
     case float
     case bool
     case category
@@ -55,11 +55,12 @@ class IntegerRef {
 /**
  This is the structure used as data which is filled during the user journey navigation.
  It is filled in the GenericRegulationViewModel once the user has clicked to the next button. The data is thereafter send to the UserJourneyCoordinator class.
+ Could be either the regulation's comment or the regulation value
  
  - Properties:
     - id: regulation's identifier
     - key: same as **id**
-    - valueMetric: writted value by the user  (if the field is not a checkbox)
+    - valueString: written value by the user  (if the field is not a checkbox)
     - valueCheckBox: checkBox value (if the field is a checkbox)
     - mandatory:indicate whether the value must be fieled
     - type:type of the value (Bool, Text, Metric)
@@ -71,24 +72,38 @@ struct RegulationNorm: Identifiable {
     var id: String {get {return key}}
     
     let key: String;
-    var valueMetric: String;
+    var valueString: String;
     var valueCheckBox: Bool;
     let instruction: String // useless
     let mandatory: Bool;
     let type: TypeField;
-    var comment: String;
-    
+
     init(key: String, inst: String, type: TypeField, mandatory: Bool = true, valueString: String = "", valueBool: Bool = false) {
         self.key = key
         
         
-        self.valueMetric = valueString
+        self.valueString = valueString
         self.valueCheckBox = valueBool
-        self.comment = ""
         
         self.instruction = inst
         self.mandatory = mandatory
         self.type = type
+    }
+}
+
+func getCommentFromRegulationNormArray(regNorms: [RegulationNorm]) -> String {
+    for norm in regNorms {
+        if norm.key.contains("-comment'") {
+            return norm.valueString
+        }
+    }
+}
+
+func getRegulationFromRegulationNormArray(regNorms: [RegulationNorm]) -> RegulationNorm {
+    for norm in regNorms {
+        if !norm.key.contains("-comment'") {
+            return norm
+        }
     }
 }
 
@@ -108,6 +123,7 @@ class DataNorm: Identifiable {
     var id: String {key}
     
     let key: String
+    
     var data: [RegulationNorm]
     let subStepId: String
     

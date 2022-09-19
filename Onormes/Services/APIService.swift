@@ -238,13 +238,14 @@ class APIService {
         print("send audit id")
         print(auditId)
         for norm in data {
-            for regulation in norm.data {
-                var value = regulation.valueMetric
-                if regulation.type == TypeField.bool {
-                    value = regulation.valueCheckBox == true ? "True" : "False"
-                }
-                self.createMeasure(params: ["audit_fk": auditId, "kitName": "", "name": regulation.key, "value": value, "comment": regulation.comment, "details": regulation.instruction])
+            let comment = getCommentFromRegulationNormArray(regNorms: norm.data)
+            let reg = getRegulationFromRegulationNormArray(regNorms: norm.data)
+            var value = reg.valueString
+            if reg.type == TypeField.bool {
+                value = reg.valueCheckBox == true ? "True" : "False"
             }
+            self.createMeasure(params: ["audit_fk": auditId, "kitName": "", "name": reg.key, "value": value, "comment": comment, "details": reg.instruction])
+
             print("norm " + norm.key + " done.")
         }
         
