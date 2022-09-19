@@ -18,11 +18,15 @@ struct PathSavedAudit: Identifiable {
 
 struct SavedAudit: View {
     var savedAuditList: [PathSavedAudit]
+    @State private var selectionTag: String?
+    @ObservedObject var coordinator: UJCoordinator;
 
     init() {
         self.savedAuditList = []
+        self.selectionTag = ""
+        self.coordinator = UJCoordinator()
         
-        let userDirectory = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first
+        let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         
         let pathToSavedAudit = userDirectory!.path + "/savedAudit/"
         
@@ -38,8 +42,25 @@ struct SavedAudit: View {
     }
     
     var body: some View {
-        List(self.savedAuditList) { audit in
-            Text(audit.name)
+        return NavigationView {
+            List(self.savedAuditList) { audit in
+                //Text(audit.name)
+                CustomNavigationLink(coordinator: coordinator, tag: audit.name, selection: $selectionTag, destination: { () -> GenericRegulationView in
+                    return self.coordinator.getNextView(forceQuit: true)},
+                    navigationButton: false
+                ,label: {
+                    Button(audit.name) {
+                        let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+                        
+                        let fullPath = userDirectory!.path + "/savedAudit/" + audit.name
+                        
+                        self.coordinator.loadPath(pathToLoad: fullPath)
+                        self.coordinator.nextStep(start: true)
+                        selectionTag = audit.name
+                    }.buttonStyle(ButtonStyle())
+                })
+            }
         }
+        
     }
 }

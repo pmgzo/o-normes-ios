@@ -52,7 +52,7 @@ class UJCoordinator: ObservableObject {
     
     // audit, general information:
     
-    let auditRef: String;
+    var auditRef: String;
     var config: ERP_Config;
     
     // stages
@@ -62,11 +62,8 @@ class UJCoordinator: ObservableObject {
     var stageDelegate: PRegulationCheckStageDelegate?;
     var totalStages: Int = 0;
     
-    @Published var value: Bool;
-
     init() {
         print("UJCoordinator initialized")
-        value = true
         self.auditRef = UUID().uuidString;
         self.config = ERP_Config()
 
@@ -77,12 +74,30 @@ class UJCoordinator: ObservableObject {
         self.myDictionary[self.stageHistory[index]] = []
     }
     
+    func loadPath(pathToLoad: String) {
+        self.myDictionary = convertJsonToStep(path: pathToLoad)
+        
+        self.stageHistory = Array(self.myDictionary.keys)
+        self.index = self.stageHistory.count - 1
+        
+        self.stageDelegate = nil
+        
+        // get it from json
+        //self.auditRef = UUID().uuidString;
+        let startIndex = pathToLoad.index(pathToLoad.endIndex, offsetBy: -6-35)
+        let endIndex = pathToLoad.index(pathToLoad.endIndex, offsetBy: -6)
+        let range = startIndex...endIndex
+        self.auditRef = String(pathToLoad[range])
+        print("new audit ref \(self.auditRef)")
+        self.config = ERP_Config()
+    }
+    
     /**
         This function is used for navigation  button, if the user can not go back to the previous step during the user journey, usually its because no substep or stages have been validated so far.
      */
     
     func canGoBack() -> Bool {
-        return !(index == 0 && stageDelegate!.index == 0)
+        return stageDelegate == nil || !(index == 0 && stageDelegate!.index == 0)
     }
     
     /**
@@ -91,7 +106,6 @@ class UJCoordinator: ObservableObject {
      */
     
     func resetWentBack() -> Void {
-        print("rest wentBack")
         self.wentBack = false
     }
     
@@ -109,8 +123,7 @@ class UJCoordinator: ObservableObject {
      */
     
     func getCurrentStageId() -> String {
-        print(self.stageHistory)
-        // print(self.wentBack)
+        //print(self.stageHistory)
         
         if self.stageDelegate != nil && self.stageHistory.count > 0 {
             return self.stageHistory[index]
@@ -136,6 +149,8 @@ class UJCoordinator: ObservableObject {
         //TODO: to test !!
         
         if wentBack {
+            //
+            print("modify")
             let fetchId = newObject.subStepId
             for (i,obj_value) in myDictionary[self.stageDelegate!.id]!.enumerated() {
                 if obj_value.subStepId == fetchId {
@@ -145,9 +160,79 @@ class UJCoordinator: ObservableObject {
             }
         }
         else {
+            print("create")
             self.myDictionary[self.stageDelegate!.id]!.append(newObject)
         }
+        
     }
+    
+    
+    /**
+     
+     This function is saving the current saved data into a json file
+     
+     */
+    
+    func writeDataIntoJsonFile() -> Void {
+        do {
+            let obj = convertStepIntoJson(data: myDictionary)
+            print(obj)
+            print(JSONSerialization.isValidJSONObject(obj))
+            if JSONSerialization.isValidJSONObject(obj) {
+                
+                print("1")
+                let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+                print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+                print("2")
+                let pathToSavedAudit = userDirectory!.path + "/savedAudit"
+                
+                
+                
+                print("3")
+                
+                // TODO: to remove
+                let allFiles = try FileManager.default.contentsOfDirectory(atPath: pathToSavedAudit)
+                print("before 3")
+                
+                for file in allFiles {
+                    try FileManager.default.removeItem(atPath: pathToSavedAudit + "/" + file)
+                }
+
+                try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
+
+                print(FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask))
+                
+                //jsonData.write(to: )
+                print("4")
+
+                let data = try JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted)
+                print("5")
+
+                let string = String(data: data, encoding: String.Encoding.utf8)
+                print("6")
+                print(string)
+
+                let filename = pathToSavedAudit + "/" + self.auditRef + ".json"
+                print(filename)
+                //print(string)
+                print("7")
+                try string!.write(to: URL(fileURLWithPath: filename), atomically: true, encoding: String.Encoding.utf8)
+                print("8")
+                // TODO: to remove
+//                let allFiles = try FileManager.default.contentsOfDirectory(atPath: pathToSavedAudit)
+//                print("9")
+//                for file in allFiles {
+//                    print(file)
+//                }
+                    
+            }
+            
+        } catch {
+            print("Unexpected error: \(error).")
+            print("erreur lors de la sauvegarde du json")
+        }
+    }
+    
     
     /**
         This function adds new stages in the user journey after adding stage in the **RegulationsSelection** page.
@@ -157,7 +242,7 @@ class UJCoordinator: ObservableObject {
      */
 
     func addRegulationCheckStages(ids: Set<String>) {
-        print(ids)
+        //print(ids)
         for id in ids {
             //build the stage id here
             self.stageHistory.append(id + "-" + UUID().uuidString)
@@ -181,6 +266,9 @@ class UJCoordinator: ObservableObject {
         } else {
             self.stageDelegate = nil
         }
+        
+        // save in json file
+        self.writeDataIntoJsonFile()
     }
     
     /**
