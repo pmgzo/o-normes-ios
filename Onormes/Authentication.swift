@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 class Authentication: ObservableObject {
   @Published var isValidated = false
   
@@ -28,11 +29,17 @@ class Authentication: ObservableObject {
     }
   }
   
-  func updateValidation(success: Bool) {
-    withAnimation {
-      DispatchQueue.main.async {
-        self.isValidated = success
-      }
+    func updateValidation(success: Bool) {
+        withAnimation {
+          DispatchQueue.main.async {
+            self.isValidated = success
+          }
+        }
     }
-  }
+    
+    func startModeOffline() {
+        withAnimation {
+            self.isValidated = true
+        }
+    }
 }

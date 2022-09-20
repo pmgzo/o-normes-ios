@@ -145,6 +145,7 @@ extension GenericRegulationView {
                 DataNormList(list: self.coordinator!.dataAudit)
                 
                 QuitingNavigationLink(isActive: $isActive) {
+                    if appState.offlineModeActivated == false {
                             Button("Valider et Envoyer") {
                             // TODO: Loading button once we're sending the infos
                             print("Start sending information")
@@ -165,8 +166,12 @@ extension GenericRegulationView {
                             print("End sending information")
                             // TODO: create json file in local also, with the audit's name
                         }.buttonStyle(validateButtonStyle())
+                    } else {
+                        Button("Enregistrer l'audit") {
+                            self.isActive = true
+                        }.buttonStyle(GrayButtonStyle())
                     }
             }
-
+        }
     }
 }

@@ -24,6 +24,23 @@ struct ButtonStyle: PrimitiveButtonStyle
     }
 }
 
+struct GrayButtonStyle: PrimitiveButtonStyle
+{
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+        .onTapGesture {
+            configuration.trigger()
+        } //https://developer.apple.com/documentation/swiftui/primitivebuttonstyleconfiguration/role
+        .padding()
+        .font(.system(size: 20, design: .default))
+        .foregroundColor(Color.black).background(Color(red: 213/255, green: 213/255, blue: 213/255))
+        .cornerRadius(15)
+        .frame(maxWidth: .infinity)
+        
+    }
+}
+
+
 struct deleteButtonStyle: PrimitiveButtonStyle
 {
     func makeBody(configuration: Configuration) -> some View {

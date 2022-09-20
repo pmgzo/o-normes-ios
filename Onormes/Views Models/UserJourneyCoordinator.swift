@@ -176,30 +176,23 @@ class UJCoordinator: ObservableObject {
     func writeDataIntoJsonFile() -> Void {
         do {
             let obj = convertStepIntoJson(data: myDictionary)
-            //print(obj)
-            //print(JSONSerialization.isValidJSONObject(obj))
+
             if JSONSerialization.isValidJSONObject(obj) {
                 
                 //print("1")
                 let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-                //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-                //print("2")
                 let pathToSavedAudit = userDirectory!.path + "/savedAudit"
                 
-                
-                
-                print("3")
+                //print("3")
                 
                 // TODO: to remove
+                // remove previous file in the directory
                 let allFiles = try FileManager.default.contentsOfDirectory(atPath: pathToSavedAudit)
-                //print("before 3")
-                
                 for file in allFiles {
                     try FileManager.default.removeItem(atPath: pathToSavedAudit + "/" + file)
                 }
-
+                
                 try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
-
                 //print(FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask))
                 
                 //jsonData.write(to: )

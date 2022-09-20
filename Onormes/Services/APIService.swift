@@ -46,7 +46,6 @@ class APIService {
         - Parameters:
             - credentials: user's credentials
             - completion: callback function to handle the request's response
-     
      */
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
@@ -289,6 +288,56 @@ class APIService {
           //completion(userResponse)
         }.resume()
         return true
+    }
+    
+    /**
+            This function retrieve the list of criteria retrieved from the backend and save in a json file
+     
+     */
+    
+    func updateCriteriaList() -> Bool {
+        var result = true
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
+        
+        guard let url = URL(string: "http://51.103.72.63:3001/api/criteria/all") else { return false }
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "GET"
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        
+        
+        URLSession.shared.dataTask(with: request) {(data, response, error) in
+          guard let data = data, error == nil else {
+            print(error?.localizedDescription ?? "No data")
+            return
+          }
+            do {
+                let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+                let pathToCriteriaList = userDirectory!.path + "/criteriaList"
+
+                // create folder
+                try FileManager.default.createDirectory(atPath: pathToCriteriaList, withIntermediateDirectories: true, attributes: nil)
+                
+                // create file
+                let filename = pathToCriteriaList + "/" + "criteriaList.json"
+                
+                let string = String(data: data, encoding: String.Encoding.utf8)
+                
+                try string!.write(to: URL(fileURLWithPath: filename), atomically: true, encoding: String.Encoding.utf8)
+                
+                print("success")
+                
+            } catch {
+                print("Error lors de la sauvegarde de la liste des critères: \(error).")
+                result = false
+            }
+        }.resume()
+        return result
     }
 
 

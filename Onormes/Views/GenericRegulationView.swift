@@ -63,6 +63,8 @@ struct GenericRegulationView: View
     var gridItemLayout: [GridItem];
     @State var isActive = false
     
+    @EnvironmentObject var appState: AppState
+
     init(title: String, content: [RegulationCheckField], id: String, subStepId: String) {
         self.title = title
         self.content = content

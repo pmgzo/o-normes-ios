@@ -14,41 +14,116 @@ let lightGreyColor = Color(red: 239.0/255.0, green: 243.0/255.0, blue: 244.0/255
  
  */
 struct LoginView: View {
-  @StateObject private var loginVM = LoginViewModel()
-  @EnvironmentObject var authentication: Authentication
+    @StateObject private var loginVM = LoginViewModel()
+
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var authentication: Authentication
+    
+    @State private var pageIndex = 0
   
   var body: some View {
-    VStack {
+      VStack {
+          
+          VStack {
+              LogoImage()
+              
+              if pageIndex == 0 {
+                  WelcomeText()
+              }
+              else {
+                  Text("Lancer l'application en mode offline")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 16)
+              }
+              
+              if pageIndex == 0 {
+                  VStack {
+                    
+                    
+                    
+                    LoginForm().environmentObject(loginVM)
+                    
+                    Button(action: {
+                      if !loginVM.loginDisabled {
+                        loginVM.login { success in
+                          authentication.updateValidation(success: success)
+                        }
+                      }
+                    }, label: { loginVM.showProgressView
+                      ? AnyView(ProgressView())
+                      : AnyView(LoginButtonContent()) })
+                    
+                    LabelledDivider(label: "ou")
+                    
+                    Text("Mot de passe oublié").foregroundColor(Color(hex: 0x282359))
+                  }.padding()
+                    .preferredColorScheme(.light)
+                    .autocapitalization(.none)
+                    .onTapGesture {
+                      UIApplication.shared.endEditing()
+                    }
+                    .alert(item: $loginVM.error) { error in
+                      Alert(title: Text("Erreur"), message: Text(error.localizedDescription))
+                    }
+                    .transition(.slide)
+              }
+              else {
+                  Button("Mode offline") {
+                      print("here")
+                      authentication.startModeOffline()
+                      appState.offlineModeActivated = true
+                  }.buttonStyle(GrayButtonStyle())
+                  //Text("SecondView")
+                    .transition(AnyTransition.asymmetric(
+                    insertion: .move(edge: .trailing),
+                    removal: .move(edge: .leading))) //.backslide
+              }
+              
+          }.frame(maxWidth: .infinity, maxHeight: .infinity)
+          .animation(.default, value: pageIndex)
       
-      LogoImage()
-      
-      WelcomeText()
-      
-      LoginForm().environmentObject(loginVM)
-      
-      Button(action: {
-        if !loginVM.loginDisabled {
-          loginVM.login { success in
-            authentication.updateValidation(success: success)
+          Spacer()
+          HStack {
+              if pageIndex == 0 {
+                  Image(systemName: "circle.fill")
+                      .resizable()
+                      .frame(width: 5, height: 5)
+                      .foregroundColor(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1))
+                  Image(systemName: "circle")
+                      .resizable()
+                      .frame(width: 5, height: 5)
+                      .foregroundColor(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1))
+              } else {
+                  Image(systemName: "circle").resizable()
+                      .frame(width: 5, height: 5)
+                      .foregroundColor(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1))
+                  Image(systemName: "circle.fill").resizable()
+                      .frame(width: 5, height: 5)
+                      .foregroundColor(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1))
+              }
           }
-        }
-      }, label: { loginVM.showProgressView
-        ? AnyView(ProgressView())
-        : AnyView(LoginButtonContent()) })
-      
-      LabelledDivider(label: "ou")
-      
-      Text("Mot de passe oublié").foregroundColor(Color(hex: 0x282359))
-    }.padding()
-      .preferredColorScheme(.light)
-      .autocapitalization(.none)
-      .onTapGesture {
-        UIApplication.shared.endEditing()
       }
-      .alert(item: $loginVM.error) { error in
-        Alert(title: Text("Erreur"), message: Text(error.localizedDescription))
-      }
+      .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
+        .onEnded({ value in
+            if value.translation.width < 0 {
+                // left
+                if pageIndex == 1 {
+                    pageIndex = 0
+                }
+            }
+
+            if value.translation.width > 0 {
+                // right
+                if pageIndex == 0 {
+                    pageIndex = 1
+                }
+
+            }
+        }))
   }
+    
 }
 
 struct LoginView_Previews: PreviewProvider {
