@@ -43,13 +43,13 @@ func getImageName(id: String) -> String {
     let newId = parseNormId(id)
     let stageMap: [String:String] = [
         "portedentrée" : "Door",
-        "rampe": "Ramp",
+        "rampe": "ramp",
         "préétape": "Ruler",
         "alléestructurante" : "Ruler",
         "alléenonstructurante": "Ruler",
         "escalier" : "Stairs",
         "ascenseur" : "Elevator",
-        "filedattente" : "WaitingLine",
+        "filedattente" : "waitingLine",
         "cheminementexterieur": "Ruler",
         "parking": "Ruler"
     ]
