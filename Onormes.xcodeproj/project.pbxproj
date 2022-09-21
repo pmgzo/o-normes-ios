@@ -49,6 +49,7 @@
 		EA6F4D9827E0CD92009CDDAF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6F4D9727E0CD92009CDDAF /* Style.swift */; };
 		EA7F07D227F7231300DFC8CE /* Door.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7F07D127F7231300DFC8CE /* Door.swift */; };
 		EA7F07D427F738AA00DFC8CE /* CustomNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */; };
+		EA85AB7D28DA1046006D7195 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA85AB7C28DA1046006D7195 /* AppState.swift */; };
 		EA87EBFD287C1A2900140E30 /* ReferencedSubSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA87EBFC287C1A2900140E30 /* ReferencedSubSteps.swift */; };
 		EA8EB9D128D0CE3300A4FD3C /* SavedAudit.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8EB9D028D0CE3300A4FD3C /* SavedAudit.swift */; };
 		EAAAF480282A8AAC00D7A04B /* Elevator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAAF47F282A8AAB00D7A04B /* Elevator.swift */; };
@@ -105,6 +106,7 @@
 		EA6F4D9727E0CD92009CDDAF /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		EA7F07D127F7231300DFC8CE /* Door.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Door.swift; sourceTree = "<group>"; };
 		EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigation.swift; sourceTree = "<group>"; };
+		EA85AB7C28DA1046006D7195 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		EA87EBFC287C1A2900140E30 /* ReferencedSubSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferencedSubSteps.swift; sourceTree = "<group>"; };
 		EA8EB9D028D0CE3300A4FD3C /* SavedAudit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedAudit.swift; sourceTree = "<group>"; };
 		EAAAF47F282A8AAB00D7A04B /* Elevator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Elevator.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				9494C80C273668EC00FA0354 /* Models */,
 				949FE4ED272D6B4E008DD273 /* Info.plist */,
 				94CD61F127679D0A0046B02E /* GeometryUtils.swift */,
+				EA85AB7C28DA1046006D7195 /* AppState.swift */,
 				94996E38272D3939003E6D96 /* OnormesApp.swift */,
 				944A4B5727367CE300811D53 /* Authentication.swift */,
 				94996E3C272D393B003E6D96 /* Assets.xcassets */,
@@ -365,6 +368,7 @@
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
 				EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */,
+				EA85AB7D28DA1046006D7195 /* AppState.swift in Sources */,
 				940D380727B7247B00231AD1 /* AreaViewController.swift in Sources */,
 				940D380327B7244200231AD1 /* MeasureSCNView.swift in Sources */,
 				94CD61F227679D0A0046B02E /* GeometryUtils.swift in Sources */,
