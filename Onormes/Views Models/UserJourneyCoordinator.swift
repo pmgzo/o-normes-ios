@@ -184,6 +184,7 @@ class UJCoordinator: ObservableObject {
                 let pathToSavedAudit = userDirectory!.path + "/savedAudit"
                 
                 //print("3")
+                try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
                 
                 // TODO: to remove
                 // remove previous file in the directory
@@ -192,7 +193,6 @@ class UJCoordinator: ObservableObject {
                     try FileManager.default.removeItem(atPath: pathToSavedAudit + "/" + file)
                 }
                 
-                try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
                 //print(FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask))
                 
                 //jsonData.write(to: )
