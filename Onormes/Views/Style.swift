@@ -24,6 +24,19 @@ struct ButtonStyle: PrimitiveButtonStyle
     }
 }
 
+struct LinkStyle: PrimitiveButtonStyle
+{
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+        .onTapGesture {
+            configuration.trigger()
+        } // TODO: graphical chart for normal, cancel, destructive button + import their police (.configuration.role ==) https://developer.apple.com/documentation/swiftui/primitivebuttonstyleconfiguration/role
+        .padding()
+        .font(.system(size: 16, design: .default))
+        .foregroundColor(Color.blue).background(Color.white)
+    }
+}
+
 struct GrayButtonStyle: PrimitiveButtonStyle
 {
     func makeBody(configuration: Configuration) -> some View {
