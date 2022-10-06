@@ -16,7 +16,7 @@ func convertDataNormToDictionary(dataNorm: DataNorm) -> [[String:Any]] {
     var dic: [[String:Any]] = []
     let substepId = dataNorm.subStepId
 
-    // browse regulationNorm
+    // browse RegulationNorm
     for criterion in dataNorm.data {
         if criterion.type == TypeField.bool {
             dic.append([
@@ -55,6 +55,31 @@ func dataNormToDictionary(dataNormList: [DataNorm]) -> [String:[[String:Any]]] {
 }
 
 // returns Dictionary which as an array of dictionaries
+/**
+ 
+ Returned data is represented as follow:
+ 
+ ```json
+ 
+ {
+        StepName: [
+                {
+                            PageName/DataNorm'sName: [ // this the list of RegulationNorm
+                                                {
+                                                    // first data contain the field's attributes
+                                                }
+                                                {
+                                                    // second are the comment
+                                                }
+                                                                                                        
+                                    ]
+            }
+        ]
+ }
+ ```
+ 
+ 
+ */
 func convertStepIntoJson(data: [String:[DataNorm]]) -> [String:[String:[[String:Any]]]] {
     var newObject: [String:[String:[[String:Any]]]] = [:]
     
