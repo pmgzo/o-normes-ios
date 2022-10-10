@@ -27,6 +27,7 @@ struct HomeMenu: View {
     @State private var hasOpenedNotSentAudit = false
 
     @ObservedObject var coordinator: UJCoordinator;
+    @EnvironmentObject var appState: AppState
   
       init() {
           self.coordinator = UJCoordinator()
@@ -35,15 +36,32 @@ struct HomeMenu: View {
   var body: some View {
       return NavigationView {
           VStack {
-              Text("Vous êtes connecté !")
-              CustomNavigationLink(coordinator: coordinator, isActive: $hasStartUserJouney, destination: { () -> GenericRegulationView in
-                  return self.coordinator.getNextView()
-              },label: {
-                  Button("Commencer le parcours utilisateur") {
-                      self.coordinator.nextStep(start: true)
-                      hasStartUserJouney = true
-                  }.buttonStyle(ButtonStyle())
-              })
+              
+              if appState.offlineModeActivated == false {
+                  Text("Vous êtes connecté !")
+              }
+              else {
+                  Text("Mode offline")
+              }
+              
+//              CustomNavigationLink(coordinator: coordinator, isActive: $hasStartUserJouney, destination: { () -> GenericRegulationView in
+//                  return self.coordinator.getNextView()
+//              },label: {
+//                  Button("Réaliser un diagnostique d'accessibilité") {
+//                      self.coordinator.nextStep(start: true)
+//                      hasStartUserJouney = true
+//                  }.buttonStyle(ButtonStyle())
+//              })
+              
+              NavigationLink(
+                  destination: CreateAuditView(),
+                  isActive: $hasStartUserJouney,
+                  label: {
+                      Button("Réaliser un diagnostique d'accessibilité") {
+                          hasStartUserJouney = true
+                      }.buttonStyle(ButtonStyle())
+                  }
+              )
               
               NavigationLink(
                   destination: FeedbackView(),
@@ -64,7 +82,6 @@ struct HomeMenu: View {
                       }.buttonStyle(ButtonStyle())
                   }
               )
-
           }
       }
   }

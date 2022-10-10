@@ -37,6 +37,9 @@
 		EA0B2B6528D648F0001F38D7 /* SaveMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B2B6428D648F0001F38D7 /* SaveMode.swift */; };
 		EA17E3DF282BE7F100F3995F /* Ramp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA17E3DE282BE7F100F3995F /* Ramp.swift */; };
 		EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1D30AF27E20A4F004BCC97 /* UserJourneyCoordinator.swift */; };
+		EA2572C128EDD8DB00D97EB5 /* CreateAudit.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2572C028EDD8DB00D97EB5 /* CreateAudit.swift */; };
+		EA2572C328EEDC3C00D97EB5 /* BuildingTypeSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2572C228EEDC3C00D97EB5 /* BuildingTypeSelection.swift */; };
+		EA2572C528EEE1EC00D97EB5 /* ResearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2572C428EEE1EC00D97EB5 /* ResearchBar.swift */; };
 		EA2DB564289EBFCB00C66C88 /* GenericRegulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DB563289EBFCB00C66C88 /* GenericRegulationView.swift */; };
 		EA2DB566289EC05600C66C88 /* GenericRegulationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DB565289EC05600C66C88 /* GenericRegulationViewModel.swift */; };
 		EA2DB568289EC0AF00C66C88 /* RegulationsSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DB567289EC0AF00C66C88 /* RegulationsSelection.swift */; };
@@ -94,6 +97,9 @@
 		EA0B2B6428D648F0001F38D7 /* SaveMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveMode.swift; sourceTree = "<group>"; };
 		EA17E3DE282BE7F100F3995F /* Ramp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ramp.swift; sourceTree = "<group>"; };
 		EA1D30AF27E20A4F004BCC97 /* UserJourneyCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserJourneyCoordinator.swift; sourceTree = "<group>"; };
+		EA2572C028EDD8DB00D97EB5 /* CreateAudit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAudit.swift; sourceTree = "<group>"; };
+		EA2572C228EEDC3C00D97EB5 /* BuildingTypeSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingTypeSelection.swift; sourceTree = "<group>"; };
+		EA2572C428EEE1EC00D97EB5 /* ResearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResearchBar.swift; sourceTree = "<group>"; };
 		EA2DB563289EBFCB00C66C88 /* GenericRegulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericRegulationView.swift; sourceTree = "<group>"; };
 		EA2DB565289EC05600C66C88 /* GenericRegulationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericRegulationViewModel.swift; sourceTree = "<group>"; };
 		EA2DB567289EC0AF00C66C88 /* RegulationsSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationsSelection.swift; sourceTree = "<group>"; };
@@ -177,6 +183,7 @@
 		944A4B4C27366D9000811D53 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				EAF6417328E498530017500A /* OldStages */,
 				944A4B55273672B400811D53 /* LoginView.swift */,
 				EACEA77128CB8413007DECAD /* NavigationBar.swift */,
 				EACEA77328CB84AE007DECAD /* HomeMenu.swift */,
@@ -184,23 +191,17 @@
 				EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */,
 				EACEA77528CB8763007DECAD /* Feedback.swift */,
 				EA2DB563289EBFCB00C66C88 /* GenericRegulationView.swift */,
-				EA7F07D127F7231300DFC8CE /* Door.swift */,
-				EA5537CF282A532F00780CB8 /* Corridor.swift */,
-				EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */,
-				EA5537D3282A85A800780CB8 /* Stairs.swift */,
-				EAAAF47F282A8AAB00D7A04B /* Elevator.swift */,
-				EA17E3DE282BE7F100F3995F /* Ramp.swift */,
 				EAB77C08282E574600185C1A /* SummaryPage.swift */,
 				EA02F75A287B2F5400954209 /* StageDelegate.swift */,
 				EA87EBFC287C1A2900140E30 /* ReferencedSubSteps.swift */,
 				EA2DB567289EC0AF00C66C88 /* RegulationsSelection.swift */,
 				EA2DB569289EC13100C66C88 /* DataTypes.swift */,
 				EAC2B98028C636CD001708A5 /* DropDownMenu.swift */,
-				EA00C1F728C7663300CED8AC /* Prestage.swift */,
 				EA6F4D9727E0CD92009CDDAF /* Style.swift */,
 				EA8EB9D028D0CE3300A4FD3C /* SavedAudit.swift */,
-				EA52737B28D88D6200E52AF8 /* ExternalPath.swift */,
-				EA52737D28D897EA00E52AF8 /* Parking.swift */,
+				EA2572C028EDD8DB00D97EB5 /* CreateAudit.swift */,
+				EA2572C228EEDC3C00D97EB5 /* BuildingTypeSelection.swift */,
+				EA2572C428EEE1EC00D97EB5 /* ResearchBar.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -267,6 +268,22 @@
 				94996E3F272D393B003E6D96 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EAF6417328E498530017500A /* OldStages */ = {
+			isa = PBXGroup;
+			children = (
+				EA5537D3282A85A800780CB8 /* Stairs.swift */,
+				EA52737B28D88D6200E52AF8 /* ExternalPath.swift */,
+				EA5537CF282A532F00780CB8 /* Corridor.swift */,
+				EA7F07D127F7231300DFC8CE /* Door.swift */,
+				EA5537D1282A5C7F00780CB8 /* WaitingLine.swift */,
+				EAAAF47F282A8AAB00D7A04B /* Elevator.swift */,
+				EA52737D28D897EA00E52AF8 /* Parking.swift */,
+				EA17E3DE282BE7F100F3995F /* Ramp.swift */,
+				EA00C1F728C7663300CED8AC /* Prestage.swift */,
+			);
+			path = OldStages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -349,6 +366,7 @@
 				EA00C1F828C7663300CED8AC /* Prestage.swift in Sources */,
 				94CD61F027674E5B0046B02E /* ProfileView.swift in Sources */,
 				EA2DB56A289EC13100C66C88 /* DataTypes.swift in Sources */,
+				EA2572C328EEDC3C00D97EB5 /* BuildingTypeSelection.swift in Sources */,
 				EAC2B98128C636CE001708A5 /* DropDownMenu.swift in Sources */,
 				EA2DB566289EC05600C66C88 /* GenericRegulationViewModel.swift in Sources */,
 				EACEA77428CB84AE007DECAD /* HomeMenu.swift in Sources */,
@@ -360,6 +378,7 @@
 				EA5537D2282A5C7F00780CB8 /* WaitingLine.swift in Sources */,
 				9412DA25276A0AFF0021A441 /* UserViewModel.swift in Sources */,
 				EA8EB9D128D0CE3300A4FD3C /* SavedAudit.swift in Sources */,
+				EA2572C528EEE1EC00D97EB5 /* ResearchBar.swift in Sources */,
 				EA6F4D9827E0CD92009CDDAF /* Style.swift in Sources */,
 				EA02F75B287B2F5400954209 /* StageDelegate.swift in Sources */,
 				EA7F07D427F738AA00DFC8CE /* CustomNavigation.swift in Sources */,
@@ -367,6 +386,7 @@
 				94996E39272D3939003E6D96 /* OnormesApp.swift in Sources */,
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
+				EA2572C128EDD8DB00D97EB5 /* CreateAudit.swift in Sources */,
 				EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */,
 				EA85AB7D28DA1046006D7195 /* AppState.swift in Sources */,
 				940D380727B7247B00231AD1 /* AreaViewController.swift in Sources */,

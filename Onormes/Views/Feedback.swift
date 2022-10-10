@@ -13,32 +13,54 @@ struct FeedbackView: View {
     @State private var hasSendFeedback = false
     @State private var textInput: String = ""
     
+    @State private var animate: Bool = false
+
     var coordinator: UJCoordinator?;
     
     @Environment(\.presentationMode) var presentationMode
-
-//    init(coordinator: UJCoordinator) {
-//
-//    }
-//    init with coordinator
 
     var body: some View {
         // title
         Text("Envoyez-nous votre feedback").font(.title).multilineTextAlignment(.center)
         
-        // Input
         TextField(
           "Ecrivez ici...",
           text: $textInput
         ).padding().frame(height: 300)
         
         Spacer()
-        // Button to validate
-        Button("Envoyer") {
-            APIService().sendFeedback(feedback: textInput)
-            presentationMode.wrappedValue.dismiss()
 
+        Button(action: {
+            Task {
+                print("va envoyer")
+
+                let seconds = 10
+                animate = true
+                await APIService().sendFeedback(feedback: textInput)
+                //try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                print("envoyé")
+                animate = false
+                presentationMode.wrappedValue.dismiss()
+            }
+        }){
+            if animate {
+                LoadingCircle()
+            } else {
+                Text("Envoyer")
+            }
         }.buttonStyle(validateButtonStyle())
+    }
+}
+
+struct LoadingCircle: View {
+    @State private var animate: Bool = false
+    
+    var body: some View {
+        Image("loadingCircle").resizable().frame(width: 50, height: 50)
+        .rotationEffect(Angle(degrees: animate ?  360 : 0))
+        .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false), value: animate)
+        .background(.green)
+        .onAppear { animate.toggle() }
     }
 }
 

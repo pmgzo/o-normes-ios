@@ -62,6 +62,7 @@ struct GenericRegulationView: View
     @ObservedObject var selectedItems: SelectedRegulationSet;
     var gridItemLayout: [GridItem];
     @State var isActive = false
+    @State var animateCircle: Bool = false
     
     @EnvironmentObject var appState: AppState
 

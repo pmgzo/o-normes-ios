@@ -183,3 +183,19 @@ struct RegulationCheckField: Identifiable, Equatable {
     }
 }
 
+/**
+ 
+ Struct to save during the user journey
+
+ */
+
+struct AuditInfos {
+    var buildingType: String = "";
+    var name: String = "";
+    var buildingName: String = "";
+    var address: String = "";
+    var email: String = "";
+    var phoneNumber: String = "";
+    var notes: String = "";
+    var date: Date;
+}

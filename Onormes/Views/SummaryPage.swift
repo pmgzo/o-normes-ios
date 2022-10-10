@@ -146,25 +146,31 @@ extension GenericRegulationView {
                 
                 QuitingNavigationLink(isActive: $isActive) {
                     if appState.offlineModeActivated == false {
-                            Button("Valider et Envoyer") {
-                            // TODO: Loading button once we're sending the infos
-                            print("Start sending information")
+                        Button(action: {
                             Task {
-                               do {
-                                   let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
-                                   APIService().sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
-                                   
-                                   print("End sending information")
-                                   self.isActive = true
-                                   
-                                   self.selectionTag = "backToTheMenu"
-                               } catch {
-                                   // TODO: to fix warning (line above)
-                                   print(error)
-                               }
+                                do {
+                                    animateCircle = true
+                                    
+                                    let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
+                                    
+                                    APIService().sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
+                                    
+                                    print("End sending information")
+                                    
+                                    animateCircle = false
+                                    self.isActive = true
+                                } catch {
+                                    // TODO: to fix warning (line above)
+                                    print(error)
+                                }
                             }
-                            print("End sending information")
-                            // TODO: create json file in local also, with the audit's name
+                        }){
+                            if animateCircle {
+                                LoadingCircle()
+                            } else {
+                                Text("Valider et Envoyer")
+                            }
+                            
                         }.buttonStyle(validateButtonStyle())
                     } else {
                         Button("Enregistrer l'audit") {

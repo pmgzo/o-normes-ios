@@ -8,10 +8,6 @@
 import Foundation
 import SwiftUI
 
-struct AuditData {
-    
-}
-
 struct CreateAuditView: View {
     
     @State private var buildingType: String = "";
@@ -24,6 +20,7 @@ struct CreateAuditView: View {
     @State private var notes: String = "";
     
     @State private var hasOpenBuildingType: Bool = false;
+    @State private var animateButton: Bool = false;
 
     var coordinator: UJCoordinator?;
     
@@ -93,14 +90,36 @@ struct CreateAuditView: View {
             
             // submit button
             if self.validate() {
-                Button("Page suivante") {
-                    print("green")
-                    // call API
-                    
-                    
-
-                    //APIService().sendFeedback(feedback: textInput)
-                    //presentationMode.wrappedValue.dismiss()
+                Button(action: {
+                    Task {
+                        // call API + getData
+                        
+                        let auditInfos = AuditInfos(
+                            buildingType: buildingType,
+                            name: name,
+                            buildingName: buildingName,
+                            address: address,
+                            email: email,
+                            phoneNumber: phoneNumber,
+                            notes: notes,
+                            date: Date.now
+                        )
+                        
+                        
+                        animateButton = true
+                        // ask for steps lists
+                        try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
+                        
+                        animateButton = false
+                        // get steps list, and redirect to steps selection
+                        
+                    }
+                }){
+                    if animateButton {
+                        LoadingCircle()
+                    } else {
+                        Text("Page suivante")
+                    }
                 }.buttonStyle(validateButtonStyle())
             } else {
                 Button("Page suivante"){
