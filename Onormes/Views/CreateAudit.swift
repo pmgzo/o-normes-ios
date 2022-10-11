@@ -21,12 +21,10 @@ struct CreateAuditView: View {
     
     @State private var hasOpenBuildingType: Bool = false;
     @State private var animateButton: Bool = false;
-
-    var coordinator: UJCoordinator?;
     
-    init() {
-        // create object
-    }
+    @State private var startUserJourney: Bool = false
+
+    var coordinator = UJCoordinator()
 
     var body: some View {
         ScrollView(.vertical) {
@@ -90,37 +88,43 @@ struct CreateAuditView: View {
             
             // submit button
             if self.validate() {
-                Button(action: {
-                    Task {
-                        // call API + getData
-                        
-                        let auditInfos = AuditInfos(
-                            buildingType: buildingType,
-                            name: name,
-                            buildingName: buildingName,
-                            address: address,
-                            email: email,
-                            phoneNumber: phoneNumber,
-                            notes: notes,
-                            date: Date.now
-                        )
-                        
-                        
-                        animateButton = true
-                        // ask for steps lists
-                        try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
-                        
-                        animateButton = false
-                        // get steps list, and redirect to steps selection
-                        
-                    }
-                }){
-                    if animateButton {
-                        LoadingCircle()
-                    } else {
-                        Text("Page suivante")
-                    }
-                }.buttonStyle(validateButtonStyle())
+                //
+                NavigationLink(
+                    destination: SelectStageView(coordinator: self.coordinator),
+                    isActive: $startUserJourney,
+                    label: {
+                        Button(action: {
+                            Task {
+                                // call API + getData
+                                
+                                let auditInfos = AuditInfos(
+                                    buildingType: buildingType,
+                                    name: name,
+                                    buildingName: buildingName,
+                                    address: address,
+                                    email: email,
+                                    phoneNumber: phoneNumber,
+                                    notes: notes,
+                                    date: Date.now
+                                )
+                                
+                                
+                                animateButton = true
+                                // ask for steps lists
+                                try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
+                                
+                                animateButton = false
+                                // get steps list, and redirect to steps selection
+                                startUserJourney = true
+                            }
+                        }){
+                            if animateButton {
+                                LoadingCircle()
+                            } else {
+                                Text("Page suivante")
+                            }
+                        }.buttonStyle(validateButtonStyle())
+                    })
             } else {
                 Button("Page suivante"){
                     print("gray")

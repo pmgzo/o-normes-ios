@@ -63,12 +63,12 @@ class SelectedRegulationSet: ObservableObject {
     }
 }
 
-//TODO: faire une map de norme à verifier qui contient, l'image specific à check étape (porte, escalier, allée structurante/non structurante)
+// TODO: faire une map de norme à verifier qui contient, l'image specific à check étape (porte, escalier, allée structurante/non structurante)
 // https://www.hackingwithswift.com/quick-start/swiftui/how-to-position-views-in-a-grid-using-lazyvgrid-and-lazyhgrid
 
 /**
  This is an extension of the class **GenericRegulationView**. It defines the **RegulationsSelection** page.
- 
+
  */
 
 extension GenericRegulationView {
@@ -136,3 +136,97 @@ extension GenericRegulationView {
     }
 }
 
+
+/**
+ Page to select step during the user journey
+ 
+ */
+
+struct SelectStageView: View {
+    @ObservedObject var selectedItems: SelectedRegulationSet;
+    
+    @State var userJourneyStarted = false
+    
+    var gridItemLayout: [GridItem];
+    var coordinator: UJCoordinator;
+    
+    init(coordinator: UJCoordinator) {
+        self.coordinator = coordinator
+        self.gridItemLayout = [GridItem(.adaptive(minimum: 100))]
+        self.selectedItems = SelectedRegulationSet(selectedItems: [])
+    }
+    
+    var body: some View {
+        VStack {
+            // Return button removed, has the user has to choose steps
+//            HStack {
+//                Button("Retour") {
+//                    // coordinator check
+//                    self.navcoordinator?.renderStepPage = false
+//                }.buttonStyle(ButtonStyle())
+//                Spacer().frame(width: 250)
+//            }
+//            Spacer()
+//                   .frame(height: 40)
+            Text("Ajoutez au minimum une étape pour commencer le parcours").font(.system(size: 20.0))
+            Spacer()
+                   .frame(height: 30)
+            ScrollView {
+                LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
+                    ForEach(0..<regulationPageslist.count, id: \.self) { i in
+                        Button(regulationPageslist[i].name) {
+                            regulationPageslist[i].selected = !regulationPageslist[i].selected
+                            print(regulationPageslist[i].id + " selected")
+                            if regulationPageslist[i].selected {
+                                // add
+                                if !selectedItems.contains(id: regulationPageslist[i].id) {
+                                    self.selectedItems.addItem(id: regulationPageslist[i].id)
+                                }
+                            } else {
+                                // remove
+                                self.selectedItems.removeItem(id: regulationPageslist[i].id)
+                            }
+                        }.foregroundColor(regulationPageslist[i].selected ? .black : .gray)
+                    }
+                }.padding(.horizontal)
+            }.frame(maxWidth: 550).background(Image("Logo")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
+            
+
+            if selectedItems.items.count != 0 || userJourneyStarted == true { // its a hack to allow the navigation to continue otherwise it stops as we reset selectedItems
+                HStack {
+                    CustomNavigationLink(
+                        coordinator: self.coordinator,
+                        isActive: $userJourneyStarted,
+                        destination: { () -> GenericRegulationView in return self.coordinator.getNextView()
+
+                        },
+                        label: {
+                            Button("Valider") {
+
+                                self.coordinator.addRegulationCheckStages(ids: selectedItems.items)
+
+                                self.coordinator.nextStep(start: true)
+
+                                userJourneyStarted = true
+                                
+                                //reset values
+                                for (index, _) in regulationPageslist.enumerated() {
+                                    regulationPageslist[index].selected = false
+                                }
+                                self.selectedItems.items = Set<String>()
+                                
+                            }.buttonStyle(validateButtonStyle())
+                    })
+                    Spacer().frame(maxWidth: 40)
+                    Button("Annuler") {
+                        selectedItems.items = Set<String>()
+                    }.buttonStyle(deleteButtonStyle())
+                }
+            } else {
+                Spacer().frame(height: 64)
+            }
+        }
+    }
+}

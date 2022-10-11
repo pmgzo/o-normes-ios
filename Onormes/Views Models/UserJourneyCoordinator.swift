@@ -241,6 +241,7 @@ class UJCoordinator: ObservableObject {
             self.stageHistory.append(id + "-" + UUID().uuidString)
         }
         self.totalStages = self.stageHistory.count
+        print(self.totalStages)
     }
 
     /**
@@ -317,7 +318,7 @@ class UJCoordinator: ObservableObject {
         
         self.wentBack = true
         print("back 0")
-        if self.stageDelegate == nil || (self.stageDelegate!.index == 0) {// go previous stage
+        if self.stageDelegate == nil || (self.stageDelegate!.index == 0) { // go previous stage
             print("previous stage")
             self.index -= 1
             print("index ==")
@@ -360,6 +361,8 @@ extension UJCoordinator {
      This function enables us to reload properly the previous steps, once we need to go back to the previous stage.
      */
     func getStageMap() -> NSDictionary {
+        // load stage map getting from the begining
+        // old method
         let stageMap: NSDictionary = [
             "préétape": PrestageStageDelegate(config: self.config, coordinator: self),
             "portedentrée" : DoorStageDelegate(config: self.config, coordinator: self),
@@ -374,4 +377,9 @@ extension UJCoordinator {
         ]
         return stageMap
     }
+}
+
+
+struct stage {
+    
 }
