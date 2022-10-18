@@ -18,7 +18,6 @@ This function is used to call sub steps within stage of the user journey
 
 
 func getSubSteps(id: String) -> GenericRegulationView {
-    
     let subStepsMap: [String:GenericRegulationView] =  [
         "préétape-1": GenericRegulationView(title: "Selection du type de batiment", content: [RegulationCheckField(key: "selectiontypedebatiment", type: TypeField.category, text: "Definir le type de batiment", categories: ["Hôtel", "Piscine", "Restaurant", "Aéroports", "Assurance", "Dentiste", "Monuments"], optional: false)], id: "préétape", subStepId: "préétape-1"),
         "préétape-2": GenericRegulationView(title: "Date du permis de construire", content: [RegulationCheckField(key: "permisdeconstruire", type: TypeField.bool, text: "Est ce que la date du permis de construire est après janvier 2007 ? (Après cette date, le batiment est considéré comme neuf)", optional: false)], id: "préétape", subStepId: "préétape-2"),
@@ -116,3 +115,31 @@ func getSubSteps(id: String) -> GenericRegulationView {
     return subStepsMap[id]!
 }
 
+let temporaryStageList: [String:StageRead] = [
+    "Transport à proximité": StageRead(
+        name: "Transport à proximité",
+        content: [
+            RegulationCheckField(key: "Gare à proximité", type: TypeField.bool, text: "Gare à proximité", optional: false),
+            RegulationCheckField(key: "Métro à proximité", type: TypeField.bool, text: "Métro à proximité", optional: false),
+            RegulationCheckField(key: "Bus à proximité", type: TypeField.bool, text: "Bus à proximité", optional: false),
+            RegulationCheckField(key: "Tramway à proximité", type: TypeField.bool, text: "Tramway à proximité", optional: false),
+        ]
+    ),
+    "Trottoirs adaptés": StageRead(
+        name: "Trottoirs adaptés",
+        content: [
+            RegulationCheckField(key: "Sans Dévers", type: TypeField.bool, text: "Sans Dévers", optional: false),
+            RegulationCheckField(key: "Largeur suffisante ( >  à 1,20 mètre) et sans obstacle", type: TypeField.bool, text: "Largeur suffisante ( >  à 1,20 mètre) et sans obstacle", optional: false),
+            RegulationCheckField(key: "Trottoirs Abaissés", type: TypeField.bool, text: "Trottoirs Abaissés", optional: false)
+        ]
+    ),
+    "Parking accessible": StageRead(
+        name: "Parking accessible",
+        content: [
+            RegulationCheckField(key: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", type: TypeField.bool, text: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", optional: false),
+            RegulationCheckField(key: "Contrôle d’accès et de sortie avec InterPhonie", type: TypeField.bool, text: "Contrôle d’accès et de sortie avec InterPhonie", optional: false),
+            RegulationCheckField(key: "Place(s) de stationnement adaptée(s) située(s) à proximité de l’entrée du site", type: TypeField.bool, text: "Place(s) de stationnement adaptée(s) située(s) à proximité de l’entrée du site", optional: false)
+        ]
+    ),
+
+]

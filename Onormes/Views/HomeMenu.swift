@@ -57,7 +57,7 @@ struct HomeMenu: View {
                   destination: CreateAuditView(),
                   isActive: $hasStartUserJouney,
                   label: {
-                      Button("Réaliser un diagnostique d'accessibilité") {
+                      Button("Réaliser un diagnostic") {
                           hasStartUserJouney = true
                       }.buttonStyle(ButtonStyle())
                   }

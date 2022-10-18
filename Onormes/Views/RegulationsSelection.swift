@@ -89,20 +89,20 @@ extension GenericRegulationView {
                    .frame(height: 30)
             ScrollView {
                 LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
-                    ForEach(0..<regulationPageslist.count, id: \.self) { i in
-                        Button(regulationPageslist[i].name) {
-                            regulationPageslist[i].selected = !regulationPageslist[i].selected
-                            print(regulationPageslist[i].id + " selected")
-                            if regulationPageslist[i].selected {
+                    ForEach(0..<stageList.count, id: \.self) { i in
+                        Button(stageList[i].name) {
+                            stageList[i].selected = !stageList[i].selected
+                            print(stageList[i].id + " selected")
+                            if stageList[i].selected {
                                 // add
-                                if !selectedItems.contains(id: regulationPageslist[i].id) {
-                                    self.selectedItems.addItem(id: regulationPageslist[i].id)
+                                if !selectedItems.contains(id: stageList[i].id) {
+                                    self.selectedItems.addItem(id: stageList[i].id)
                                 }
                             } else {
                                 // remove
-                                self.selectedItems.removeItem(id: regulationPageslist[i].id)
+                                self.selectedItems.removeItem(id: stageList[i].id)
                             }
-                        }.foregroundColor(regulationPageslist[i].selected ? .black : .gray)
+                        }.foregroundColor(stageList[i].selected ? .black : .gray)
                     }
                 }.padding(.horizontal)
             }.frame(maxWidth: 550).background(Image("Logo")
@@ -117,8 +117,8 @@ extension GenericRegulationView {
 
                         //reset values
                         self.selectedItems.items = Set<String>()
-                        for (index, _) in regulationPageslist.enumerated() {
-                            regulationPageslist[index].selected = false
+                        for (index, _) in stageList.enumerated() {
+                            stageList[index].selected = false
                         }
                         
                         navcoordinator?.renderStepPage = false
@@ -137,6 +137,16 @@ extension GenericRegulationView {
 }
 
 
+func returnArray(stageNames:[String]) -> [RegulationPageItem] {
+    var array: [RegulationPageItem]  = []
+    for key in stageNames {
+        print(key)
+        array.append(RegulationPageItem(id: key, name: key, imageName: "doorImage"))
+        //print(self.stageList.count)
+    }
+    return array
+}
+
 /**
  Page to select step during the user journey
  
@@ -149,44 +159,47 @@ struct SelectStageView: View {
     
     var gridItemLayout: [GridItem];
     var coordinator: UJCoordinator;
-    
+    @State var stageList: [RegulationPageItem]
+
     init(coordinator: UJCoordinator) {
         self.coordinator = coordinator
         self.gridItemLayout = [GridItem(.adaptive(minimum: 100))]
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
+        self.stageList = returnArray(stageNames: self.coordinator.getStageNames)
+        
+//        print("toto \(self.coordinator.getStageNames)")
+//
+//        for key in self.coordinator.getStageNames {
+//            print(key)
+//            self.stageList.append(RegulationPageItem(id: key, name: key, imageName: "doorImage"))
+//            print(self.stageList.count)
+//        }
+        print(self.stageList.count)
     }
+    
+    
     
     var body: some View {
         VStack {
-            // Return button removed, has the user has to choose steps
-//            HStack {
-//                Button("Retour") {
-//                    // coordinator check
-//                    self.navcoordinator?.renderStepPage = false
-//                }.buttonStyle(ButtonStyle())
-//                Spacer().frame(width: 250)
-//            }
-//            Spacer()
-//                   .frame(height: 40)
             Text("Ajoutez au minimum une étape pour commencer le parcours").font(.system(size: 20.0))
             Spacer()
                    .frame(height: 30)
             ScrollView {
                 LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
-                    ForEach(0..<regulationPageslist.count, id: \.self) { i in
-                        Button(regulationPageslist[i].name) {
-                            regulationPageslist[i].selected = !regulationPageslist[i].selected
-                            print(regulationPageslist[i].id + " selected")
-                            if regulationPageslist[i].selected {
+                    ForEach(0..<stageList.count, id: \.self) { i in
+                        Button(stageList[i].name) {
+                            self.stageList[i].selected = !stageList[i].selected
+                            print(stageList[i].id + " selected")
+                            if stageList[i].selected {
                                 // add
-                                if !selectedItems.contains(id: regulationPageslist[i].id) {
-                                    self.selectedItems.addItem(id: regulationPageslist[i].id)
+                                if !selectedItems.contains(id: stageList[i].id) {
+                                    self.selectedItems.addItem(id: stageList[i].id)
                                 }
                             } else {
                                 // remove
-                                self.selectedItems.removeItem(id: regulationPageslist[i].id)
+                                self.selectedItems.removeItem(id: stageList[i].id)
                             }
-                        }.foregroundColor(regulationPageslist[i].selected ? .black : .gray)
+                        }.foregroundColor(stageList[i].selected ? .black : .gray)
                     }
                 }.padding(.horizontal)
             }.frame(maxWidth: 550).background(Image("Logo")
@@ -204,7 +217,6 @@ struct SelectStageView: View {
                         },
                         label: {
                             Button("Valider") {
-
                                 self.coordinator.addRegulationCheckStages(ids: selectedItems.items)
 
                                 self.coordinator.nextStep(start: true)
@@ -212,8 +224,8 @@ struct SelectStageView: View {
                                 userJourneyStarted = true
                                 
                                 //reset values
-                                for (index, _) in regulationPageslist.enumerated() {
-                                    regulationPageslist[index].selected = false
+                                for (index, _) in stageList.enumerated() {
+                                    stageList[index].selected = false
                                 }
                                 self.selectedItems.items = Set<String>()
                                 
