@@ -26,9 +26,21 @@ This class is the user journey class dedicated to control all the data flow duri
     - index: index of the current stage
     - stageDelegate: current stage of the user journey (the stageDelegate manages its own substeps)
  */
+
 class UJCoordinator: ObservableObject {
     //model data
-    private var myDictionary: [String:[DataNorm]] = [:]
+    private var myDictionary: [String:[DataNorm]] = [:] // TODO: to remove
+    
+    private var savedData: [StageWrite] = []
+
+    private var stageList:  [String:StageRead] = [:]
+    
+    var getStageNames: [String] {
+        get {
+            return Array(stageList.keys)
+        }
+    }
+
     var dataAudit: [DataNorm] {
         get {
             var array: [DataNorm] = []
@@ -46,35 +58,43 @@ class UJCoordinator: ObservableObject {
     
     var done: Bool {
         get {
-            return self.stageDelegate == nil || (!self.stillHaveStage() && self.stageDelegate!.hasFinished && self.wentBack == false)
+            return self.finished == true || (!self.stillHaveStage() && self.stageDelegate!.hasFinished && self.wentBack == false)
         }
     }
     
     // audit, general information:
-    
     var auditRef: String;
-    var config: ERP_Config;
     
-    // stages
+    // stages properties
     private var wentBack: Bool = false;
     private var stageHistory: [String];
     private var index: Int;
-    var stageDelegate: PRegulationCheckStageDelegate?;
+    //var stageDelegate: PRegulationCheckStageDelegate?;
+    
+    //state properties
+    var stageDelegate: StageDelegate?;
     var totalStages: Int = 0;
+    private var finished = false
+    
     
     init() {
         print("UJCoordinator initialized")
         self.auditRef = UUID().uuidString;
-        self.config = ERP_Config()
 
         self.index = 0
         self.stageHistory = []
-        self.stageDelegate = (self.getStageMap()["préétape"] as! PRegulationCheckStageDelegate)
-        self.stageHistory.append(self.stageDelegate!.id)
-        self.myDictionary[self.stageHistory[index]] = []
+        
+        self.stageDelegate = nil
+
+        self.stageHistory = []
+        self.myDictionary = [:]
     }
     
-    func loadPath(pathToLoad: String) {
+    /*
+        Load filled steps from file
+    */
+    
+    func loadPath(pathToLoad: String) { // TODO: modify with JSON
         self.myDictionary = convertJsonToStep(path: pathToLoad)
         
         self.stageHistory = Array(self.myDictionary.keys)
@@ -89,7 +109,15 @@ class UJCoordinator: ObservableObject {
         let range = startIndex...endIndex
         self.auditRef = String(pathToLoad[range])
         print("new audit ref \(self.auditRef)")
-        self.config = ERP_Config()
+    }
+
+    /**
+     
+        This function stores all the possible stages to add for the selected building type
+     */
+
+    func loadBuildingTypeStages(stages: [String:StageRead]) {
+        self.stageList = stages
     }
     
     /**
@@ -97,7 +125,7 @@ class UJCoordinator: ObservableObject {
      */
     
     func canGoBack() -> Bool {
-        return stageDelegate == nil || !(index == 0 && stageDelegate!.index == 0)
+        return stageDelegate == nil || !(index == 0 && self.stageDelegate!.currentlyIntheFirstStep())
     }
     
     /**
@@ -123,14 +151,9 @@ class UJCoordinator: ObservableObject {
      */
     
     func getCurrentStageId() -> String {
-        //print(self.stageHistory)
-        
+
         if self.stageDelegate != nil && self.stageHistory.count > 0 {
             return self.stageHistory[index]
-        }
-        if self.stageHistory.count == 0 {
-            //: doesn't works well because the UJ is reinitialise every but the value is not lost though ...
-            return "portedentrée" + "-" + UUID().uuidString
         }
         return "unknown"
     }
@@ -146,24 +169,30 @@ class UJCoordinator: ObservableObject {
      */
     
     func addNewRegulationCheck(newObject: DataNorm) {
-        if wentBack {
-            //
-            print("modify")
-            let fetchId = newObject.subStepId
-            for (i,obj_value) in myDictionary[self.stageDelegate!.id]!.enumerated() {
-                if obj_value.subStepId == fetchId {
-                    myDictionary[self.stageDelegate!.id]![i] = newObject
-                    return
-                }
-            }
-            // case which the object is not saved in the current stage
-            self.myDictionary[self.stageDelegate!.id]!.append(newObject)
+        let stageId = self.index
+        let dataNormId = self.stageDelegate!.getIndex
+
+        if self.savedData[stageId].data.count > 0 && dataNormId <= (savedData[stageId].data.count - 1) {
+            self.savedData[stageId].data[dataNormId] = newObject
+        } else {
+            self.savedData[stageId].data.append(newObject)
         }
-        else {
-            print("create")
-            self.myDictionary[self.stageDelegate!.id]!.append(newObject)
-        }
-        
+    }
+    
+    func addStageDescription(description: String) -> Bool {
+        self.savedData[self.index].description = description
+        return true
+    }
+    
+    /**
+     
+     This function add description to the current stage
+     
+     */
+    
+    func changeDescription(description: String) {
+        print("description = \(description)")
+        self.savedData[self.index].description = description
     }
     
     
@@ -174,6 +203,9 @@ class UJCoordinator: ObservableObject {
      */
     
     func writeDataIntoJsonFile() -> Void {
+        
+        // TODO: to refacto, change the data structure
+        
         do {
             let obj = convertStepIntoJson(data: myDictionary)
 
@@ -235,13 +267,13 @@ class UJCoordinator: ObservableObject {
      */
 
     func addRegulationCheckStages(ids: Set<String>) {
-        //print(ids)
         for id in ids {
             //build the stage id here
-            self.stageHistory.append(id + "-" + UUID().uuidString)
+            //self.stageHistory.append(id + "-" + UUID().uuidString)
+            self.stageHistory.append(id)
+            self.savedData.append(StageWrite(stageName: id, description: "", data: []))
         }
         self.totalStages = self.stageHistory.count
-        print(self.totalStages)
     }
 
     /**
@@ -250,19 +282,28 @@ class UJCoordinator: ObservableObject {
     
     func changeDelegate() {
         self.index += 1
-        print("changeDelegate")
         
         if self.index < self.stageHistory.count {
-            let trueId = parseNormId(stageHistory[index])
-            // TODO: have to handle when you already write something and then you want back to a previous stage, we need a way to reload the previous data we had
-            self.stageDelegate = (self.getStageMap()[trueId] as! PRegulationCheckStageDelegate)
-            self.myDictionary[self.stageHistory[index]] = []
+
+            self.stageDelegate = StageDelegate(coordinator: self, stageRead: stageList[self.stageHistory[self.index]]!)
+            
+            if savedData[self.index].data.count > 0 || savedData[self.index].description != "" {
+                let previousId = self.stageHistory[self.index]
+
+                // ensure that the loaded stage retrieve all stored data
+                self.stageDelegate!.reloadFilledStage(
+                    previousId: previousId,
+                    stageWrite: savedData[self.index]
+                )
+            }
+
         } else {
-            self.stageDelegate = nil
+            // set user journey to finished
+            self.userJourneyFinished()
         }
         
         // save in json file
-        self.writeDataIntoJsonFile()
+        //self.writeDataIntoJsonFile()
     }
     
     /**
@@ -274,13 +315,14 @@ class UJCoordinator: ObservableObject {
      */
     
     func nextStep(start: Bool = false) { // user has click to the next step button
-        print("go next step")
-        
+
         if self.wentBack == true && !self.stageDelegate!.stillHaveSteps() {
             self.resetWentBack()
         }
-
-        if start == false {
+        
+        if start == true {
+            stageDelegate = StageDelegate(coordinator: self, stageRead: stageList[self.stageHistory[0]]!)
+        } else {
             //TODO: we change the stage at that moment in the User Journey Coordinator and not in the delegate class
             self.stageDelegate!.moveIndex()
 
@@ -302,6 +344,7 @@ class UJCoordinator: ObservableObject {
     func getNextView(forceQuit: Bool = false) -> GenericRegulationView {
         if forceQuit == true || index == stageHistory.count || stageDelegate!.hasFinished {
             // summary page
+            self.userJourneyFinished()
             return GenericRegulationView(coordinator: self)
         } else {
             return self.stageDelegate!.getNextStep()
@@ -317,27 +360,30 @@ class UJCoordinator: ObservableObject {
         // TODO: check, maybe move the index of the previous delegate, maybe it will erase when we go to previous stage, add stg to load in the next features
         
         self.wentBack = true
-        print("back 0")
-        if self.stageDelegate == nil || (self.stageDelegate!.index == 0) { // go previous stage
-            print("previous stage")
+        
+        // go previous stage
+        if self.stageDelegate == nil || (self.stageDelegate!.currentlyIntheFirstStep()) {
+
             self.index -= 1
-            print("index ==")
-            print(index)
-            print(self.stageHistory)
-            // reload data
-            print(self.wentBack)
-            self.stageDelegate = (self.getStageMap()[parseNormId(self.stageHistory[self.index])] as! PRegulationCheckStageDelegate)
+            
+            self.stageDelegate = StageDelegate(
+                coordinator: self,
+                stageRead: stageList[self.stageHistory[self.index]]!)
             let previousId = self.stageHistory[self.index]
 
             // reload saved data for data model
-            self.stageDelegate!.reloadPreviousStage(previousId: previousId,newSavedData: self.myDictionary[previousId]!)
+            self.stageDelegate!.reloadPreviousStage(
+                previousId: previousId,
+                stageWrite: savedData[self.index],
+                stageRead: stageList[previousId]!)
             self.stageDelegate!.loadPreviousStep()
         }
         
-        else if self.stageDelegate!.index > 0 { // go previous stage's substep
+        // go previous step
+        else if !self.stageDelegate!.currentlyIntheFirstStep() {
             print("previous step")
 
-            self.stageDelegate?.reloadDuringTheStage(newSavedData: self.myDictionary[self.stageDelegate!.id]!)
+            self.stageDelegate?.reloadDuringTheStage(newSavedData: savedData[self.index].data)
             self.stageDelegate?.loadPreviousStep()
         }
     }
@@ -347,39 +393,15 @@ class UJCoordinator: ObservableObject {
      */
     
     func getPreviousView() -> GenericRegulationView {
-        //TODO: check if we can load the previous step otherwise, we keep the current scene
-        
-        if self.stageDelegate == nil {
-            return GenericRegulationView(title: "Empty Page", content: [], id: "emptypage", subStepId: "emptypage")
-        }
         return self.stageDelegate!.getPreviousStep()
     }
-}
-
-extension UJCoordinator {
-    /**
-     This function enables us to reload properly the previous steps, once we need to go back to the previous stage.
-     */
-    func getStageMap() -> NSDictionary {
-        // load stage map getting from the begining
-        // old method
-        let stageMap: NSDictionary = [
-            "préétape": PrestageStageDelegate(config: self.config, coordinator: self),
-            "portedentrée" : DoorStageDelegate(config: self.config, coordinator: self),
-            "rampe" : RampStageDelegate(config: self.config, coordinator: self),
-            "alléestructurante" : CorridorStageDelegate(config: self.config, coordinator: self),
-            "alléenonstructurante" : NonPublicCorridorStageDelegate(config: self.config, coordinator: self),
-            "escalier" : StairsStageDelegate(config: self.config, coordinator: self),
-            "ascenseur" : ElevatorStageDelegate(config: self.config, coordinator: self),
-            "filedattente" : WaitingLineStageDelegate(config: self.config, coordinator: self),
-            "cheminementexterieur" : ExternalPathStageDelegate(config: self.config, coordinator: self),
-            "parking" : ParkingStageDelegate(config: self.config, coordinator: self),
-        ]
-        return stageMap
+    
+    func userJourneyFinished() {
+        finished = true
+    }
+    
+    func userJourneyNotFinished() {
+        finished = false
     }
 }
 
-
-struct stage {
-    
-}

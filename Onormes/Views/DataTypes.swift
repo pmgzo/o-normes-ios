@@ -14,6 +14,8 @@ import Foundation
 
 enum PageType {
     case regular
+    case description
+
     case addStage
     case summary
 }
@@ -198,4 +200,28 @@ struct AuditInfos {
     var phoneNumber: String = "";
     var notes: String = "";
     var date: Date;
+}
+
+/**
+ 
+ Reading struct to render the displaying of a stage
+ 
+ */
+
+struct StageRead {
+    let name: String;
+    let content: [RegulationCheckField];
+}
+
+/**
+ 
+ Writing struct to save data of a stage
+ 
+ */
+
+struct StageWrite {
+    // maybe an id as reference once sending the infos
+    let stageName: String;
+    var description: String
+    var data: [DataNorm];
 }

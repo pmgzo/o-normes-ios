@@ -7,24 +7,20 @@
 
 import Foundation
 
-/**
- This class is like an abstract class in C++. Each Stage class inherits from that class.
- This class implement the first simple step to handle substeps within a stage.
- 
-- Properties:
-    - steps: are simple view corresponding to a substep
-    - index: is the index of the current substep
-    - coordinator: is the user journey coordinator, used to communicate between **UserJourneyCoordinator** and the **GenericViewModel**
-    - savedData: is the date saved during the stage, to handle back button event
-    - hasFinished: is a variable used to indicate to the **UserJourneyCoordinator** that the current stage is finished
- */
-
-class PRegulationCheckStageDelegate  {
+struct StageDelegate  {
+    var descriptionPage: GenericRegulationView;
+    var descriptionPagePassed: Bool
     var steps: [GenericRegulationView] = []
     var index: Int = 0
     var coordinator: UJCoordinator;
     var savedData: [DataNorm] = [];
     var hasFinished: Bool = false
+    
+    var getIndex: Int {
+        get {
+            return index
+        }
+    }
     
     private var _id: String
     var id: String {
@@ -33,17 +29,31 @@ class PRegulationCheckStageDelegate  {
       }
     }
     
-    init(config: ERP_Config, coordinator: UJCoordinator) {
+    init(coordinator: UJCoordinator, stageRead: StageRead) {
         self._id = coordinator.getCurrentStageId()
         self.index = 0
         self.coordinator = coordinator
+        
+        self.steps = []
+        for step in stageRead.content {
+            steps.append(GenericRegulationView(title: stageRead.name, content: [step], id: stageRead.name, subStepId: stageRead.name))
+        }
+        
+        self.descriptionPage =  GenericRegulationView(coordinator: coordinator, description: "")
+        self.descriptionPagePassed = false
     }
     
     /**
         Method to increase the index in the substeps list.
      */
     
-    func moveIndex() {
+    mutating func moveIndex() {
+        print("move index")
+        
+        if descriptionPagePassed == false {
+            descriptionPagePassed = true
+            return
+        }
         self.index += 1
         if index == self.steps.count {
             hasFinished = true
@@ -56,8 +66,10 @@ class PRegulationCheckStageDelegate  {
      */
     
     func getNextStep() -> GenericRegulationView {
+        if descriptionPagePassed == false {
+            return descriptionPage
+        }
         if savedData.count != 0 && index < savedData.count {
-            // reload the data
             steps[index].reloadSavedData(savedData: savedData[index])
         }
         
@@ -68,17 +80,33 @@ class PRegulationCheckStageDelegate  {
             Method to return the previous step
      */
     
-    func getPreviousStep() -> GenericRegulationView {
+    mutating func getPreviousStep() -> GenericRegulationView {
+        if self.descriptionPagePassed == false {
+            return descriptionPage
+        }
         return self.steps[index]
     }
     
+
+    
+    func currentlyIntheFirstStep() -> Bool {
+        if descriptionPagePassed == false {
+            return true
+        }
+        return false
+    }
+
     /**
      
         Method to indicate whether if the current stage has still substeps to be filled
         - Returns: boolean
      */
     
+    
     func stillHaveSteps()  -> Bool {
+        if self.descriptionPagePassed == false {
+            return true
+        }
         return (index + 1) < steps.count
     }
     
@@ -88,7 +116,7 @@ class PRegulationCheckStageDelegate  {
      */
 
     func hasStillPreviousSteps() -> Bool {
-        return !(index == 0)
+        return !(index == 0 && self.descriptionPagePassed == false)
     }
     
     /**
@@ -97,7 +125,9 @@ class PRegulationCheckStageDelegate  {
      */
     
     func formIsOkay() -> Bool {
-        print("form is okay ")
+        if self.descriptionPagePassed == false {
+            return true
+        }
         return steps[index].formIsOkay()
     }
     
@@ -110,6 +140,13 @@ class PRegulationCheckStageDelegate  {
     
     
     func modify(coordinator: UJCoordinator) -> Bool {
+        print("modify")
+        print(descriptionPagePassed)
+        if self.descriptionPagePassed == false {
+            print(self.descriptionPage.getDescription())
+            print(self.descriptionPage.description)
+            return coordinator.addStageDescription(description: self.descriptionPage.getDescription())
+        }
         return steps[index].modify(coordinator: coordinator)
     }
     
@@ -119,7 +156,7 @@ class PRegulationCheckStageDelegate  {
         - newSavedData: saved data
      */
     
-    func loadData(newSavedData: [DataNorm]) {
+    mutating func loadData(newSavedData: [DataNorm]) {
         self.savedData = newSavedData
     }
     
@@ -129,34 +166,57 @@ class PRegulationCheckStageDelegate  {
      - previousId: previous stage Id
      - newSavedData: saved data
      */
-    func reloadPreviousStage(previousId: String, newSavedData: [DataNorm]) {
+    mutating func reloadPreviousStage(previousId: String, stageWrite: StageWrite, stageRead: StageRead) {
+        print("reload preivous stage")
         
-        //TODO: modify maybe
+        let newSavedData = stageWrite.data
+        
+        self.descriptionPage =  GenericRegulationView(coordinator: coordinator, description: stageWrite.description)
+
         if newSavedData.count == 0 {
-            print("returned")
+            // leave as no data has been saved
             return
         }
-
+        
+        self.descriptionPagePassed = true
+        
         _id = previousId
         print(id)
         self.steps = []
         
         // we have to fully copy it because the journey can change according to our previous choices
-        for subStep in newSavedData {
-            steps.append(getSubSteps(id: subStep.subStepId))
+        for subStep in stageRead.content {
+            steps.append(
+                GenericRegulationView(title: stageRead.name, content: [subStep], id: stageRead.name, subStepId: stageRead.name))
         }
         
         self.loadData(newSavedData: newSavedData)
         self.index =  newSavedData.count
-        print("dataloaded")
     }
+    
+    /**
+        Called once we get a back to an already filled stage
+     - Parameters:
+     - previousId: previous stage Id
+     - stageWrite: saved data to be considered
+     */
+    mutating func reloadFilledStage(previousId: String, stageWrite: StageWrite) {
+        
+        self.savedData = stageWrite.data
+        
+        self.descriptionPage =  GenericRegulationView(coordinator: coordinator, description: stageWrite.description)
+
+        _id = previousId
+        self.index =  0
+    }
+    
     /**
         Method equivalent to **loadData**
      - Parameters:
      - newSavedData: saved data
      */
     
-    func reloadDuringTheStage(newSavedData: [DataNorm]) {
+    mutating func reloadDuringTheStage(newSavedData: [DataNorm]) {
         self.loadData(newSavedData: newSavedData)
         //self.index =  savedData.count
     }
@@ -166,9 +226,13 @@ class PRegulationCheckStageDelegate  {
         Method to filled the previous page with the data that has been filled recently
      
      */
-    func loadPreviousStep() {
-        self.index -= 1
-        steps[self.index].reloadSavedData(savedData: savedData[self.index])
+    mutating func loadPreviousStep() {
+        if self.index != 0 {
+            self.index -= 1
+            steps[self.index].reloadSavedData(savedData: savedData[self.index])
+        } else {
+            descriptionPagePassed = false
+        }
     }
     
     /**

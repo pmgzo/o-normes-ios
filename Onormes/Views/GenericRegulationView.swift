@@ -8,6 +8,10 @@
 import Foundation
 import SwiftUI
 
+class StageDescription: ObservableObject {
+    @Published var value: String = ""
+}
+
 /**
  This class is the main view of the user journey navigation. It handles the summary page, the regulations selection page, and substeps pages.
  
@@ -59,10 +63,16 @@ struct GenericRegulationView: View
     var navcoordinator: CustomNavCoordinator?;
     var coordinator: UJCoordinator?;
     @State var selectionTag: String?;
+    
+    // selection step
     @ObservedObject var selectedItems: SelectedRegulationSet;
     var gridItemLayout: [GridItem];
     @State var isActive = false
     @State var animateCircle: Bool = false
+    @State var stageList: [RegulationPageItem]
+    
+    // description
+    @ObservedObject var description: StageDescription;
     
     @EnvironmentObject var appState: AppState
 
@@ -77,6 +87,9 @@ struct GenericRegulationView: View
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
         self.model.changeState(id: new_id, content: content)
         self.dataContainer = DataNormContainer(content: content)
+        //self.description = ""
+        self.description = StageDescription()
+        self.stageList = []
     }
     
     // for accessibility page
@@ -84,7 +97,8 @@ struct GenericRegulationView: View
         self.navcoordinator = navcoordinator
         self.coordinator = coordinator
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
-        
+        //self.description = ""
+        self.description = StageDescription()
         //self.isRegulationsPage = true
         self.pageType = PageType.addStage
         self.gridItemLayout = [GridItem(.adaptive(minimum: 100))]
@@ -94,6 +108,7 @@ struct GenericRegulationView: View
         self.id = ""
         self.subStepId = ""
         self.dataContainer = DataNormContainer(content: [])
+        self.stageList = returnArray(stageNames: coordinator.getStageNames)
     }
     
     // recap page
@@ -102,7 +117,8 @@ struct GenericRegulationView: View
         self.navcoordinator = nil
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
         self.gridItemLayout = [GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86))]
-        
+        //self.description = ""
+        self.description = StageDescription()
         self.pageType = PageType.summary
         self.title = ""
         self.content = []
@@ -110,6 +126,27 @@ struct GenericRegulationView: View
         self.subStepId = ""
         self.gridItemLayout = []
         self.dataContainer = DataNormContainer(content: [])
+        self.stageList = []
+    }
+    
+    // description page
+    init(coordinator: UJCoordinator, description: String) {
+        self.coordinator = coordinator
+        self.navcoordinator = nil
+        self.selectedItems = SelectedRegulationSet(selectedItems: [])
+        self.gridItemLayout = []
+        //self.description = description
+        self.description = StageDescription()
+        
+        self.pageType = PageType.description
+        self.title = ""
+        self.content = []
+        self.id = ""
+        self.subStepId = ""
+        self.gridItemLayout = []
+        self.dataContainer = DataNormContainer(content: [])
+        self.stageList = []
+        self.description.value = description
     }
         
     var body: some View {
@@ -119,6 +156,10 @@ struct GenericRegulationView: View
         }
         else if self.pageType == PageType.summary {
             self.summaryPage
+        }
+        else if self.pageType == PageType.description {
+            Text("Description")
+            TextField("Description", text: $description.value)
         } else {
             VStack {
                 Text(self.title!).font(.title).multilineTextAlignment(.center)
@@ -158,6 +199,10 @@ struct GenericRegulationView: View
             }
 
         }
+    }
+    
+    func getDescription() -> String {
+        return self.description.value
     }
     
     //func binding(for key: String) -> Binding<String> {
@@ -216,7 +261,6 @@ struct GenericRegulationView: View
      */
     
     func modify(coordinator: UJCoordinator) -> Bool {
-        //TODO: att byta
         return self.model.addRegulationCheck(coordinator: coordinator, data: self.dataContainer.data, content: self.content!, subStepId: self.subStepId!)
     }
     
