@@ -54,7 +54,7 @@ struct HomeMenu: View {
 //              })
               
               NavigationLink(
-                  destination: CreateAuditView(),
+                  destination: CreateAuditView().navigationBarHidden(true),
                   isActive: $hasStartUserJouney,
                   label: {
                       Button("Réaliser un diagnostic") {

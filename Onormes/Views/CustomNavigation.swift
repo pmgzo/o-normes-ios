@@ -8,9 +8,12 @@
 import Foundation
 import SwiftUI
 
+enum UJPages {
+    case stageSelection, regular;
+}
 
-class CustomNavCoordinator: ObservableObject {
-    @Published var renderStepPage: Bool = false;
+class CustomNavCoordinator: ObservableObject { // regular can be the main page either summary or criteria page
+    @Published var renderStepPage: UJPages = .regular;
     // others...
 }
 
@@ -32,77 +35,95 @@ struct UserJourneyNavigationPage: View {
     @State private var selectionTag: String?;
     
     let content: () -> GenericRegulationView;
-    private unowned let navcoordinator: CustomNavCoordinator;
+    @ObservedObject var navcoordinator = CustomNavCoordinator();
+    
     var coordinator: UJCoordinator;
     var navigationButton = false;
     
-    init(content: @escaping () -> GenericRegulationView, navcoordinator: CustomNavCoordinator, coordinator: UJCoordinator, navigationButton: Bool) {
+    init(content: @escaping () -> GenericRegulationView, coordinator: UJCoordinator, navigationButton: Bool) {
         self.content = content
         self.coordinator = coordinator
-        self.navcoordinator = navcoordinator
         self.navigationButton = navigationButton
     }
     
     var body: some View {
         VStack {
-            HStack {
-                Spacer().frame(width: 290)
-                Button(action: {
-                    navcoordinator.renderStepPage = true
-                }) {
-                    Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 15, height: 15).padding()
-                }.background(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1)).cornerRadius(13).frame(width: 16, height: 16).padding()
+            if navcoordinator.renderStepPage == .stageSelection {
+                GenericRegulationView(coordinator: coordinator, navcoordinator: navcoordinator)
             }
-            
-            // own content
-            Spacer()
-            self.content().frame(maxWidth: .infinity, maxHeight: .infinity)
-            if navigationButton {
+            else {
+                HStack {
+                    Spacer().frame(width: 290)
+                    Button(action: {
+                        print("before")
+                        navcoordinator.renderStepPage = .stageSelection
+                        print("after")
+                    }) {
+                        Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 15, height: 15).padding()
+                    }.background(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1)).cornerRadius(13).frame(width: 16, height: 16).padding()
+                }
+                
+                // own content
                 Spacer()
-                VStack {
-                    HStack {
-                        if (self.coordinator.canGoBack()) {
-                            CustomNavigationLink(coordinator: coordinator,tag: "goback", selection: $selectionTag, destination: self.coordinator.getPreviousView, navigationButton: !self.coordinator.done) {
-                                Button("Retour") {
-                                    self.coordinator.backToThePreviousStage()
-                                    selectionTag = "goback"
-                                }.buttonStyle(ButtonStyle())
+                self.content().frame(maxWidth: .infinity, maxHeight: .infinity)
+                if navigationButton {
+                    Spacer()
+                    VStack {
+                        HStack {
+                            if (self.coordinator.canGoBack()) {
+                                CustomNavigationLink(coordinator: coordinator, tag: "goback", selection: $selectionTag,
+                                    destination: {() -> GenericRegulationView in
+                                    print("call go back")
+                                    return self.coordinator.getPreviousView()}, navigationButton: !self.coordinator.done) {
+                                    Button("Retour") {
+                                        self.coordinator.backToThePreviousStage()
+                                        selectionTag = "goback"
+                                    }
+                                    .buttonStyle(ButtonStyle())
+                                    .transition(.slide)
+                                }
+                            }
+                            
+                            CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: {() -> GenericRegulationView in
+                                return self.coordinator.getNextView()}, navigationButton: false) {
+                                Button("Finir l'audit") {
+                                    // coordinator check
+                                    coordinator.userJourneyFinished()
+                                    selectionTag  = "finished"
+                                }
+                                .buttonStyle(ButtonStyle())
+                                .transition(.slide)
+                            }
+                            
+                            CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: {() -> GenericRegulationView in
+                                self.coordinator.getNextView()
+                                
+                            }, navigationButton: !self.coordinator.done) {
+                                Button("Etape suivante") {
+                                    if coordinator.stageDelegate!.formIsOkay() {
+                                        // save data
+                                        self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
+                                        self.coordinator.nextStep()
+                                        selectionTag = "skip"
+                                    }
+                                }
+                                .buttonStyle(ButtonStyle())
+                                .transition(AnyTransition.asymmetric(
+                                insertion: .move(edge: .trailing),
+                                removal: .move(edge: .leading)))
                             }
                         }
-                                                
-                        // TODO: Add Recap page ?
-                        CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: {() -> GenericRegulationView in return self.coordinator.getNextView(forceQuit: true)}, navigationButton: false) {
-                            Button("Finir l'audit") {
-                                // coordinator check
-                                selectionTag  = "finished"
-                            }.buttonStyle(ButtonStyle())
-                        }
-                        
-                        CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: {() -> GenericRegulationView in return self.coordinator.getNextView()}, navigationButton: !self.coordinator.done) {
-                            Button("Etape suivante") {
-                                if coordinator.stageDelegate!.formIsOkay() {
-                                    print("step approved, modify data object")
-                                    // save data
-                                    self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
-                                    self.coordinator.nextStep()
-                                    selectionTag  = "skip"
-                                    //TODO: handle redirection with coordinator
-                                }
-                            }.buttonStyle(ButtonStyle())
-                        }
                     }
-                }
             }
         }
     }
 
-    
+    }
 }
 
 /// This class manages RegulationsSelection page and the Substep page view
 struct UserJourneyNavigationWrapper: View {
     let content: () -> GenericRegulationView;
-    @ObservedObject var navcoordinator = CustomNavCoordinator();
     var coordinator: UJCoordinator;
     var navigationButton = false
     
@@ -119,13 +140,16 @@ struct UserJourneyNavigationWrapper: View {
     
     var body: some View {
         VStack {
-            if navcoordinator.renderStepPage {
-                GenericRegulationView(coordinator: coordinator, navcoordinator: navcoordinator)
+            // summary page
+            if self.coordinator.hasFinished {
+                //summaryPage
+                SummaryWrapper(coordinator: self.coordinator,      content: self.content).navigationBarHidden(true)
             }
+            // criterion page
             else {
-                UserJourneyNavigationPage(content: content,navcoordinator: navcoordinator, coordinator: coordinator, navigationButton: self.navigationButton)
+                UserJourneyNavigationPage(content: content, coordinator: coordinator, navigationButton: self.navigationButton)
             }
-        }.navigationBarHidden(true)
+        }
     }
 }
 
@@ -188,6 +212,7 @@ struct CustomNavigationLink<Label: View> : View {
     }
 
     init(coordinator: UJCoordinator, isActive: Binding<Bool>, destination: @escaping () -> GenericRegulationView, @ViewBuilder label: @escaping () -> Label) {
+
         self.constructorNumber = 2
         self.isActive = isActive
         self.destination = destination
@@ -251,5 +276,30 @@ struct QuitingNavigationLink<Label: View> : View {
             destination: HomeMenu().navigationBarHidden(true),
             isActive: self.isActive,
             label: label)
+    }
+}
+
+struct ReturnButtonWrapper<WrappedView: View>: View
+{
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    let destination: () -> WrappedView;
+    
+    init(@ViewBuilder destination: @escaping () -> WrappedView) {
+        self.destination = destination
+    }
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Button("Retour") {
+                    presentationMode.wrappedValue.dismiss()
+                }.buttonStyle(ButtonStyle())
+
+                Spacer().frame(width: 250)
+            }
+            Spacer()
+                   .frame(height: 40)
+            destination()
+        }
     }
 }

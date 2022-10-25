@@ -77,8 +77,7 @@ extension GenericRegulationView {
         VStack {
             HStack {
                 Button("Retour") {
-                    // coordinator check
-                    self.navcoordinator?.renderStepPage = false
+                    self.navcoordinator?.renderStepPage = .regular
                 }.buttonStyle(ButtonStyle())
                 Spacer().frame(width: 250)
             }
@@ -112,17 +111,24 @@ extension GenericRegulationView {
             if selectedItems.items.count != 0 {
                 HStack {
                     Button("Valider") {
+                        print("here1")
                         print(selectedItems.items)
                         coordinator!.addRegulationCheckStages(ids: selectedItems.items)
 
+                        print("here2")
                         //reset values
                         self.selectedItems.items = Set<String>()
                         for (index, _) in stageList.enumerated() {
                             stageList[index].selected = false
                         }
-                        
-                        navcoordinator?.renderStepPage = false
-                    }.buttonStyle(validateButtonStyle())
+                        print("here3")
+
+
+                        navcoordinator?.renderStepPage = .regular
+                    }
+                    .buttonStyle(validateButtonStyle())
+                    .transition(.slide)
+
                     Spacer().frame(maxWidth: 40)
                     Button("Annuler") {
                         // empty list
@@ -180,64 +186,152 @@ struct SelectStageView: View {
     
     
     var body: some View {
-        VStack {
-            Text("Ajoutez au minimum une étape pour commencer le parcours").font(.system(size: 20.0))
-            Spacer()
-                   .frame(height: 30)
-            ScrollView {
-                LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
-                    ForEach(0..<stageList.count, id: \.self) { i in
-                        Button(stageList[i].name) {
-                            self.stageList[i].selected = !stageList[i].selected
-                            print(stageList[i].id + " selected")
-                            if stageList[i].selected {
-                                // add
-                                if !selectedItems.contains(id: stageList[i].id) {
-                                    self.selectedItems.addItem(id: stageList[i].id)
+        ReturnButtonWrapper {
+            VStack {
+                Text("Ajoutez au minimum une étape pour commencer le parcours").font(.system(size: 20.0))
+                Spacer()
+                       .frame(height: 30)
+                ScrollView {
+                    LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
+                        ForEach(0..<stageList.count, id: \.self) { i in
+                            Button(stageList[i].name) {
+                                self.stageList[i].selected = !stageList[i].selected
+                                print(stageList[i].id + " selected")
+                                if stageList[i].selected {
+                                    // add
+                                    if !selectedItems.contains(id: stageList[i].id) {
+                                        self.selectedItems.addItem(id: stageList[i].id)
+                                    }
+                                } else {
+                                    // remove
+                                    self.selectedItems.removeItem(id: stageList[i].id)
                                 }
-                            } else {
-                                // remove
-                                self.selectedItems.removeItem(id: stageList[i].id)
-                            }
-                        }.foregroundColor(stageList[i].selected ? .black : .gray)
+                            }.foregroundColor(stageList[i].selected ? .black : .gray)
+                        }
+                    }.padding(.horizontal)
+                }.frame(maxWidth: 550).background(Image("Logo")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
+                
+
+                if selectedItems.items.count != 0 || userJourneyStarted == true { // its a hack to allow the navigation to continue otherwise it stops as we reset selectedItems
+                    HStack {
+                        CustomNavigationLink(
+                            coordinator: self.coordinator,
+                            isActive: $userJourneyStarted,
+                            destination: { () -> GenericRegulationView in return self.coordinator.getNextView()
+
+                            },
+                            label: {
+                                Button("Valider") {
+                                    self.coordinator.addRegulationCheckStages(ids: selectedItems.items)
+
+                                    self.coordinator.nextStep(start: true)
+
+                                    userJourneyStarted = true
+                                    
+                                    //reset values
+                                    for (index, _) in stageList.enumerated() {
+                                        stageList[index].selected = false
+                                    }
+                                    self.selectedItems.items = Set<String>()
+                                    
+                                }.buttonStyle(validateButtonStyle())
+                        })
+                        Spacer().frame(maxWidth: 40)
+                        Button("Annuler") {
+                            selectedItems.items = Set<String>()
+                        }.buttonStyle(deleteButtonStyle())
                     }
-                }.padding(.horizontal)
-            }.frame(maxWidth: 550).background(Image("Logo")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
-            
-
-            if selectedItems.items.count != 0 || userJourneyStarted == true { // its a hack to allow the navigation to continue otherwise it stops as we reset selectedItems
-                HStack {
-                    CustomNavigationLink(
-                        coordinator: self.coordinator,
-                        isActive: $userJourneyStarted,
-                        destination: { () -> GenericRegulationView in return self.coordinator.getNextView()
-
-                        },
-                        label: {
-                            Button("Valider") {
-                                self.coordinator.addRegulationCheckStages(ids: selectedItems.items)
-
-                                self.coordinator.nextStep(start: true)
-
-                                userJourneyStarted = true
-                                
-                                //reset values
-                                for (index, _) in stageList.enumerated() {
-                                    stageList[index].selected = false
-                                }
-                                self.selectedItems.items = Set<String>()
-                                
-                            }.buttonStyle(validateButtonStyle())
-                    })
-                    Spacer().frame(maxWidth: 40)
-                    Button("Annuler") {
-                        selectedItems.items = Set<String>()
-                    }.buttonStyle(deleteButtonStyle())
+                } else {
+                    Spacer().frame(height: 64)
                 }
-            } else {
-                Spacer().frame(height: 64)
+            }
+        }
+    }
+}
+
+// Stage Selection in summary page
+
+struct SelectStageInSummaryView: View {
+    @ObservedObject var selectedItems: SelectedRegulationSet;
+    
+    @State var stageSelected = false
+    
+    var gridItemLayout: [GridItem];
+    var coordinator: UJCoordinator;
+        
+    @State var stageList: [RegulationPageItem];
+    
+    init(coordinator: UJCoordinator) {
+        self.coordinator = coordinator
+        self.gridItemLayout = [GridItem(.adaptive(minimum: 100))]
+        self.selectedItems = SelectedRegulationSet(selectedItems: [])
+        self.stageList = returnArray(stageNames: self.coordinator.getStageNames)
+        
+        print(self.stageList.count)
+    }
+    
+    
+    
+    var body: some View {
+        ReturnButtonWrapper {
+            VStack {
+                Text("Ajoutez au minimum une étape pour commencer le parcours").font(.system(size: 20.0))
+                Spacer()
+                       .frame(height: 30)
+                ScrollView {
+                    LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
+                        ForEach(0..<stageList.count, id: \.self) { i in
+                            Button(stageList[i].name) {
+                                self.stageList[i].selected = !stageList[i].selected
+                                print(stageList[i].id + " selected")
+                                if stageList[i].selected {
+                                    // add
+                                    if !selectedItems.contains(id: stageList[i].id) {
+                                        self.selectedItems.addItem(id: stageList[i].id)
+                                    }
+                                } else {
+                                    // remove
+                                    self.selectedItems.removeItem(id: stageList[i].id)
+                                }
+                            }.foregroundColor(stageList[i].selected ? .black : .gray)
+                        }
+                    }.padding(.horizontal)
+                }.frame(maxWidth: 550).background(Image("Logo")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
+                
+
+                if selectedItems.items.count != 0 || stageSelected == true { // its a hack to allow the navigation to continue otherwise it stops as we reset selectedItems
+                    HStack {
+                        CustomNavigationLink(
+                            coordinator: self.coordinator,
+                            isActive: $stageSelected,
+                            destination: { () -> GenericRegulationView in return self.coordinator.getNextView()
+                            },
+                            label: {
+                                Button("Valider") {
+                                    self.coordinator.addRegulationCheckStages(ids: selectedItems.items)
+
+                                    stageSelected = true
+                                    
+                                    //reset values
+                                    for (index, _) in stageList.enumerated() {
+                                        stageList[index].selected = false
+                                    }
+                                    self.selectedItems.items = Set<String>()
+                                    
+                                }.buttonStyle(validateButtonStyle())
+                        })
+                        Spacer().frame(maxWidth: 40)
+                        Button("Annuler") {
+                            selectedItems.items = Set<String>()
+                        }.buttonStyle(deleteButtonStyle())
+                    }
+                } else {
+                    Spacer().frame(height: 64)
+                }
             }
         }
     }

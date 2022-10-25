@@ -124,23 +124,14 @@ struct DataNormList: View {
 }
 
 extension GenericRegulationView {
-    // Summary page
+    // summary page
     var summaryPage: some View {
         VStack {
-                HStack {
-                    CustomNavigationLink(coordinator: self.coordinator!, tag: "goback", selection: $selectionTag, destination: self.coordinator!.getPreviousView, navigationButton: true) {
-                        Button("Retour") {
-                            self.coordinator!.backToThePreviousStage()
-                            selectionTag = "goback"
-                        }.buttonStyle(ButtonStyle())
-                    }
-                    Spacer().frame(width: 250)
-                }
-                Spacer()
-                       .frame(height: 40)
                 Text("Resumé de l'audit").font(.system(size: 20.0))
                 Spacer()
                        .frame(height: 30)
+            
+                Text("New Page !")
                 
                 DataNormList(list: self.coordinator!.dataAudit)
                 
@@ -181,3 +172,49 @@ extension GenericRegulationView {
         }
     }
 }
+
+struct SummaryWrapper: View {
+    
+    var coordinator: UJCoordinator
+    var content: () -> GenericRegulationView
+    @State var selectionTag: String? = ""
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
+    
+    init(coordinator: UJCoordinator, content: @escaping () -> GenericRegulationView) {
+        print("create summary")
+        self.coordinator = coordinator
+        self.content = content
+    }
+    
+    
+    
+    var body: some View {
+        VStack {
+            HStack {
+                    Button("Retour") {
+                        self.coordinator.backToThePreviousStage()
+                        self.coordinator.userJourneyNotFinished()
+
+                        presentationMode.wrappedValue.dismiss()
+                    }.buttonStyle(ButtonStyle())
+                
+                Spacer().frame(width: 150)
+
+                NavigationLink(
+                    destination: SelectStageInSummaryView(coordinator: self.coordinator).navigationBarHidden(true),
+                    tag: "stageSelection", selection: $selectionTag) {
+                    Button(action: {
+                        selectionTag = "stageSelection"
+                    }) {
+                        Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 15, height: 15).padding()
+                    }.background(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1)).cornerRadius(13).frame(width: 16, height: 16).padding()
+                }
+            }
+            Spacer().frame(height: 40)
+
+            content()
+        }
+    }
+}
+

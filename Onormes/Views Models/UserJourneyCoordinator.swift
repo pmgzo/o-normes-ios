@@ -12,8 +12,6 @@ enum UJCoordinatorError: Error {
     case attributeNotSet(name: String)
 }
 
-//TODO: IntroUJCoordinator Page (place, date, type of establishment, how many floor ? etc...)
-
 /**
  
 This class is the user journey class dedicated to control all the data flow during the user journey navigation
@@ -62,6 +60,10 @@ class UJCoordinator: ObservableObject {
         }
     }
     
+    var hasFinished: Bool {
+        return finished
+    }
+    
     // audit, general information:
     var auditRef: String;
     
@@ -75,7 +77,6 @@ class UJCoordinator: ObservableObject {
     var stageDelegate: StageDelegate?;
     var totalStages: Int = 0;
     private var finished = false
-    
     
     init() {
         print("UJCoordinator initialized")
@@ -274,8 +275,19 @@ class UJCoordinator: ObservableObject {
             self.savedData.append(StageWrite(stageName: id, description: "", data: []))
         }
         self.totalStages = self.stageHistory.count
+        
+        // handle add step during summary page
+        if self.finished == true {
+            self.userJourneyNotFinished()
+            self.startTheNewStage()
+        }
     }
 
+    // used once the stages are added at the end of the summary
+    func startTheNewStage() {
+        self.stageDelegate = StageDelegate(coordinator: self, stageRead: stageList[self.stageHistory[self.index]]!)
+    }
+    
     /**
         This function change the **stageDelegate** property. This function is called once we get to a new stage or once the user journey is done
      */
@@ -322,8 +334,9 @@ class UJCoordinator: ObservableObject {
         
         if start == true {
             stageDelegate = StageDelegate(coordinator: self, stageRead: stageList[self.stageHistory[0]]!)
-        } else {
-            //TODO: we change the stage at that moment in the User Journey Coordinator and not in the delegate class
+        }
+        else {
+            // TODO: we change the stage at that moment in the User Journey Coordinator and not in the delegate class
             self.stageDelegate!.moveIndex()
 
             if self.stageDelegate!.hasFinished {
@@ -341,10 +354,9 @@ class UJCoordinator: ObservableObject {
      
      */
     
-    func getNextView(forceQuit: Bool = false) -> GenericRegulationView {
-        if forceQuit == true || index == stageHistory.count || stageDelegate!.hasFinished {
+    func getNextView() -> GenericRegulationView {
+        if hasFinished {
             // summary page
-            self.userJourneyFinished()
             return GenericRegulationView(coordinator: self)
         } else {
             return self.stageDelegate!.getNextStep()
@@ -362,7 +374,7 @@ class UJCoordinator: ObservableObject {
         self.wentBack = true
         
         // go previous stage
-        if self.stageDelegate == nil || (self.stageDelegate!.currentlyIntheFirstStep()) {
+        if self.hasFinished || (self.stageDelegate!.currentlyIntheFirstStep()) {
 
             self.index -= 1
             

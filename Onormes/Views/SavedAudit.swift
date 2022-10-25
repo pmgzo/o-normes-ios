@@ -46,10 +46,12 @@ struct SavedAudit: View {
             List(self.savedAuditList) { audit in
                 //Text(audit.name)
                 CustomNavigationLink(coordinator: coordinator, tag: audit.name, selection: $selectionTag, destination: { () -> GenericRegulationView in
-                    return self.coordinator.getNextView(forceQuit: true)},
+                    return self.coordinator.getNextView()},
                     navigationButton: false
                 ,label: {
                     Button(audit.name) {
+                        self.coordinator.userJourneyFinished()
+                        
                         let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
                         
                         let fullPath = userDirectory!.path + "/savedAudit/" + audit.name

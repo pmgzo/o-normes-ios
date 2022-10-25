@@ -20,12 +20,14 @@ struct BuildingTypeSelection: View {
     }
     
     var body: some View {
-        ResearchBar(text: _buildingType)
-        List {
-            ForEach(searchResults, id: \.self) { buildingType in
-                Button(buildingType) {
-                    _buildingType.wrappedValue = buildingType
-                    presentationMode.wrappedValue.dismiss()
+        ReturnButtonWrapper {
+            ResearchBar(text: _buildingType)
+            List {
+                ForEach(searchResults, id: \.self) { buildingType in
+                    Button(buildingType) {
+                        _buildingType.wrappedValue = buildingType
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 }
             }
         }
