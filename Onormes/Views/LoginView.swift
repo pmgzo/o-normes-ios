@@ -15,10 +15,9 @@ let lightGreyColor = Color(red: 239.0/255.0, green: 243.0/255.0, blue: 244.0/255
  */
 struct LoginView: View {
     @StateObject private var loginVM = LoginViewModel()
-
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var authentication: Authentication
-    
+
     @State private var pageIndex = 0
   
   var body: some View {
@@ -40,9 +39,7 @@ struct LoginView: View {
               
               if pageIndex == 0 {
                   VStack {
-                    
-                    
-                    
+
                     LoginForm().environmentObject(loginVM)
                     
                     Button(action: {
@@ -52,12 +49,15 @@ struct LoginView: View {
                         }
                       }
                     }, label: { loginVM.showProgressView
-                      ? AnyView(ProgressView())
-                      : AnyView(LoginButtonContent()) })
+                      ? AnyView(LoadingCircle())
+                        : AnyView(LoginButtonContent())
+                    }).modifier(PrimaryButtonStyle1())
                     
                     LabelledDivider(label: "ou")
                     
-                    Text("Mot de passe oublié").foregroundColor(Color(hex: 0x282359))
+                      Text("Mot de passe oublié")
+                          .font(.system(size: 18, design: .default))
+                          .foregroundColor(Color(hex: "29245A"))
                   }.padding()
                     .preferredColorScheme(.light)
                     .autocapitalization(.none)
@@ -108,18 +108,17 @@ struct LoginView: View {
       .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
         .onEnded({ value in
             if value.translation.width < 0 {
-                // left
-                if pageIndex == 1 {
-                    pageIndex = 0
-                }
-            }
-
-            if value.translation.width > 0 {
                 // right
                 if pageIndex == 0 {
                     pageIndex = 1
                 }
+            }
 
+            if value.translation.width > 0 {
+                // left
+                if pageIndex == 1 {
+                    pageIndex = 0
+                }
             }
         }))
   }
@@ -166,10 +165,9 @@ struct LogoImage: View {
 struct WelcomeText: View {
   var body: some View {
     Text("Bienvenue sur O-Normes !")
-      .font(.title3)
-      .fontWeight(.semibold)
-      .multilineTextAlignment(.center)
-      .padding(.bottom, 16)
+          .font(.system(size: 25))
+          .foregroundColor(Color(hex: "29245A"))
+          .multilineTextAlignment(.center)
   }
 }
 
@@ -180,18 +178,21 @@ struct UsernameTextField: View {
     HStack(alignment: .center) {
       ZStack(alignment: .center) {
         Image(systemName: "envelope.fill")
-          .foregroundColor(Color(hex: 0x282359))
+          .foregroundColor(Color(hex: "29245A"))
       }.frame(width: 40, height: 40, alignment: .center)
       
       TextField("Adresse mail", text: $username)
-        .background(lightGreyColor)
-        .padding(.bottom)
-        .padding(.top)
+        .padding(.bottom, 10)
+        .padding(.top, 10)
+        .font(Font.system(size: 18))
+        .foregroundColor(Color(hex: "29245A"))
         .keyboardType(.emailAddress)
         .disableAutocorrection(true)
         .submitLabel(.next)
-    }.background(lightGreyColor)
-      .cornerRadius(5.0)
+    }.background(.white)
+      .cornerRadius(70)
+      .overlay(RoundedRectangle(cornerRadius: 70)
+          .stroke(Color(hex: "29245A"), lineWidth: 2))
   }
 }
 
@@ -205,40 +206,46 @@ struct PasswordSecureField: View {
         HStack(alignment: .center){
           ZStack(alignment: .center) {
             Image(systemName: "lock.fill")
-              .foregroundColor(Color(hex: 0x282359))
-              .font(Font.system(size: 22, weight: .regular))
+              .foregroundColor(Color(hex: "29245A"))
+              .font(Font.system(size: 19, weight: .regular))
           }.frame(width: 40, height: 40, alignment: .center)
           
           SecureField("Mot de passe", text: $password)
-            .padding(.bottom)
-            .padding(.top)
-            .background(lightGreyColor)
+            .padding(.bottom, 10)
+            .padding(.top, 10)
+            .foregroundColor(Color(hex: "29245A"))
             .submitLabel(.done)
-        }.background(lightGreyColor)
-          .cornerRadius(5.0)
-        
+        }.background(.white)
+              .cornerRadius(70)
+              .overlay(RoundedRectangle(cornerRadius: 70)
+                  .stroke(Color(hex: "29245A"), lineWidth: 2))
       } else {
         HStack {
           ZStack(alignment: .center) {
             Image(systemName: "lock.fill")
-              .foregroundColor(Color(hex: 0x282359))
-              .font(Font.system(size: 22, weight: .regular))
+              .foregroundColor(Color(hex: "29245A"))
+              .font(Font.system(size: 19, weight: .regular))
           }.frame(width: 40, height: 40, alignment: .center)
           
           TextField("Mot de passe", text: $password)
-            .padding(.bottom)
-            .padding(.top)
-            .background(lightGreyColor)
+            .padding(.bottom, 10)
+            .padding(.top, 10)
+            .font(Font.system(size: 18))
+            .foregroundColor(Color(hex: "29245A"))
             .disableAutocorrection(true)
             .submitLabel(.done)
-        }.background(lightGreyColor)
-          .cornerRadius(5.0)
+            
+        }.background(.white)
+          .cornerRadius(70)
+          .overlay(RoundedRectangle(cornerRadius: 70)
+              .stroke(Color(hex: "29245A"), lineWidth: 2))
+
       }
       Button(action: {
         isShowPassword.toggle()
       }) {
         Image(systemName: self.isShowPassword ? "eye.slash" : "eye")
-          .foregroundColor(Color(hex: 0x282359))
+          .foregroundColor(Color(hex: "29245A"))
       }.offset(x: -10, y: 0)
     }.frame(height: 60)
     
@@ -247,13 +254,13 @@ struct PasswordSecureField: View {
 
 struct LoginButtonContent: View {
   var body: some View {
-    Text("Connexion")
-      .frame(maxWidth: .infinity)
-      .font(.headline)
-      .foregroundColor(.white)
-      .padding()
-      .background(Color(hex: 0x282359))
-      .cornerRadius(15.0)
+      Text("Connexion")
+//      .frame(maxWidth: .infinity)
+//      .font(.headline)
+//      .foregroundColor(.white)
+//      .padding()
+//      .background(Color(hex: 0x282359))
+//      .cornerRadius(15.0)
   }
 }
 
@@ -286,7 +293,7 @@ struct LabelledDivider: View {
   var body: some View {
     HStack {
       line
-      Text(label).foregroundColor(color)
+        Text(label).font(.system(size: 18)).foregroundColor(color)
       line
     }
   }

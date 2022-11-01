@@ -59,7 +59,7 @@ struct HomeMenu: View {
                   label: {
                       Button("Réaliser un diagnostic") {
                           hasStartUserJouney = true
-                      }.buttonStyle(ButtonStyle())
+                      }.modifier(PrimaryButtonStyle1(size: 300))
                   }
               )
               
@@ -69,7 +69,7 @@ struct HomeMenu: View {
                   label: {
                       Button("Donner un feedback") {
                           hasOpenedTheFeedbackPage = true
-                      }.buttonStyle(ButtonStyle())
+                      }.modifier(SecondaryButtonStyle1(size: 300))
                   }
               )
               
@@ -79,7 +79,7 @@ struct HomeMenu: View {
                   label: {
                       Button("Audits sauvegardés") {
                           hasOpenedNotSentAudit = true
-                      }.buttonStyle(ButtonStyle())
+                      }.modifier(SecondaryButtonStyle1(size: 300))
                   }
               )
           }
@@ -88,6 +88,8 @@ struct HomeMenu: View {
 };
 
 struct HomeMenu_Previews: PreviewProvider {
+    @StateObject var appState = AppState()
+    
     static var previews: some View {
       Group {
           HomeMenu()
