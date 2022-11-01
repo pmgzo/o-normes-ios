@@ -29,9 +29,9 @@ struct CreateAuditView: View {
     var body: some View {
         ReturnButtonWrapper {
             ScrollView(.vertical) {
-                Text("Remplissez les données de l'audit").font(.title).multilineTextAlignment(.center)
+                Text("Remplissez les données de l'audit").modifier(Header1(alignment: .center))
                 
-                Spacer()
+                Spacer().frame(height: 50)
                 
                 VStack {
                     HStack {
@@ -89,13 +89,13 @@ struct CreateAuditView: View {
                 
                 // submit button
                 if self.validate() {
-                    //
                     NavigationLink(
                         destination: SelectStageView(coordinator: self.coordinator).navigationBarHidden(true),
                         isActive: $startUserJourney,
                         label: {
                             Button(action: {
                                 Task {
+                                    print("begging")
                                     // call API + getData
                                     
                                     let auditInfos = AuditInfos(
@@ -116,6 +116,7 @@ struct CreateAuditView: View {
                                     //TODO:
                                     // Retrieve data
                                     // convert it into StageRead type
+                                    print("here")
                                     
                                     self.coordinator.loadBuildingTypeStages(stages: temporaryStageList)
                                     
@@ -123,22 +124,25 @@ struct CreateAuditView: View {
                                     // get steps list, and redirect to steps selection
                                     startUserJourney = true
                                 }
-                            }){
+                            })
+                            {
                                 if animateButton {
                                     LoadingCircle()
                                 } else {
                                     Text("Page suivante")
                                 }
-                            }.buttonStyle(validateButtonStyle())
-                        })
+                            }
+                        }
+                    ).modifier(PrimaryButtonStyle1())
                 } else {
-                    Button("Page suivante"){
-                        print("gray")
-                        // do nothing
-                    }.buttonStyle(GrayButtonStyle())
-                    
+                    Button("Page suivante") {
+                        // disabled button
+                    }
+                    .modifier(PrimaryDisabledButtonStyle1())
                 }
+                
             }
+            Spacer().frame(height: 10)
         }
 
     }

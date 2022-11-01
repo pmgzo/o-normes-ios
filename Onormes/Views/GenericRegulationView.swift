@@ -62,6 +62,7 @@ struct GenericRegulationView: View
     //let regulationPageContent: View?;
     var navcoordinator: CustomNavCoordinator?;
     var coordinator: UJCoordinator?;
+    var savedData: [StageWrite] = []
     @State var selectionTag: String?;
     
     // selection step
@@ -127,6 +128,7 @@ struct GenericRegulationView: View
         self.gridItemLayout = []
         self.dataContainer = DataNormContainer(content: [])
         self.stageList = []
+        self.savedData = coordinator.getSavedData
     }
     
     // description page
@@ -158,46 +160,53 @@ struct GenericRegulationView: View
             self.summaryPage
         }
         else if self.pageType == PageType.description {
-            Text("Description")
-            TextField("Description", text: $description.value)
+            VStack {
+                Text("Nouvelle étape: \(self.coordinator!.getCurrentStageId())").modifier(Header1())
+                Spacer().frame(height: 100)
+                HStack {
+                    Spacer().frame(width: 35)
+                    Text("Description").modifier(Header3())
+                }.frame(maxWidth: .infinity, alignment: .leading)
+                HStack {
+                    Spacer().frame(width: 35)
+                    TextField("Ajoutez une description à cette étape", text: $description.value).textFieldStyle(CommentTextFieldStyle())
+                        .frame(width: 300)
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }
         } else {
             VStack {
-                Text(self.title!).font(.title).multilineTextAlignment(.center)
-                Form {
-                    Spacer().frame(minHeight: 70, maxHeight: 130)
-                        
-                    List(self.content!) { c in
-                        // Text($0.name)
-                        // model.displayError() ?
-                        
-                        Section(header: Text(c.type != TypeField.bool ? c.text :  "").foregroundColor(.black).multilineTextAlignment(.center), footer: Text("*champs obligatoire").foregroundColor(.red)) {
-                                // TODO: add check box condition or text
-                            if c.type == TypeField.bool {
-                                Toggle(c.text, isOn: self.booleanBinding(for: c))
-                            }
-                            else if c.type == TypeField.category {
-                                // drop down menu
-                                DropDownMenu(labelList: c.menusCategories, text: self.bindingCategory(for : c,  categories: c.menusCategories))//.frame(height: 220)
-                            }
-                            else {
-                                TextField("mesure", text: self.binding(for: c)).textFieldStyle(MeasureTextFieldStyle())
-                            }
-                                    
-                            TextField("commentaire", text: self.binding(for: c, comment: true)).textFieldStyle(CommentTextFieldStyle())
-                                        .multilineTextAlignment(TextAlignment.center)
-                            }
-                        }
-                }
-                .background(Color.white)
-                .onAppear { // ADD THESE
-                  UITableView.appearance().backgroundColor = .clear
-                }
-                
-                Spacer()
-                
-                
-            }
 
+                Text(self.title!).modifier(Header1())
+                
+                Spacer().frame(height: 100)
+
+                HStack {
+                    Spacer().frame(width: 35)
+                    Text(self.content![0].text).modifier(Header3())
+                }.frame(maxWidth: .infinity, alignment: .leading)
+                
+                
+                
+                if self.content![0].type == TypeField.bool {
+                    HStack {
+                        BooleanRadioButtons(value: self.booleanBinding(for: self.content![0]))
+                    }.frame(maxWidth: .infinity, alignment: .center)
+                }
+                else if self.content![0].type == TypeField.category {
+                    // drop down menu
+                    DropDownMenu(labelList: self.content![0].menusCategories, text: self.bindingCategory(for : self.content![0],  categories: self.content![0].menusCategories))
+                } else {
+                    TextField("mesure", text: self.binding(for: self.content![0])).textFieldStyle(MeasureTextFieldStyle())
+                }
+                
+                Spacer().frame(height: 20)
+                       
+                HStack {
+                    Spacer().frame(width: 35)
+                    TextField("commentaire", text: self.binding(for: self.content![0], comment: true)).textFieldStyle(CommentTextFieldStyle())
+                        .frame(width: 300)
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
     }
     
@@ -279,4 +288,39 @@ struct GenericRegulationView: View
             //dataContainer.data[value.key]?.comment = value.comment
         }
     }
+}
+
+struct Criteria_Previews: PreviewProvider {
+    
+    var coordinator: UJCoordinator;
+
+    init() {
+        // usual process
+        self.coordinator = UJCoordinator()
+        self.coordinator.loadBuildingTypeStages(stages: temporaryStageList)
+        self.coordinator.addRegulationCheckStages(ids: Set<String>(["Trottoirs adaptés"]))
+        self.coordinator.nextStep(start: true)
+    }
+    
+  static var previews: some View {
+//      UserJourneyNavigationPage(
+//        content: {() -> GenericRegulationView in
+//      GenericRegulationView(title: "Parking accessible",
+//                            content: [
+//                                RegulationCheckField(key: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", type: TypeField.bool, text: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", optional: false)
+//                            ],
+//                            id: "Parking accessible",
+//                            subStepId: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur")
+//      }, coordinator: UJCoordinator(), navigationButton: false)
+      
+      GenericRegulationView(coordinator: returnCoordinator(), description: "description")
+  }
+}
+
+func returnCoordinator() -> UJCoordinator {
+    var coordinator = UJCoordinator()
+    coordinator.loadBuildingTypeStages(stages: temporaryStageList)
+    coordinator.addRegulationCheckStages(ids: Set<String>(["Trottoirs adaptés"]))
+    coordinator.nextStep(start: true)
+    return coordinator
 }

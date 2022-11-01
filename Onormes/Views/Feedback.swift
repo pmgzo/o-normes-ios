@@ -56,10 +56,9 @@ struct LoadingCircle: View {
     @State private var animate: Bool = false
     
     var body: some View {
-        Image("loadingCircle").resizable().frame(width: 50, height: 50)
+        Image("loadingCircle").resizable().frame(width: 20, height: 20)
         .rotationEffect(Angle(degrees: animate ?  360 : 0))
         .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false), value: animate)
-        .background(.green)
         .onAppear { animate.toggle() }
     }
 }
