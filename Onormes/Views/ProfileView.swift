@@ -69,16 +69,6 @@ struct ProfileView: View {
                     Text("N/A")
                   }
                 }
-                  NavigationLink(
-                      destination: FeedbackView(),
-                      isActive: $hasOpenedTheFeedbackPage,
-                      label: {
-                          Button("Donner un feedback") {
-                              hasOpenedTheFeedbackPage = true
-                          }.buttonStyle(ButtonStyle())
-                      }
-                  )
-                  
                   
               }.navigationBarTitle(Text("Profile"))
                 

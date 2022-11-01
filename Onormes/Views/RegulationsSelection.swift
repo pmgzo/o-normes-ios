@@ -171,16 +171,9 @@ struct SelectStageView: View {
         self.coordinator = coordinator
         self.gridItemLayout = [GridItem(.adaptive(minimum: 100))]
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
-        self.stageList = returnArray(stageNames: self.coordinator.getStageNames)
         
-//        print("toto \(self.coordinator.getStageNames)")
-//
-//        for key in self.coordinator.getStageNames {
-//            print(key)
-//            self.stageList.append(RegulationPageItem(id: key, name: key, imageName: "doorImage"))
-//            print(self.stageList.count)
-//        }
-        print(self.stageList.count)
+        // as it is a state we should give it all the data during initialization
+        self.stageList = returnArray(stageNames: self.coordinator.getStageNames)
     }
     
     
@@ -219,8 +212,8 @@ struct SelectStageView: View {
                         CustomNavigationLink(
                             coordinator: self.coordinator,
                             isActive: $userJourneyStarted,
-                            destination: { () -> GenericRegulationView in return self.coordinator.getNextView()
-
+                            destination: { () -> GenericRegulationView
+                                in return self.coordinator.getNextView()
                             },
                             label: {
                                 Button("Valider") {

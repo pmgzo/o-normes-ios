@@ -36,7 +36,8 @@ struct StageDelegate  {
         
         self.steps = []
         for step in stageRead.content {
-            steps.append(GenericRegulationView(title: stageRead.name, content: [step], id: stageRead.name, subStepId: stageRead.name))
+            //steps.append(GenericRegulationView(title: stageRead.name, content: [step], id: stageRead.name, subStepId: stageRead.name))
+            steps.append(GenericRegulationView(title: stageRead.name, content: [step], id: stageRead.name, subStepId: step.text))
         }
         
         self.descriptionPage =  GenericRegulationView(coordinator: coordinator, description: "")
@@ -48,7 +49,6 @@ struct StageDelegate  {
      */
     
     mutating func moveIndex() {
-        print("move index")
         
         if descriptionPagePassed == false {
             descriptionPagePassed = true
@@ -141,6 +141,7 @@ struct StageDelegate  {
     
     func modify(coordinator: UJCoordinator) -> Bool {
         print("modify")
+
         print(descriptionPagePassed)
         if self.descriptionPagePassed == false {
             print(self.descriptionPage.getDescription())

@@ -56,45 +56,89 @@ func getImageName(id: String) -> String {
     return stageMap[newId]!
 }
 
-struct DataNormRow: View {
-    let name: String;
-    let image: Image;
+func limitStringLength(str: String, limit: Int) -> String {
+    if str.count > limit {
+        return String(str[0..<limit]) + "..."
+    }
+    return str
+}
+
+struct DataDetails: View {
+    let text: String;
     
-    init(stageName: String) {
-        self.name = stageName
-        self.image = Image(getImageName(id: stageName))
+    @State var value: Bool;
+    @State var comment: String;
+    var dataSaved: DataNorm
+
+    init(data: DataNorm) {
+        if data.data[0].key.contains("-comment") {
+            comment = data.data[0].valueString
+            value = data.data[1].valueCheckBox
+        } else {
+            comment = data.data[1].valueString
+            value = data.data[0].valueCheckBox
+        }
+        text = data.subStepId
+        dataSaved = data
     }
     
     var body: some View {
-        HStack {
-            self.image
-                .resizable()
-                .frame(width: 50, height: 50)
-            Text(name)
+        VStack {
+            // details about the stage
+            Text(text).modifier(Header1())
+            Spacer().frame(height: 100)
+            HStack {
+                Spacer().frame(width: 35)
+                Text("Valeur").modifier(Header3())
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            
+            //Toggle("test", isOn: $value)
+            HStack {
+                BooleanRadioButtons(value: $value)
+            }.frame(maxWidth: .infinity, alignment: .center)
 
-            Spacer()
-        }
+            Spacer().frame(height: 50)
+
+            HStack {
+                Spacer().frame(width: 35)
+                Text("Commentaire").modifier(Header3())
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        
+            Spacer().frame(height: 20)
+            TextField("commentaire", text:$comment).textFieldStyle(CommentTextFieldStyle()).frame(width: 300)
+        }.onDisappear(perform: {
+            if dataSaved.data[0].key.contains("-comment") {
+                dataSaved.data[0].valueString = comment
+                dataSaved.data[1].valueCheckBox = value
+            } else {
+                dataSaved.data[1].valueString = comment
+                dataSaved.data[0].valueCheckBox = value
+            }
+        })
     }
 }
 
-struct DataNormDetails: View {
-    var data: [RegulationNorm];
+struct StageDetails: View {
+    var data: [DataNorm];
+    var stageName: String;
 
-    init(data: [RegulationNorm]) {
-        self.data = data
+    init(stage: StageWrite) {
+        data = stage.data
+        stageName = stage.stageName
     }
-    
+
     var body: some View {
         // details about the stage
         VStack {
+            Text(stageName).modifier(Header1())
+            Spacer().frame(height: 30)
+            Text("Critères d'accessibilité").modifier(Header2())
             List(self.data) { value in
                 HStack {
-                    Text(value.key)
-                    Spacer()
-                    if (value.type == TypeField.bool) {
-                        Text((value.valueCheckBox == true ? "Oui" : "Non"))
-                    } else {
-                        Text(value.valueString == "" ? "vide" :  value.valueString)
+                    NavigationLink {
+                        DataDetails(data: value)
+                    } label: {
+                        Text(limitStringLength(str: value.subStepId, limit: 20)).modifier(Header3())
                     }
                 }
             }
@@ -102,21 +146,48 @@ struct DataNormDetails: View {
     }
 }
 
-struct DataNormList: View {
+struct StageRow: View {
+    let name: String;
+    let description: String;
     
-    var list: [DataNorm];
+    init(stageName: String, description: String) {
+        self.name = stageName
+        self.description = description
+    }
     
-    init(list: [DataNorm]) {
+    var body: some View {
+        VStack {
+            HStack {
+                Text(self.name).modifier(Header3())
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Spacer()
+            
+            HStack {
+                Text(limitStringLength(str: self.description == "" ? "-" :  self.description, limit: 20)).italic().modifier(DescriptionText())
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+
+struct StageList: View {
+    
+    var list: [StageWrite];
+    
+    init(list: [StageWrite]) {
         self.list = list
     }
     
     var body: some View {
         VStack {
-            List(self.list) { norm in
+            List(self.list) { stage in
                 NavigationLink {
-                    DataNormDetails(data: norm.data)
+                    StageDetails(stage: stage)
                 } label: {
-                    DataNormRow(stageName: norm.key)
+                    StageRow(stageName: stage.stageName, description: stage.description)
                 }
             }
         }
@@ -127,14 +198,15 @@ extension GenericRegulationView {
     // summary page
     var summaryPage: some View {
         VStack {
-                Text("Resumé de l'audit").font(.system(size: 20.0))
+                Text("Page Résumé").modifier(Header1())
                 Spacer()
                        .frame(height: 30)
+
+                // TODO: voir les données de l'audit
             
-                Text("New Page !")
-                
-                DataNormList(list: self.coordinator!.dataAudit)
-                
+                Text("Etapes").modifier(Header2())
+                StageList(list: self.savedData)
+
                 QuitingNavigationLink(isActive: $isActive) {
                     if appState.offlineModeActivated == false {
                         Button(action: {
@@ -142,14 +214,20 @@ extension GenericRegulationView {
                                 do {
                                     animateCircle = true
                                     
-                                    let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
-                                    
-                                    APIService().sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
-                                    
-                                    print("End sending information")
+                                    for i in savedData {
+                                        for i2 in i.data {
+                                            print(i2.data[0])
+                                            print(i2.data[1])
+                                        }
+                                    }
+//                                    let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
+// APIService().sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
+//
+//                                    print("End sending information")
                                     
                                     animateCircle = false
                                     self.isActive = true
+
                                 } catch {
                                     // TODO: to fix warning (line above)
                                     print(error)
@@ -164,6 +242,7 @@ extension GenericRegulationView {
                             
                         }.buttonStyle(validateButtonStyle())
                     } else {
+                        // for offline mode
                         Button("Enregistrer l'audit") {
                             self.isActive = true
                         }.buttonStyle(GrayButtonStyle())
@@ -218,3 +297,16 @@ struct SummaryWrapper: View {
     }
 }
 
+struct DataDetails_Previews: PreviewProvider {
+  static var previews: some View {
+      DataDetails(data:
+            DataNorm(key: "test", data:
+                [
+                    RegulationNorm(key: "test2", inst: "Gare à proximité", type: TypeField.bool, mandatory: true, valueString: "", valueBool: true),
+
+                    
+                    RegulationNorm(key: "test1", inst: "Gare à proximité", type: TypeField.string, mandatory: true, valueString: "Pomme24", valueBool: false)
+                ]
+            , subStepId: "Trottoirs adaptés"))
+  }
+}
