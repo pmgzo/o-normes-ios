@@ -67,8 +67,8 @@ struct GenericRegulationView: View
     @State var selectionTag: String?;
     
     // selection step
+    @State var fetchingKeyword: String = ""
     @ObservedObject var selectedItems: SelectedRegulationSet;
-    var gridItemLayout: [GridItem];
     @State var isActive = false
     @State var animateCircle: Bool = false
     @State var stageList: [RegulationPageItem]
@@ -85,7 +85,6 @@ struct GenericRegulationView: View
         let new_id = id + "-" + UUID().uuidString
         self.id = new_id
         self.pageType = PageType.regular
-        self.gridItemLayout = []
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
         self.model.changeState(id: new_id, content: content)
         self.dataContainer = DataNormContainer(content: content)
@@ -103,8 +102,7 @@ struct GenericRegulationView: View
         self.description = StageDescription()
         //self.isRegulationsPage = true
         self.pageType = PageType.addStage
-        self.gridItemLayout = [GridItem(.adaptive(minimum: 100))]
-        // self.model = GenericRegulationViewModel(content: [], id:  "")
+
         self.title = ""
         self.content = []
         self.id = ""
@@ -118,15 +116,12 @@ struct GenericRegulationView: View
         self.coordinator = coordinator
         self.navcoordinator = nil
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
-        self.gridItemLayout = [GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86)), GridItem(.fixed(86))]
-        //self.description = ""
         self.description = StageDescription()
         self.pageType = PageType.summary
         self.title = ""
         self.content = []
         self.id = ""
         self.subStepId = ""
-        self.gridItemLayout = []
         self.dataContainer = DataNormContainer(content: [])
         self.stageList = []
         self.savedData = coordinator.getSavedData
@@ -138,7 +133,6 @@ struct GenericRegulationView: View
         self.coordinator = coordinator
         self.navcoordinator = nil
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
-        self.gridItemLayout = []
         //self.description = description
         self.description = StageDescription()
         
@@ -147,7 +141,6 @@ struct GenericRegulationView: View
         self.content = []
         self.id = ""
         self.subStepId = ""
-        self.gridItemLayout = []
         self.dataContainer = DataNormContainer(content: [])
         self.stageList = []
         self.description.value = description

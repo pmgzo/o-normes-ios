@@ -8,6 +8,12 @@
 import Foundation
 import SwiftUI
 
+extension UIScreen{
+   static let screenWidth = UIScreen.main.bounds.size.width
+   static let screenHeight = UIScreen.main.bounds.size.height
+   static let screenSize = UIScreen.main.bounds.size
+}
+
 struct ButtonStyle: PrimitiveButtonStyle
 {
     func makeBody(configuration: Configuration) -> some View {
@@ -349,6 +355,20 @@ struct BooleanRadioButtons: View {
 
     func radioGroupCallback(val: Bool) {
         self.value.wrappedValue = val
+    }
+}
+
+struct CheckBox: View {
+    let filled: Bool
+    init(filled: Bool) {
+        self.filled = filled
+    }
+    var body: some View {
+        Image(self.filled ? "FilledCheckBox" : "EmptyCheckBox")
+            .renderingMode(.original)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 20, height: 20)
     }
 }
 

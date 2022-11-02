@@ -155,7 +155,7 @@ struct UserJourneyNavigationPage: View {
                                 .transition(.slide)
                             }
                     }
-                    Spacer().frame(height: 10)
+                    Spacer().frame(height: 20)
             }
         }
     }

@@ -40,6 +40,21 @@ var regulationPageslist: [RegulationPageItem] = [
 ]
 
 /**
+ 
+ Function to match string patter
+ 
+ */
+
+
+func match(string: String, patternValue: String) -> Bool {
+    let range = NSRange(location: 0, length: string.utf16.count)
+    let pattern  = patternValue
+    let regex = try! NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
+    
+    return regex.firstMatch(in: string, options: [], range: range) != nil
+}
+
+/**
  This is a custom ObservableObject to handle item selection in the **RegulationSelection** page.
  
  */
@@ -78,72 +93,97 @@ extension GenericRegulationView {
             HStack {
                 Button("Retour") {
                     self.navcoordinator?.renderStepPage = .regular
-                }.buttonStyle(ButtonStyle())
+                }.modifier(SecondaryButtonStyle1(size: 100))
                 Spacer().frame(width: 250)
             }
             Spacer()
                    .frame(height: 40)
-            Text("Ajoutez une étape au parcours utilisateur").font(.system(size: 20.0))
+            Text("Ajoutez une étape au parcours utilisateur").modifier(Header2(alignment: .center))
             Spacer()
                    .frame(height: 30)
+            ResearchBar(text: $fetchingKeyword)
             ScrollView {
-                LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
-                    ForEach(0..<stageList.count, id: \.self) { i in
-                        Button(stageList[i].name) {
-                            stageList[i].selected = !stageList[i].selected
-                            print(stageList[i].id + " selected")
-                            if stageList[i].selected {
-                                // add
-                                if !selectedItems.contains(id: stageList[i].id) {
-                                    self.selectedItems.addItem(id: stageList[i].id)
-                                }
-                            } else {
-                                // remove
-                                self.selectedItems.removeItem(id: stageList[i].id)
+                ForEach(searchResult, id: \.self) { i in
+                    Button(action: {
+                        self.stageList[i].selected = !stageList[i].selected
+                        
+                        if stageList[i].selected {
+                            // add
+                            if !selectedItems.contains(id: stageList[i].id) {
+                                self.selectedItems.addItem(id: stageList[i].id)
                             }
-                        }.foregroundColor(stageList[i].selected ? .black : .gray)
-                    }
-                }.padding(.horizontal)
-            }.frame(maxWidth: 550).background(Image("Logo")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
+                        } else {
+                            // remove
+                            self.selectedItems.removeItem(id: stageList[i].id)
+                        }
+                    },label : {
+                        VStack {
+                            HStack {
+                                HStack {
+                                    Text(stageList[i].name)
+                                }.frame(width: (UIScreen.screenWidth - 100) / 3 * 2, alignment: .leading)
+                                    .truncationMode(.tail)
+                                
+                                HStack {
+                                    CheckBox(filled: stageList[i].selected)
+                                }.frame(width:  (UIScreen.screenWidth - 100) / 3,
+                                    alignment: .trailing)
+                            }
+                            .frame(maxWidth: .infinity)
+                            Divider()
+                        }.frame(height: 40)
+                    })
+                }
+            }.frame(maxWidth: .infinity).background(.white)
             
             if selectedItems.items.count != 0 {
-                HStack {
+                VStack {
                     Button("Valider") {
-                        print("here1")
-                        print(selectedItems.items)
+
                         coordinator!.addRegulationCheckStages(ids: selectedItems.items)
 
-                        print("here2")
                         //reset values
                         self.selectedItems.items = Set<String>()
                         for (index, _) in stageList.enumerated() {
                             stageList[index].selected = false
                         }
-                        print("here3")
-
 
                         navcoordinator?.renderStepPage = .regular
                     }
-                    .buttonStyle(validateButtonStyle())
+                    .modifier(PrimaryButtonStyle1())
                     .transition(.slide)
 
-                    Spacer().frame(maxWidth: 40)
+                    Spacer().frame(height: 10)
+                    
                     Button("Annuler") {
                         // empty list
                         selectedItems.items = Set<String>()
-                    }.buttonStyle(deleteButtonStyle())
+                    }.modifier(SecondaryButtonStyle1())
+                    Spacer().frame(height: 20)
                 }
             } else {
                 Spacer().frame(height: 64)
             }
         }
     }
+    
+    var searchResult: [Int] {
+        if self.fetchingKeyword == "" {
+            return Array(0..<stageList.count)
+        } else {
+            var array: [Int] = []
+            for i in 0..<self.stageList.count {
+                if match(string: self.stageList[i].name, patternValue: self.fetchingKeyword) {
+                    array.append(i)
+                }
+            }
+            return array
+        }
+    }
 }
 
 
-func returnArray(stageNames:[String]) -> [RegulationPageItem] {
+func returnArray(stageNames: [String]) -> [RegulationPageItem] {
     var array: [RegulationPageItem]  = []
     for key in stageNames {
         print(key)
@@ -165,7 +205,9 @@ struct SelectStageView: View {
     
     var gridItemLayout: [GridItem];
     var coordinator: UJCoordinator;
-    @State var stageList: [RegulationPageItem]
+    @State var stageList: [RegulationPageItem];
+    
+    @State var fetchingKeyword: String = "";
 
     init(coordinator: UJCoordinator) {
         self.coordinator = coordinator
@@ -184,12 +226,12 @@ struct SelectStageView: View {
                 Text("Ajoutez au minimum une étape pour commencer le parcours").font(.system(size: 20.0))
                 Spacer()
                        .frame(height: 30)
-                ScrollView {
-                    LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
-                        ForEach(0..<stageList.count, id: \.self) { i in
-                            Button(stageList[i].name) {
+                ResearchBar(text: $fetchingKeyword)
+                    ScrollView {
+                        ForEach(searchResult, id: \.self) { i in
+                            Button(action: {
                                 self.stageList[i].selected = !stageList[i].selected
-                                print(stageList[i].id + " selected")
+                                
                                 if stageList[i].selected {
                                     // add
                                     if !selectedItems.contains(id: stageList[i].id) {
@@ -199,16 +241,29 @@ struct SelectStageView: View {
                                     // remove
                                     self.selectedItems.removeItem(id: stageList[i].id)
                                 }
-                            }.foregroundColor(stageList[i].selected ? .black : .gray)
+                            },label : {
+                                VStack {
+                                    HStack {
+                                        HStack {
+                                            Text(stageList[i].name)
+                                        }.frame(width: (UIScreen.screenWidth - 100) / 3 * 2, alignment: .leading)
+                                            .truncationMode(.tail)
+                                        
+                                        HStack {
+                                            CheckBox(filled: stageList[i].selected)
+                                        }.frame(width:  (UIScreen.screenWidth - 100) / 3,
+                                            alignment: .trailing)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    Divider()
+                                }.frame(height: 40)
+                            })
                         }
-                    }.padding(.horizontal)
-                }.frame(maxWidth: 550).background(Image("Logo")
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
+                    }.frame(maxWidth: .infinity).background(.white)
                 
 
                 if selectedItems.items.count != 0 || userJourneyStarted == true { // its a hack to allow the navigation to continue otherwise it stops as we reset selectedItems
-                    HStack {
+                    VStack {
                         CustomNavigationLink(
                             coordinator: self.coordinator,
                             isActive: $userJourneyStarted,
@@ -229,12 +284,13 @@ struct SelectStageView: View {
                                     }
                                     self.selectedItems.items = Set<String>()
                                     
-                                }.buttonStyle(validateButtonStyle())
-                        })
-                        Spacer().frame(maxWidth: 40)
+                                }
+                        }).modifier(PrimaryButtonStyle1())
+                        Spacer().frame(height: 10)
                         Button("Annuler") {
                             selectedItems.items = Set<String>()
-                        }.buttonStyle(deleteButtonStyle())
+                        }.modifier(SecondaryButtonStyle1())
+                        Spacer().frame(height: 20)
                     }
                 } else {
                     Spacer().frame(height: 64)
@@ -242,6 +298,21 @@ struct SelectStageView: View {
             }
         }
     }
+    
+    var searchResult: [Int] {
+        if self.fetchingKeyword == "" {
+            return Array(0..<stageList.count)
+        } else {
+            var array: [Int] = []
+            for i in 0..<self.stageList.count {
+                if match(string: self.stageList[i].name, patternValue: self.fetchingKeyword) {
+                    array.append(i)
+                }
+            }
+            return array
+        }
+    }
+    
 }
 
 // Stage Selection in summary page
@@ -255,6 +326,8 @@ struct SelectStageInSummaryView: View {
     var coordinator: UJCoordinator;
         
     @State var stageList: [RegulationPageItem];
+    
+    @State var fetchingKeyword: String = "";
     
     init(coordinator: UJCoordinator) {
         self.coordinator = coordinator
@@ -273,10 +346,10 @@ struct SelectStageInSummaryView: View {
                 Text("Ajoutez au minimum une étape pour commencer le parcours").font(.system(size: 20.0))
                 Spacer()
                        .frame(height: 30)
+                ResearchBar(text: $fetchingKeyword)
                 ScrollView {
-                    LazyVGrid(columns: gridItemLayout, alignment: .center, spacing: 20) {
-                        ForEach(0..<stageList.count, id: \.self) { i in
-                            Button(stageList[i].name) {
+                    ForEach(searchResult, id: \.self) { i in
+                        Button(action: {
                                 self.stageList[i].selected = !stageList[i].selected
                                 print(stageList[i].id + " selected")
                                 if stageList[i].selected {
@@ -288,16 +361,29 @@ struct SelectStageInSummaryView: View {
                                     // remove
                                     self.selectedItems.removeItem(id: stageList[i].id)
                                 }
-                            }.foregroundColor(stageList[i].selected ? .black : .gray)
-                        }
-                    }.padding(.horizontal)
-                }.frame(maxWidth: 550).background(Image("Logo")
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit).frame(width: 300).opacity(0.8))
+                        }, label: {
+                            VStack {
+                                HStack {
+                                    HStack {
+                                        Text(stageList[i].name)
+                                    }.frame(width: (UIScreen.screenWidth - 100) / 3 * 2, alignment: .leading)
+                                        .truncationMode(.tail)
+                                    
+                                    HStack {
+                                        CheckBox(filled: stageList[i].selected)
+                                    }.frame(width:  (UIScreen.screenWidth - 100) / 3,
+                                        alignment: .trailing)
+                                }
+                                .frame(maxWidth: .infinity)
+                                Divider()
+                            }.frame(height: 40)
+                        })
+                    }
+                }.frame(maxWidth: .infinity).background(.white)
                 
 
                 if selectedItems.items.count != 0 || stageSelected == true { // its a hack to allow the navigation to continue otherwise it stops as we reset selectedItems
-                    HStack {
+                    VStack {
                         CustomNavigationLink(
                             coordinator: self.coordinator,
                             isActive: $stageSelected,
@@ -315,17 +401,32 @@ struct SelectStageInSummaryView: View {
                                     }
                                     self.selectedItems.items = Set<String>()
                                     
-                                }.buttonStyle(validateButtonStyle())
-                        })
-                        Spacer().frame(maxWidth: 40)
+                                }
+                        }).modifier(PrimaryButtonStyle1())
+                        Spacer().frame(height: 10)
                         Button("Annuler") {
                             selectedItems.items = Set<String>()
-                        }.buttonStyle(deleteButtonStyle())
+                        }.modifier(SecondaryButtonStyle1())
+                        Spacer().frame(height: 20)
                     }
                 } else {
                     Spacer().frame(height: 64)
                 }
             }
+        }
+    }
+
+    var searchResult: [Int] {
+        if self.fetchingKeyword == "" {
+            return Array(0..<stageList.count)
+        } else {
+            var array: [Int] = []
+            for i in 0..<self.stageList.count {
+                if match(string: self.stageList[i].name, patternValue: self.fetchingKeyword) {
+                    array.append(i)
+                }
+            }
+            return array
         }
     }
 }
