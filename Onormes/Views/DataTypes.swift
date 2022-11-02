@@ -82,8 +82,7 @@ struct RegulationNorm: Identifiable {
 
     init(key: String, inst: String, type: TypeField, mandatory: Bool = true, valueString: String = "", valueBool: Bool = false) {
         self.key = key
-        
-        
+            
         self.valueString = valueString
         self.valueCheckBox = valueBool
         
@@ -191,7 +190,7 @@ struct RegulationCheckField: Identifiable, Equatable {
 
  */
 
-struct AuditInfos {
+class AuditInfos {
     var buildingType: String = "";
     var name: String = "";
     var buildingName: String = "";
@@ -199,7 +198,86 @@ struct AuditInfos {
     var email: String = "";
     var phoneNumber: String = "";
     var notes: String = "";
-    var date: Date;
+    var date: Date = Date();
+    
+    init(
+        buildingType: String,
+        name: String,
+        buildingName: String,
+        address: String,
+        email: String,
+        phoneNumber: String,
+        notes: String,
+        date: Date
+    ) {
+        self.buildingType = buildingType
+        self.name = name
+        self.buildingName = buildingName
+        self.address = address
+        self.email = email
+        self.phoneNumber = phoneNumber
+        self.notes = notes
+        self.date = date
+    }
+}
+
+/**
+ 
+ Audit Info struct to modify audit infos data
+ 
+ */
+
+class AuditInfosObject: ObservableObject {
+
+    @Published var buildingType: String = "";
+    @Published var name: String = "";
+    @Published var buildingName: String = ""; // unused
+    @Published var address: String = "";
+    @Published var email: String = "";
+    @Published var phoneNumber: String = "";
+    @Published var notes: String = "";
+    @Published var date: Date; // unused maybe only print it
+
+    
+    init(infos: AuditInfos) {
+        self.buildingType = infos.buildingType
+        self.name = infos.name
+        self.buildingName = infos.buildingName
+        self.address = infos.address
+        self.email = infos.email
+        self.phoneNumber = infos.phoneNumber
+        self.notes = infos.notes
+        self.date = infos.date
+    }
+
+    
+    func hasChanged(refAudit: AuditInfos) -> Bool {
+        if self.buildingType != refAudit.buildingType {
+            return true
+        }
+        if self.name != refAudit.name {
+            return true
+        }
+        if self.buildingName != refAudit.buildingName {
+            return true
+        }
+        if self.address != refAudit.address {
+            return true
+        }
+        if self.email != refAudit.email {
+            return true
+        }
+        if self.phoneNumber != refAudit.phoneNumber {
+            return true
+        }
+        if self.notes != refAudit.notes {
+            return true
+        }
+        if self.date != refAudit.date {
+            return true
+        }
+        return false
+    }
 }
 
 /**
@@ -225,3 +303,10 @@ struct StageWrite {
     var description: String
     var data: [DataNorm];
 }
+
+extension StageWrite: Identifiable {
+    var id: UUID {
+        return UUID()
+    }
+}
+

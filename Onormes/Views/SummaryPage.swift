@@ -63,6 +63,110 @@ func limitStringLength(str: String, limit: Int) -> String {
     return str
 }
 
+struct AuditSummaryView: View {
+    @ObservedObject var auditInfos: AuditInfosObject;
+
+    var refAudit: AuditInfos;
+    let dateFormatter = DateFormatter()
+    var coordinator: UJCoordinator;
+
+    init(auditInfos: AuditInfos, coordinator: UJCoordinator) {
+        self.auditInfos = AuditInfosObject(infos: auditInfos)
+        self.refAudit = auditInfos
+
+        dateFormatter.dateFormat = "dd/MM/YY"
+        self.coordinator = coordinator
+    }
+    
+    var body: some View {
+        VStack {
+            ReturnButtonWrapper(action: {() -> Void in                 saveData()
+            }) {
+                ScrollView(.vertical) {
+                    VStack {
+                        
+                        Text("Donnée enregistrées:").modifier(Header1())
+                        
+                        Spacer().frame(height: 100)
+                        
+                        VStack {
+                            HStack {
+                                Text("Nom de l'audit")
+                                Spacer()
+                            }
+                            TextField("", text: $auditInfos.name).textFieldStyle(MeasureTextFieldStyle())
+                        }.frame(width:300)
+                        
+                        VStack {
+                            Spacer().frame(height: 10)
+                            HStack {
+                                Text("Audit crée le: \(dateFormatter.string(from: refAudit.date))")
+                                Spacer()
+                            }
+                            Spacer().frame(height: 10)
+                        }.frame(width:300)
+                        
+                        VStack {
+                            HStack {
+                                Text("Nom de l'établissement")
+                                Spacer()
+                            }
+                            TextField("", text: $auditInfos.buildingName).textFieldStyle(MeasureTextFieldStyle())
+                        }.frame(width:300)
+                        
+                        VStack {
+                            Spacer().frame(height: 10)
+                            HStack {
+                                Text("Type d'établissement: \(auditInfos.buildingType)")
+                                Spacer()
+                            }
+                            Spacer().frame(height: 10)
+                        }.frame(width:300)
+                        
+                        VStack {
+                            HStack {
+                                Text("Adresse de l'établissement")
+                                Spacer()
+                            }
+                            TextField("", text: $auditInfos.address).textFieldStyle(MeasureTextFieldStyle())
+                        }.frame(width:300)
+                        
+                        VStack {
+                            HStack {
+                                Text("Numéro de téléphone du responsable")
+                                Spacer()
+                            }
+                            TextField("", text: $auditInfos.phoneNumber).textFieldStyle(MeasureTextFieldStyle())
+                        }.frame(width:300)
+                        
+                        VStack {
+                            HStack {
+                                Text("Notes")
+                                Spacer()
+                            }
+                            TextField("", text: $auditInfos.notes).textFieldStyle(CommentTextFieldStyle())
+                        }.frame(width:300)
+                    }
+                }
+                Spacer().frame(height: 10)
+            }
+        }
+    }
+    
+    func saveData() {
+        self.refAudit.buildingType = self.auditInfos.buildingType
+        self.refAudit.name = self.auditInfos.name
+        self.refAudit.buildingName = self.auditInfos.buildingName
+        self.refAudit.address = self.auditInfos.address
+        self.refAudit.email = self.auditInfos.email
+        self.refAudit.phoneNumber = self.auditInfos.phoneNumber
+        self.refAudit.notes = self.auditInfos.notes
+        self.refAudit.date = self.auditInfos.date
+        
+        self.coordinator.setAuditInfos(auditInfos: self.refAudit)
+    }
+}
+
 struct DataDetails: View {
     let text: String;
     
@@ -84,7 +188,6 @@ struct DataDetails: View {
     
     var body: some View {
         VStack {
-            // details about the stage
             Text(text).modifier(Header1())
             Spacer().frame(height: 100)
             HStack {
@@ -92,7 +195,6 @@ struct DataDetails: View {
                 Text("Valeur").modifier(Header3())
             }.frame(maxWidth: .infinity, alignment: .leading)
             
-            //Toggle("test", isOn: $value)
             HStack {
                 BooleanRadioButtons(value: $value)
             }.frame(maxWidth: .infinity, alignment: .center)
@@ -203,6 +305,18 @@ extension GenericRegulationView {
                        .frame(height: 30)
 
                 // TODO: voir les données de l'audit
+                NavigationLink(
+                    destination: AuditSummaryView(auditInfos: self.auditInfos!, coordinator: self.coordinator!).navigationBarHidden(true),
+                    tag: "auditInfos",
+                    selection: $selectionTag,
+                    label: {
+                        Button(action: {
+                            selectionTag = "auditInfos"
+                        }) {
+                            Text("Modifier les infos de l'audit").underline()
+                        }.buttonStyle(LinkStyle())
+                    }
+                )
             
                 Text("Etapes").modifier(Header2())
                 StageList(list: self.savedData)
@@ -214,12 +328,20 @@ extension GenericRegulationView {
                                 do {
                                     animateCircle = true
                                     
+                                    // TODO: to remove, was just to check if the data as been saved
                                     for i in savedData {
                                         for i2 in i.data {
                                             print(i2.data[0])
                                             print(i2.data[1])
                                         }
                                     }
+                                    
+                                    let auditInfos = self.coordinator!.getAuditInfos()
+                                    
+                                    // call auditCreationRoute
+                                    
+                                    // call the routes to create the audit
+
 //                                    let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
 // APIService().sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
 //
@@ -240,12 +362,12 @@ extension GenericRegulationView {
                                 Text("Valider et Envoyer")
                             }
                             
-                        }.buttonStyle(validateButtonStyle())
+                        }.modifier(PrimaryButtonStyle1())
                     } else {
                         // for offline mode
                         Button("Enregistrer l'audit") {
                             self.isActive = true
-                        }.buttonStyle(GrayButtonStyle())
+                        }.modifier(PrimaryButtonStyle1())
                     }
             }
         }
@@ -274,25 +396,30 @@ struct SummaryWrapper: View {
                     Button("Retour") {
                         self.coordinator.backToThePreviousStage()
                         self.coordinator.userJourneyNotFinished()
+                        
+                        // TODO: check if it works
+                        self.coordinator.updateSavedData(modifiedData: self.content().savedData)
 
                         presentationMode.wrappedValue.dismiss()
-                    }.buttonStyle(ButtonStyle())
+                    }.modifier(SecondaryButtonStyle1(size: 100))
                 
-                Spacer().frame(width: 150)
+                Spacer().frame(width: 205)
 
                 NavigationLink(
                     destination: SelectStageInSummaryView(coordinator: self.coordinator).navigationBarHidden(true),
                     tag: "stageSelection", selection: $selectionTag) {
-                    Button(action: {
-                        selectionTag = "stageSelection"
-                    }) {
-                        Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 15, height: 15).padding()
-                    }.background(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1)).cornerRadius(13).frame(width: 16, height: 16).padding()
-                }
+                            AddStageButton(action: {
+                                selectionTag = "stageSelection"
+                                // TODO: check if it works
+                                self.coordinator.updateSavedData(modifiedData: self.content().savedData)
+                            })
+                    }
             }
             Spacer().frame(height: 40)
 
             content()
+            
+            Spacer().frame(height: 10)
         }
     }
 }

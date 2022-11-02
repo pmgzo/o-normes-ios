@@ -109,6 +109,8 @@ struct CreateAuditView: View {
                                         date: Date.now
                                     )
                                     
+                                    self.coordinator.setAuditInfos(auditInfos: auditInfos)
+                                    
                                     animateButton = true
                                     // ask for steps lists
                                     try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))

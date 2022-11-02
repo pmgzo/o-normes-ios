@@ -63,6 +63,7 @@ struct GenericRegulationView: View
     var navcoordinator: CustomNavCoordinator?;
     var coordinator: UJCoordinator?;
     var savedData: [StageWrite] = []
+    var auditInfos: AuditInfos?;
     @State var selectionTag: String?;
     
     // selection step
@@ -129,6 +130,7 @@ struct GenericRegulationView: View
         self.dataContainer = DataNormContainer(content: [])
         self.stageList = []
         self.savedData = coordinator.getSavedData
+        self.auditInfos = coordinator.getAuditInfos()
     }
     
     // description page
@@ -292,16 +294,6 @@ struct GenericRegulationView: View
 
 struct Criteria_Previews: PreviewProvider {
     
-    var coordinator: UJCoordinator;
-
-    init() {
-        // usual process
-        self.coordinator = UJCoordinator()
-        self.coordinator.loadBuildingTypeStages(stages: temporaryStageList)
-        self.coordinator.addRegulationCheckStages(ids: Set<String>(["Trottoirs adaptés"]))
-        self.coordinator.nextStep(start: true)
-    }
-    
   static var previews: some View {
 //      UserJourneyNavigationPage(
 //        content: {() -> GenericRegulationView in
@@ -313,7 +305,8 @@ struct Criteria_Previews: PreviewProvider {
 //                            subStepId: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur")
 //      }, coordinator: UJCoordinator(), navigationButton: false)
       
-      GenericRegulationView(coordinator: returnCoordinator(), description: "description")
+      //GenericRegulationView(coordinator: returnCoordinator(), description: "description")
+      GenericRegulationView(coordinator: returnCoordinator())
   }
 }
 

@@ -27,16 +27,26 @@ This class is the user journey class dedicated to control all the data flow duri
 
 class UJCoordinator: ObservableObject {
     //model data
+
+    // old saved stage's data
     private var myDictionary: [String:[DataNorm]] = [:] // TODO: to remove
-    
+
+    // saved stage's data
     private var savedData: [StageWrite] = []
 
+    // stage to be included during the diagnostic
     private var stageList:  [String:StageRead] = [:]
     
+    var auditInfos: AuditInfos;
+
     var getStageNames: [String] {
         get {
             return Array(stageList.keys)
         }
+    }
+    
+    var getSavedData: [StageWrite] {
+        return savedData
     }
 
     var dataAudit: [DataNorm] {
@@ -89,6 +99,16 @@ class UJCoordinator: ObservableObject {
 
         self.stageHistory = []
         self.myDictionary = [:]
+        
+        // temporary set auditInfos
+        self.auditInfos = AuditInfos(buildingType: "",
+                                     name: "",
+                                     buildingName: "",
+                                     address: "",
+                                     email: "",
+                                     phoneNumber: "",
+                                     notes: "",
+                                     date: Date())
     }
     
     /*
@@ -158,8 +178,44 @@ class UJCoordinator: ObservableObject {
         }
         return "unknown"
     }
+    
 
     // record data
+
+    /**
+                Get audit infos, called in the summary page
+     */
+
+    
+    func getAuditInfos() -> AuditInfos {
+        return auditInfos
+    }
+    
+    /**
+            Once the user fills out the audit infos in the audit creation page, this function is called
+     */
+    
+    func setAuditInfos(auditInfos: AuditInfos) {
+        self.auditInfos = auditInfos
+    }
+    
+    
+    /**
+            Function to update saved data, called in the summary page when user change data
+     
+     */
+    
+    func updateSavedData(modifiedData: [StageWrite]) {
+        savedData = modifiedData
+        
+        stageHistory = []
+        
+        for stage in modifiedData {
+            stageHistory.append(stage.stageName)
+        }
+        
+        self.index = stageHistory.count
+    }
 
     /**
         This function saves data once the user click on the next step button
@@ -327,15 +383,16 @@ class UJCoordinator: ObservableObject {
      */
     
     func nextStep(start: Bool = false) { // user has click to the next step button
-
         if self.wentBack == true && !self.stageDelegate!.stillHaveSteps() {
             self.resetWentBack()
         }
         
         if start == true {
+            print("start")
             stageDelegate = StageDelegate(coordinator: self, stageRead: stageList[self.stageHistory[0]]!)
         }
         else {
+            print("move Index")
             // TODO: we change the stage at that moment in the User Journey Coordinator and not in the delegate class
             self.stageDelegate!.moveIndex()
 
@@ -369,8 +426,6 @@ class UJCoordinator: ObservableObject {
      */
     
     func backToThePreviousStage() {
-        // TODO: check, maybe move the index of the previous delegate, maybe it will erase when we go to previous stage, add stg to load in the next features
-        
         self.wentBack = true
         
         // go previous stage
@@ -393,7 +448,6 @@ class UJCoordinator: ObservableObject {
         
         // go previous step
         else if !self.stageDelegate!.currentlyIntheFirstStep() {
-            print("previous step")
 
             self.stageDelegate?.reloadDuringTheStage(newSavedData: savedData[self.index].data)
             self.stageDelegate?.loadPreviousStep()

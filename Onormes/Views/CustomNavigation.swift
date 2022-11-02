@@ -54,13 +54,11 @@ struct UserJourneyNavigationPage: View {
             else {
                 HStack {
                     Spacer().frame(width: 290)
-                    Button(action: {
+                    AddStageButton(action: {
                         print("before")
                         navcoordinator.renderStepPage = .stageSelection
                         print("after")
-                    }) {
-                        Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 15, height: 15).padding()
-                    }.background(Color(hue: 246/360, saturation: 0.44, brightness: 0.24, opacity: 1)).cornerRadius(13).frame(width: 16, height: 16).padding()
+                    })
                 }
                 
                 // own content
@@ -327,15 +325,26 @@ struct ReturnButtonWrapper<WrappedView: View>: View
 {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let destination: () -> WrappedView;
+    let action: (() -> Void)?;
     
     init(@ViewBuilder destination: @escaping () -> WrappedView) {
         self.destination = destination
+        self.action = nil
     }
+    
+    init(action: @escaping () -> Void, @ViewBuilder destination: @escaping () -> WrappedView) {
+        self.destination = destination
+        self.action = action
+    }
+
     
     var body: some View {
         VStack {
             HStack {
                 Button("Retour") {
+                    if action != nil {
+                        action!()
+                    }
                     presentationMode.wrappedValue.dismiss()
                 }.modifier(SecondaryButtonStyle1(size: 100))
 

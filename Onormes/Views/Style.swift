@@ -352,6 +352,25 @@ struct BooleanRadioButtons: View {
     }
 }
 
+struct AddStageButton: View {
+    let action: () -> Void;
+    init(action: @escaping () -> Void) {
+        self.action = action
+    }
+    
+    var body: some View {
+        Button(action: {
+            self.action()
+        }) {
+            Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 10, height: 10).padding()
+        }.frame(width: 45, height: 45)
+            .background(Color(hex: "29245A"))
+            .clipShape(Circle())
+            .shadow(color: .black.opacity(0.5), radius: 5, x: 0, y: 3)
+    }
+    
+}
+
 struct BooleanRadioButtons_Preview: PreviewProvider {
       static var previews: some View {
           //BooleanRadioButtons(value: .constant(true))
@@ -384,6 +403,19 @@ struct BooleanRadioButtons_Preview: PreviewProvider {
                   print("test")
               }
               .modifier(SecondaryButtonStyle1(size: 200))
+              
+              Button(action: {
+                  print("test")
+              }) {
+                  Image(systemName: "plus").resizable().foregroundColor(.white).frame(width: 10, height: 10).padding()
+              }.frame(width: 45, height: 45)
+                  .background(Color(hex: "29245A"))
+                  .clipShape(Circle())
+                  .shadow(color: .black, radius: 5, x: 0, y: 3)
+          
+              AddStageButton(action: {() -> Void in
+                  print("cous")
+              })
           }
       }
 }
