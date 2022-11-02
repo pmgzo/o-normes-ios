@@ -22,16 +22,21 @@ struct BuildingTypeSelection: View {
     var body: some View {
         ReturnButtonWrapper {
             ResearchBar(text: _buildingType)
-            List {
+            ScrollView {
                 ForEach(searchResults, id: \.self) { buildingType in
-                    Button(buildingType) {
-                        _buildingType.wrappedValue = buildingType
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    VStack {
+                        Button(buildingType) {
+                            _buildingType.wrappedValue = buildingType
+                            presentationMode.wrappedValue.dismiss()
+                        }.frame(maxWidth: .infinity, maxHeight: 28, alignment: .center)
+                        Divider()
+                    }.frame(height: 30)
+                    
                 }
-            }
+            }.frame(maxWidth: .infinity).background(.white)
         }
     }
+
     
     var searchResults: [String] {
         if self._buildingType.wrappedValue.isEmpty {
