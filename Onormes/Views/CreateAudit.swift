@@ -8,20 +8,95 @@
 import Foundation
 import SwiftUI
 
-struct CreateAuditView: View {
-    
-    @State private var buildingType: String = "";
-    
-    @State private var name: String = "";
-    @State private var buildingName: String = "";
-    @State private var address: String = "";
-    @State private var email: String = "";
-    @State private var phoneNumber: String = "";
-    @State private var notes: String = "";
+
+struct CreateViewForm: View {
+    @ObservedObject var audit = AuditInfosObject(infos:                                         AuditInfos(
+                                        buildingType: "",
+                                        name: "",
+                                        buildingName: "",
+                                        address: "",
+                                        siret: "",
+                                        email: "",
+                                        phoneNumber: "",
+                                        notes: "",
+                                        date: Date()
+                                    ));
     
     @State private var hasOpenBuildingType: Bool = false;
-    @State private var animateButton: Bool = false;
     
+    var body: some View {
+        Text("Remplissez les données de l'audit").modifier(Header1(alignment: .center))
+        
+        Spacer().frame(height: 50)
+        
+        VStack {
+            HStack {
+                Text("Nom de l'audit")
+                Spacer()
+            }
+            TextField("", text: $audit.name).textFieldStyle(MeasureTextFieldStyle())
+        }.frame(width:300)
+
+        VStack {
+            HStack {
+                Text("Nom de l'établissement")
+                Spacer()
+            }
+            TextField("", text: $audit.buildingName).textFieldStyle(MeasureTextFieldStyle())
+        }.frame(width:300)
+        
+        NavigationLink(
+            destination: BuildingTypeSelection(buildingType: $audit.buildingType).navigationBarHidden(true),
+            isActive: $hasOpenBuildingType,
+            label: {
+                Button(action: {
+                    hasOpenBuildingType = true
+                }) {
+                    Text(audit.buildingType.isEmpty ? "Sélectionez un type d'établissement" : audit.buildingType).underline()
+                }.buttonStyle(LinkStyle())
+            }
+        )
+        
+        VStack {
+            HStack {
+                Text("SIRET de l'entreprise")
+                Spacer()
+            }
+            TextField("", text: $audit.siret).textFieldStyle(MeasureTextFieldStyle())
+        }.frame(width:300)
+
+        VStack {
+            HStack {
+                Text("Adresse de l'établissement")
+                Spacer()
+            }
+            TextField("", text: $audit.address).textFieldStyle(MeasureTextFieldStyle())
+        }.frame(width:300)
+        
+        VStack {
+            HStack {
+                Text("Numéro de téléphone du responsable")
+                Spacer()
+            }
+            TextField("", text: $audit.phoneNumber).textFieldStyle(MeasureTextFieldStyle())
+        }.frame(width:300)
+
+        VStack {
+            HStack {
+                Text("Notes")
+                Spacer()
+            }
+            TextField("", text: $audit.notes).textFieldStyle(CommentTextFieldStyle())
+        }.frame(width:300)
+    }
+}
+
+struct CreateAuditView: View {
+    
+    
+    var form = CreateViewForm()
+    
+    @State private var animateButton: Bool = false;
     @State private var startUserJourney: Bool = false
 
     var coordinator = UJCoordinator()
@@ -29,85 +104,22 @@ struct CreateAuditView: View {
     var body: some View {
         ReturnButtonWrapper {
             ScrollView(.vertical) {
-                Text("Remplissez les données de l'audit").modifier(Header1(alignment: .center))
                 
-                Spacer().frame(height: 50)
-                
-                VStack {
-                    HStack {
-                        Text("Nom de l'audit")
-                        Spacer()
-                    }
-                    TextField("", text: $name).textFieldStyle(MeasureTextFieldStyle())
-                }.frame(width:300)
-
-                VStack {
-                    HStack {
-                        Text("Nom de l'établissement")
-                        Spacer()
-                    }
-                    TextField("", text: $buildingName).textFieldStyle(MeasureTextFieldStyle())
-                }.frame(width:300)
-                
-                NavigationLink(
-                    destination: BuildingTypeSelection(buildingType: $buildingType).navigationBarHidden(true),
-                    isActive: $hasOpenBuildingType,
-                    label: {
-                        Button(action: {
-                            hasOpenBuildingType = true
-                        }) {
-                            Text(buildingType.isEmpty ? "Sélectionez un type d'établissement" : buildingType).underline()
-                        }.buttonStyle(LinkStyle())
-                    }
-                )
-
-                VStack {
-                    HStack {
-                        Text("Adresse de l'établissement")
-                        Spacer()
-                    }
-                    TextField("", text: $address).textFieldStyle(MeasureTextFieldStyle())
-                }.frame(width:300)
-                
-                VStack {
-                    HStack {
-                        Text("Numéro de téléphone du responsable")
-                        Spacer()
-                    }
-                    TextField("", text: $phoneNumber).textFieldStyle(MeasureTextFieldStyle())
-                }.frame(width:300)
-
-                VStack {
-                    HStack {
-                        Text("Notes")
-                        Spacer()
-                    }
-                    TextField("", text: $notes).textFieldStyle(CommentTextFieldStyle())
-                }.frame(width:300)
+                self.form
 
                 Spacer()
                 
                 // submit button
-                if self.validate() {
+                if self.validateTest() {
                     NavigationLink(
                         destination: SelectStageView(coordinator: self.coordinator).navigationBarHidden(true),
                         isActive: $startUserJourney,
                         label: {
                             Button(action: {
                                 Task {
-                                    print("begging")
                                     // call API + getData
                                     
-                                    let auditInfos = AuditInfos(
-                                        buildingType: buildingType,
-                                        name: name,
-                                        buildingName: buildingName,
-                                        address: address,
-                                        email: email,
-                                        phoneNumber: phoneNumber,
-                                        notes: notes,
-                                        date: Date.now
-                                    )
+                                    let auditInfos = form.audit.getData()
                                     
                                     self.coordinator.setAuditInfos(auditInfos: auditInfos)
                                     
@@ -146,22 +158,16 @@ struct CreateAuditView: View {
             }
             Spacer().frame(height: 10)
         }
+            
 
     }
     
-    func validate() -> Bool {
-        
-        
-        
-        if !buildingType.isEmpty && !name.isEmpty && !buildingName.isEmpty {
-            print(buildingType)
-            print("true")
+    func validateTest() -> Bool {
+        let audit = form.audit.getData()
+        if !audit.buildingType.isEmpty && !audit.name.isEmpty && !audit.buildingName.isEmpty && !audit.siret.isEmpty {
             return true
         }
-        print("false")
         return false
     }
-
-    
 }
 

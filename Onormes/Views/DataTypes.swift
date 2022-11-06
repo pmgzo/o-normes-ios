@@ -195,6 +195,7 @@ class AuditInfos {
     var name: String = "";
     var buildingName: String = "";
     var address: String = "";
+    var siret: String = "";
     var email: String = "";
     var phoneNumber: String = "";
     var notes: String = "";
@@ -205,6 +206,7 @@ class AuditInfos {
         name: String,
         buildingName: String,
         address: String,
+        siret: String,
         email: String,
         phoneNumber: String,
         notes: String,
@@ -214,6 +216,7 @@ class AuditInfos {
         self.name = name
         self.buildingName = buildingName
         self.address = address
+        self.siret = siret
         self.email = email
         self.phoneNumber = phoneNumber
         self.notes = notes
@@ -233,6 +236,7 @@ class AuditInfosObject: ObservableObject {
     @Published var name: String = "";
     @Published var buildingName: String = ""; // unused
     @Published var address: String = "";
+    @Published var siret: String = "";
     @Published var email: String = "";
     @Published var phoneNumber: String = "";
     @Published var notes: String = "";
@@ -244,6 +248,7 @@ class AuditInfosObject: ObservableObject {
         self.name = infos.name
         self.buildingName = infos.buildingName
         self.address = infos.address
+        self.siret = infos.siret
         self.email = infos.email
         self.phoneNumber = infos.phoneNumber
         self.notes = infos.notes
@@ -276,7 +281,24 @@ class AuditInfosObject: ObservableObject {
         if self.date != refAudit.date {
             return true
         }
+        if self.siret != refAudit.siret {
+            return true
+        }
         return false
+    }
+    
+    func getData() -> AuditInfos {
+        return AuditInfos(
+            buildingType: self.buildingType,
+            name: self.name,
+            buildingName: self.buildingName,
+            address: self.address,
+            siret: self.siret,
+            email: self.email,
+            phoneNumber: self.phoneNumber,
+            notes: self.notes,
+            date: Date.now
+        )
     }
 }
 

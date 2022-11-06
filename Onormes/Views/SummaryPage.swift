@@ -125,6 +125,14 @@ struct AuditSummaryView: View {
                         
                         VStack {
                             HStack {
+                                Text("SIRET de l'entreprise")
+                                Spacer()
+                            }
+                            TextField("", text: $auditInfos.siret).textFieldStyle(MeasureTextFieldStyle())
+                        }.frame(width:300)
+                        
+                        VStack {
+                            HStack {
                                 Text("Adresse de l'établissement")
                                 Spacer()
                             }
@@ -158,6 +166,7 @@ struct AuditSummaryView: View {
         self.refAudit.name = self.auditInfos.name
         self.refAudit.buildingName = self.auditInfos.buildingName
         self.refAudit.address = self.auditInfos.address
+        self.refAudit.siret = self.auditInfos.siret
         self.refAudit.email = self.auditInfos.email
         self.refAudit.phoneNumber = self.auditInfos.phoneNumber
         self.refAudit.notes = self.auditInfos.notes
