@@ -337,31 +337,32 @@ extension GenericRegulationView {
                                 do {
                                     animateCircle = true
                                     
-                                    // TODO: to remove, was just to check if the data as been saved
-                                    for i in savedData {
-                                        for i2 in i.data {
-                                            print(i2.data[0])
-                                            print(i2.data[1])
-                                        }
-                                    }
+                                    let api = APIService()
+                                    
                                     
                                     let auditInfos = self.coordinator!.getAuditInfos()
+                                    let auditId = try await api.createAudit(auditInfos: auditInfos)
                                     
-                                    // call auditCreationRoute
-                                    
-                                    // call the routes to create the audit
-
-//                                    let res = try await APIService().createAudit(name: self.coordinator!.auditRef, location: "Paris, Ile de France", comment: "Test", owner_phone: "pas d'info", owner_email: UserDefaults.standard.string(forKey: "email") ?? "")
-// APIService().sendAllDataAudit(auditId: res, data: self.coordinator!.dataAudit)
-//
-//                                    print("End sending information")
+                                    for stage in savedData {
+                                        let stepId = try await api.createStep(stage: stage, auditId: auditId)
+                                        for subcriterion in stage.data {
+                                            let id = try await api.createMeasure(subcriterion: subcriterion, stepId: stepId, criterionId: stage.idCriterion)
+                                        }
+                                        print("criterion well created")
+                                    }
                                     
                                     animateCircle = false
                                     self.isActive = true
-
+                                } catch ServerErrorType.internalError(let reason) {
+                                    animateCircle = false
+                                    requestError = RequestError(errorDescription: reason)
+                                    displayErrorMessage = true
+                                    return
                                 } catch {
-                                    // TODO: to fix warning (line above)
-                                    print(error)
+                                    animateCircle = false
+                                    requestError = RequestError(errorDescription: "Internal Error")
+                                    displayErrorMessage = true
+                                    return
                                 }
                             }
                         }){
@@ -371,17 +372,31 @@ extension GenericRegulationView {
                                 Text("Valider et Envoyer")
                             }
                             
-                        }.modifier(PrimaryButtonStyle1())
+                        }
+                        .modifier(PrimaryButtonStyle1())
                     } else {
                         // for offline mode
                         Button("Enregistrer l'audit") {
                             self.isActive = true
                         }.modifier(PrimaryButtonStyle1())
                     }
-            }
+                }.alert(
+                    isPresented: $displayErrorMessage, error: requestError,
+                   actions: { errorObject in
+                        Button("Ok") {
+                            requestError = nil
+                            displayErrorMessage = false
+                        }
+                    },
+                    message: { errorObject
+                    in
+                        Text(errorObject.errorDescription)
+                    }
+                )
         }
     }
 }
+
 
 struct SummaryWrapper: View {
     
@@ -396,8 +411,6 @@ struct SummaryWrapper: View {
         self.coordinator = coordinator
         self.content = content
     }
-    
-    
     
     var body: some View {
         VStack {

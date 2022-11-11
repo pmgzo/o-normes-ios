@@ -89,7 +89,7 @@ class GenericRegulationViewModel: PRegulationCheckViewModel {
     func addRegulationCheck(coordinator: UJCoordinator, data: [String:RegulationNorm], content: [RegulationCheckField], subStepId: String) -> Bool {
         if formIsOkay(data: data) {
             // TODO: maybe to change because we need the key if we need to go back to the previous state
-            var newObject = DataNorm(key: self.id, data: [], subStepId: subStepId)
+            var newObject = DataNorm(key: self.id, data: [], subStepId: subStepId, idSubCriterion: content[0].idSubCriterion)
             for (_, value) in data {
                 newObject.data.append(value)
             }

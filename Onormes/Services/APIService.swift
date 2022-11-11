@@ -14,23 +14,25 @@ struct LoginResponse: Codable {
 }
 
 /**
-    Convert string json to a dictionary
-    - Parameters:
-        - text: string http's response
-    - Returns: dictionary
+ 
+ Enum for error handling for network request
+ 
  */
 
-func convertToDictionary(text: String) -> [String: Any]? {
-    if let data = text.data(using: .utf8) {
-        do {
-            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    return nil
+enum ServerErrorType: Error {
+    case internalError(reason: String) // no data caught
 }
 
+class RequestError: LocalizedError {
+    var errorDescription: String;
+    var failureReason: String? = nil;
+    var helpAnchor: String? = nil;
+    var recoverySuggestion: String? = nil;
+
+    init(errorDescription: String) {
+        self.errorDescription = errorDescription
+    }
+}
 
 /**
  
@@ -122,6 +124,83 @@ class APIService {
     
     /**
      
+        Return the user's company Id
+     */
+    
+    func getCompanyId() async throws -> Int {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+
+        guard let url = URL(string: "http://51.103.72.63:3001/api/companies/user") else { throw ServerErrorType.internalError(reason: "Echec de la création de la requête pour avoir l'id de la l'entreprise") }
+        
+        // Build the request, set the method, the value and the body of the request
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        var  id = 0
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ServerErrorType.internalError(reason: "Echec de l'obtention de l'id de la company")
+        }
+        
+        let json = try? JSONSerialization.jsonObject(with: data, options: [])
+
+        guard json != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+
+        if let dictionary = json as? [String: Any] {
+            id = dictionary["id"]! as! Int
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+        return id
+    }
+    
+    /**
+     
+        Return the user's id
+     */
+    
+    func getUserId() async throws -> Int {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
+
+        guard let url = URL(string: "http://51.103.72.63:3001/api/users/?email=\(email)") else {
+            throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir l'id de l'utilisateur a échouée")
+        }
+
+        // Build the request, set the method, the value and the body of the request
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        var  id = 0
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        
+        let json = try? JSONSerialization.jsonObject(with: data, options: [])
+        
+        guard json != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dictionary = json as? [String: Any] {
+            id = dictionary["id"]! as! Int
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+        return id
+    }
+
+    /**
+     
         Method to create an audit
         - Parameters:
             - name: audit's id
@@ -132,15 +211,11 @@ class APIService {
         - Returns: the created audit's id (as confirmation)
      */
     
-    // TODO: Add parameters in body, have to return the audit id
-    func createAudit(name: String, location: String, comment: String, owner_phone: String, owner_email: String) async -> String {
+   func createAudit(auditInfos: AuditInfos) async throws -> Int {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
-        let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
-        
-        guard let url = URL(string: "http://51.103.72.63:3001/api/audit/?email=\(email)") else { return "error mail" }
-        
+        guard let url = URL(string: "http://51.103.72.63:3001/api/audit/") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour créer l'audit a échouée")
+        }
         var request = URLRequest(url: url)
-        var auditId: String = ""
 
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -148,108 +223,185 @@ class APIService {
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
         // fill the body
-        let json: [String: Any] = ["name": name[0..<20], "place": location, "global_comment": comment, "place_owner_phone": owner_phone, "place_owner_mail": owner_email]
+        let buildingId = buildingTypeList.firstIndex(where: {$0 == auditInfos.buildingType})! + 1
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/YY"
+        
+        // get company's id : http://51.103.72.63:3001/api/companies/user
+        // get user id:
+        let auditeurId = try await self.getUserId()
+        let companyId = try await self.getCompanyId()
+        
+        let json: [String: Any] = [
+            "name": auditInfos.name,
+            "date": dateFormatter.string(from: auditInfos.date),
+            "building_name": auditInfos.buildingName,
+            "building_email": auditInfos.email,
+            "building_phone": auditInfos.phoneNumber,
+            "building_addr": auditInfos.address,
+            "building_siret": auditInfos.siret,
+            "owner_first_name": "",
+            "owner_last_name": "",
+            "owner_email": auditInfos.email,
+            "owner_phone": auditInfos.phoneNumber,
+            "comment": auditInfos.notes,
+            "building_fk": buildingId,
+            "company_fk": companyId,
+            "auditeur_fk": auditeurId
+        ]
+        
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
         request.httpBody = jsonData
 
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
 
-            let string: String = String(data: data, encoding: .utf8)!
-            
-            let dic = convertToDictionary(text: string)
-
-            auditId = String(dic!["id"]! as! Int)
-            return auditId
-        } catch {
-            print(error)
-            print("audit not created")
+        guard (response as? HTTPURLResponse)!.statusCode >= 200 && (response as? HTTPURLResponse)!.statusCode <= 299 else {
+            throw ServerErrorType.internalError(reason: "La requête pour créer l'audit a échouée")
         }
+        
+        let receivedJson = try? JSONSerialization.jsonObject(with: data, options: [])
 
-        return auditId
+        guard receivedJson != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dictionary = receivedJson as? [String: Any] {
+            let id: Int = dictionary["id"]! as! Int
+            return id
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+    }
+    
+    /**
+     
+        Create step, call in summary page when all the data is about to be saved.
+            Return the step id
+     */
+    
+    func createStep(stage: StageWrite, auditId: Int) async throws -> Int {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        guard let url = URL(string: "http://51.103.72.63:3001/api/step/") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour créer l'étape a échouée") }
+        var request = URLRequest(url: url)
+
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        // fill the body
+        let json: [String: Any] = [
+            "name": stage.stageName,
+            "description": stage.description,
+            "area_fk": stage.idArea,
+            "place_fk": stage.idPlace,
+            "audit_fk": auditId,
+        ]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+        request.httpBody = jsonData
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)!.statusCode >= 200 && (response as? HTTPURLResponse)!.statusCode <= 299 else {
+            throw ServerErrorType.internalError(reason: "La création d'étape a échouée")
+        }
+        
+        let receivedJson = try? JSONSerialization.jsonObject(with: data, options: [])
+        
+        guard receivedJson != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dic = receivedJson as? [String:Any] {
+            let id: Int = dic["id"]! as! Int
+            return id
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
     }
     
     /**
      
         Method to create a measure
         - Parameters:
-        - params: request's parameters
+        - subcriterion: sub criterion data
+        - stepId: id reference of the substep
+        - criterionId: id reference of the criterion
      */
 
-    func createMeasure(params: NSDictionary) {
-        // more info here: http://51.103.72.63:3001/api-docs/#/Measure/post_api_measure_
-        // audit_fk
-        // norm_fk not used
-        // metric Fk (see aurele's message)
+    func createMeasure(subcriterion: DataNorm, stepId: Int, criterionId: Int) async throws -> Int {
 
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
-        let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/measure/?email=\(email)") else { return }
+        guard let url = URL(string: "http://51.103.72.63:3001/api/measure/") else {
+            throw ServerErrorType.internalError(reason: "La construction de la requête pour créer une mesure a échouée")
+        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        
+        var json: [String:Any] = [:]
+        let comment = getCommentFromRegulationNormArray(regNorms:subcriterion.data)
+        let value = getValueFromRegulationNormArray(regNorms: subcriterion.data)
 
-        print(params["audit_fk"]!)
-        //fill body
-        let json: [String: Any] = [
-            "metric_fk": 0,
-            "audit_fk": params["audit_fk"]!,
-            "norme_fk": "string",
-            "kitName": params["kitName"]!,
-            "name": params["name"]!,
-            "value": params["value"]!,
-            "photo": "pas de photo",
-            "comment": params["comment"]!,
-            "detail": params["details"]!,
-        ]
+        if subcriterion.idSubCriterion == nil {
+            json = [
+                "name": subcriterion.data[0].instruction,
+                "photo": "",
+                "comment": comment,
+                "result": value,
+                "recommendation": "",
+                "step_fk": stepId,
+                "criterion_fk": criterionId,
+            ]
+        }
+        else {
+            json = [
+                "name": subcriterion.data[0].instruction,
+                "photo": "",
+                "comment": comment,
+                "result": value,
+                "recommendation": "",
+                "step_fk": stepId,
+                "criterion_fk": criterionId,
+                "sub_criterion_fk": subcriterion.idSubCriterion,
+            ]
+        }
+        
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
         request.httpBody = jsonData
         
-        URLSession.shared.dataTask(with: request) {(data, response, error) in
-          guard let data = data, error == nil else {
-            print(error?.localizedDescription ?? "No data")
-            return
-          }
 
-          guard let userResponse = try? JSONDecoder().decode(User.self, from: data) else {
-            print("Error measure not created")
-            return
-          }
-          //completion(userResponse)
-        }.resume()
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)!.statusCode >= 200 && (response as? HTTPURLResponse)!.statusCode <= 299 else {
+            throw ServerErrorType.internalError(reason: "La création de mesure a échouée")
+        }
+        
+        let receivedJson = try? JSONSerialization.jsonObject(with: data, options: [])
+
+        guard receivedJson != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dic = receivedJson as? [String:Any] {
+            let id: Int = dic["id"]! as! Int
+            return id
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
     }
     
     /**
      
-        Method to send all the substeps's data filled during the user journey
         
-     **Parameters**
      
-        - auditId: id
-        - Returns: confirm whether the request has been successfully processed
      */
-
-    func sendAllDataAudit(auditId: String, data: [DataNorm]) -> Bool {
-        print("send audit id")
-        print(auditId)
-        for norm in data {
-            let comment = getCommentFromRegulationNormArray(regNorms: norm.data)
-            let reg = getRegulationFromRegulationNormArray(regNorms: norm.data)
-            var value = reg.valueString
-            if reg.type == TypeField.bool {
-                value = reg.valueCheckBox == true ? "True" : "False"
-            }
-            self.createMeasure(params: ["audit_fk": auditId, "kitName": "", "name": reg.key, "value": value, "comment": comment, "details": reg.instruction])
-
-            print("norm " + norm.key + " done.")
-        }
-        
-        return true
-    }
     
     func sendFeedback(feedback: String) -> Bool {
         
@@ -330,8 +482,6 @@ class APIService {
                 
                 try string!.write(to: URL(fileURLWithPath: filename), atomically: true, encoding: String.Encoding.utf8)
                 
-                print("success")
-                
             } catch {
                 print("Error lors de la sauvegarde de la liste des critères: \(error).")
                 result = false
@@ -339,6 +489,199 @@ class APIService {
         }.resume()
         return result
     }
+    
+    /**
+            Get subcriteria list from criterion Id
+     */
+    
+    func getSubCriteriaFromCriterion(criterionName: String, criterionId: Int) async throws -> [RegulationCheckField] {
+        //http://51.103.72.63:3001/api/sub_criterion/criterion?criterionId=1
+        
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        
+        guard let url = URL(string:
+                                "http://51.103.72.63:3001/api/sub_criterion/criterion?criterionId=\(criterionId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des sous critère a échouée") }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
+        var regs: [RegulationCheckField] = []
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ServerErrorType.internalError(reason: "La requête pour obtenir des sous critères à partir de l'id du critere (\(criterionId)) a échouée")
+        }
+        
+        if String(decoding: data, as: UTF8.self) == "[]" {
+            // leave subCriterion Id as null
+            regs = [RegulationCheckField(key: criterionName,
+                                         type: TypeField.bool,
+                                         text: criterionName,
+                                         optional: false
+                                        )]
+        } else {
+            let json = try? JSONSerialization.jsonObject(with: data, options: [])
+            
+            guard json != nil else {
+                throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+            }
+            
+            if let dictionary = json as? [[String: Any]] {
+                for obj in dictionary {
+                    let subcriterionName = obj["name"]! as! String
+                    let subcriterionId = obj["id"]! as! Int
+                    
+                    regs.append(RegulationCheckField(
+                        key: subcriterionName,
+                        type: TypeField.bool,
+                        text: subcriterionName,
+                        optional: false,
+                        idSubCriterion: subcriterionId
+                    ))
+                }
+            } else {
+                throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+            }
+        }
+        return regs
+    }
+    
+    /**
+     
+        Get place criteria from place Ids
+     */
+    
+    func getCriteriaFromPlace(placeId: Int) async throws -> [(String, Int)] {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        
+        guard let url = URL(string:
+                                "http://51.103.72.63:3001/api/criterion/place?placeId=\(placeId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des critères a échouée") }
 
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        var criteriaList: [(String, Int)] = []
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ServerErrorType.internalError(reason: "La requête pour obtenir des critères à partir de l'id de la place (\(placeId)) a échouée")
+        }
+        
+        
+        let json = try? JSONSerialization.jsonObject(with: data, options: [])
+        
+        guard json != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dictionary = json as? [[String: Any]] {
+            for obj in dictionary {
+                let criterionName = obj["name"]! as! String
+                let criterionId = obj["id"]! as! Int
+
+                criteriaList.append((criterionName, criterionId))
+            }
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+        return criteriaList
+    }
+
+    /**
+     
+        Get all the places from area Id
+     */
+    
+    func getPlaceFromArea(areadId: Int) async throws -> [Int] {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        
+        guard let url = URL(string: "http://51.103.72.63:3001/api/place/area?areaId=\(areadId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des  places a échouée") }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        var placeList: [Int] = []
+        
+//        do {
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ServerErrorType.internalError(reason: "La requête pour obtenir des places à partir de l'id de l'endroit (\(areadId)) a échouée")
+        }
+        
+        let json = try? JSONSerialization.jsonObject(with: data, options: [])
+        guard json != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dictionary = json as? [[String: Any]] {
+            for obj in dictionary {
+                let placeId = obj["id"]! as! Int
+                placeList.append(placeId)
+            }
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+        return placeList
+    }
+    
+    /**
+     
+        Request the backend to get all stages and criteria given the buildingId, return a StageRead list
+     
+     */
+    
+    func getAllStages(buildingTypeId: Int) async throws -> [String:StageRead] {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        
+        guard let url = URL(string: "http://51.103.72.63:3001/api/area/building?buildingId=\(buildingTypeId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des endroits a échouée") }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        var stages: [String:StageRead] = [:]
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ServerErrorType.internalError(reason: "La requête pour obtenir des endroits à partir de l'id du batiment (\(buildingTypeId)) a échouée")
+        }
+
+        let json = try? JSONSerialization.jsonObject(with: data, options: [])
+
+        guard json != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+
+        if let dictionary = json as? [[String: Any]] {
+            for obj in dictionary {
+                let areaId = obj["id"] as! Int
+                let placesId: [Int]  = try await self.getPlaceFromArea(areadId: areaId)
+                for placeId in placesId {
+                    let criteria: [(String, Int)] = try await self.getCriteriaFromPlace(placeId: placeId)
+                    for criterion in criteria {
+                        let criterionName = criterion.0
+                        let criterionId = criterion.1
+                        let criterias: [RegulationCheckField] = try await self.getSubCriteriaFromCriterion(criterionName: criterionName, criterionId: criterionId)
+                        stages[criterionName] = StageRead(name: criterionName, content: criterias, idBuilding: buildingTypeId, idArea: areaId, idPlace: placeId, idCriterion: criterionId)
+                    }
+                }
+            }
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+        return stages
+    }
  }

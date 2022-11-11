@@ -105,6 +105,7 @@ class UJCoordinator: ObservableObject {
                                      name: "",
                                      buildingName: "",
                                      address: "",
+                                     siret: "",
                                      email: "",
                                      phoneNumber: "",
                                      notes: "",
@@ -216,6 +217,39 @@ class UJCoordinator: ObservableObject {
         
         self.index = stageHistory.count
     }
+    
+    /**
+        This function adds new stages in the user journey after adding stage in the **RegulationsSelection** page.
+        
+        **Parameters**:
+        - ids: selected ids in the **RegulationsSelection** page
+     */
+
+    func addRegulationCheckStages(ids: Set<String>) {
+        for id in ids {
+            //build the stage id here
+            //self.stageHistory.append(id + "-" + UUID().uuidString)
+            self.stageHistory.append(id)
+            
+            let stageRef = stageList[id]!
+            
+            let idBuilding = stageRef.idBuilding
+            let idArea = stageRef.idArea
+            let idPlace = stageRef.idPlace
+            let idCriterion = stageRef.idCriterion
+            
+            self.savedData.append(
+                StageWrite(stageName: id, description: "", data: [], idBuilding: idBuilding, idArea: idArea, idPlace: idPlace, idCriterion: idCriterion)
+            )
+        }
+        self.totalStages = self.stageHistory.count
+        
+        // handle add step during summary page
+        if self.finished == true {
+            self.userJourneyNotFinished()
+            self.startTheNewStage()
+        }
+    }
 
     /**
         This function saves data once the user click on the next step button
@@ -316,28 +350,7 @@ class UJCoordinator: ObservableObject {
     }
     
     
-    /**
-        This function adds new stages in the user journey after adding stage in the **RegulationsSelection** page.
-        
-        **Parameters**:
-        - ids: selected ids in the **RegulationsSelection** page
-     */
 
-    func addRegulationCheckStages(ids: Set<String>) {
-        for id in ids {
-            //build the stage id here
-            //self.stageHistory.append(id + "-" + UUID().uuidString)
-            self.stageHistory.append(id)
-            self.savedData.append(StageWrite(stageName: id, description: "", data: []))
-        }
-        self.totalStages = self.stageHistory.count
-        
-        // handle add step during summary page
-        if self.finished == true {
-            self.userJourneyNotFinished()
-            self.startTheNewStage()
-        }
-    }
 
     // used once the stages are added at the end of the summary
     func startTheNewStage() {

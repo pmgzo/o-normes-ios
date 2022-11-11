@@ -157,7 +157,7 @@ let buildingTypeList = [
     "Optique",
     "Pharmacie",
     "Matériel médical orthopédique",
-    "Esthéticienne",
+    "Esthéticienne--",
     "Centre de bien-être",
     "Massage/Relaxation",
     "Piscine liée aux ERP",

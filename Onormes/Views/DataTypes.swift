@@ -94,20 +94,25 @@ struct RegulationNorm: Identifiable {
 
 func getCommentFromRegulationNormArray(regNorms: [RegulationNorm]) -> String {
     for norm in regNorms {
-        if norm.key.contains("-comment'") {
+        if norm.key.contains("-comment") {
             return norm.valueString
         }
     }
     return ""
 }
 
-func getRegulationFromRegulationNormArray(regNorms: [RegulationNorm]) -> RegulationNorm {
+func getValueFromRegulationNormArray(regNorms: [RegulationNorm]) -> String {
     for norm in regNorms {
-        if !norm.key.contains("-comment'") {
-            return norm
+        if !norm.key.contains("-comment") {
+            //return norm
+            if norm.type == TypeField.bool {
+                return norm.valueCheckBox == false ? "false" : "true"
+            } else {
+                return norm.valueString
+            }
         }
     }
-    return regNorms[0]
+    return ""
 }
 
 /**
@@ -129,11 +134,13 @@ class DataNorm: Identifiable {
     
     var data: [RegulationNorm]
     let subStepId: String
+    let idSubCriterion: Int?
     
-    init(key: String, data: [RegulationNorm], subStepId: String) {
+    init(key: String, data: [RegulationNorm], subStepId: String, idSubCriterion: Int? = nil) {
         self.key = key
         self.data = data
         self.subStepId = subStepId
+        self.idSubCriterion = idSubCriterion
     }
 }
 
@@ -171,14 +178,16 @@ struct RegulationCheckField: Identifiable, Equatable {
     let optional: Bool;
     let comment: String;
     let menusCategories: [String];
+    let idSubCriterion: Int?
     
-    init(key: String, type: TypeField, text: String, categories: [String] = [], optional: Bool = false) {
+    init(key: String, type: TypeField, text: String, categories: [String] = [], optional: Bool = false, idSubCriterion: Int? = nil) {
         self.key = key;
         self.type = type;
         self.text = text;
         self.optional = optional;
         self.menusCategories = categories;
         self.comment = "";
+        self.idSubCriterion = idSubCriterion
         
         self.id = ObjectIdentifier(IntegerRef(UUID().uuidString))
     }
@@ -242,7 +251,6 @@ class AuditInfosObject: ObservableObject {
     @Published var notes: String = "";
     @Published var date: Date; // unused maybe only print it
 
-    
     init(infos: AuditInfos) {
         self.buildingType = infos.buildingType
         self.name = infos.name
@@ -255,7 +263,6 @@ class AuditInfosObject: ObservableObject {
         self.date = infos.date
     }
 
-    
     func hasChanged(refAudit: AuditInfos) -> Bool {
         if self.buildingType != refAudit.buildingType {
             return true
@@ -311,6 +318,11 @@ class AuditInfosObject: ObservableObject {
 struct StageRead {
     let name: String;
     let content: [RegulationCheckField];
+    
+    let idBuilding: Int;
+    let idArea: Int;
+    let idPlace: Int;
+    let idCriterion: Int;
 }
 
 /**
@@ -324,6 +336,11 @@ struct StageWrite {
     let stageName: String;
     var description: String
     var data: [DataNorm];
+    
+    var idBuilding: Int;
+    var idArea: Int;
+    var idPlace: Int;
+    var idCriterion: Int;
 }
 
 extension StageWrite: Identifiable {

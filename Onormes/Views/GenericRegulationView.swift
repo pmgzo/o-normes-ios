@@ -76,6 +76,10 @@ struct GenericRegulationView: View
     // description
     @ObservedObject var description: StageDescription;
     
+    // summary page
+    @State var displayErrorMessage: Bool = false;
+    @State var requestError: RequestError?;
+
     @EnvironmentObject var appState: AppState
 
     init(title: String, content: [RegulationCheckField], id: String, subStepId: String) {

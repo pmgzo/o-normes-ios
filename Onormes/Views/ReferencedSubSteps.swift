@@ -119,27 +119,39 @@ let temporaryStageList: [String:StageRead] = [
     "Transport à proximité": StageRead(
         name: "Transport à proximité",
         content: [
-            RegulationCheckField(key: "Gare à proximité", type: TypeField.bool, text: "Gare à proximité", optional: false),
-            RegulationCheckField(key: "Métro à proximité", type: TypeField.bool, text: "Métro à proximité", optional: false),
-            RegulationCheckField(key: "Bus à proximité", type: TypeField.bool, text: "Bus à proximité", optional: false),
-            RegulationCheckField(key: "Tramway à proximité", type: TypeField.bool, text: "Tramway à proximité", optional: false),
-        ]
+            RegulationCheckField(key: "Gare à proximité", type: TypeField.bool, text: "Gare à proximité", optional: false, idSubCriterion: 1),
+            RegulationCheckField(key: "Métro à proximité", type: TypeField.bool, text: "Métro à proximité", optional: false, idSubCriterion: 2),
+            RegulationCheckField(key: "Bus à proximité", type: TypeField.bool, text: "Bus à proximité", optional: false, idSubCriterion: 3),
+            RegulationCheckField(key: "Tramway à proximité", type: TypeField.bool, text: "Tramway à proximité", optional: false, idSubCriterion: 4),
+        ],
+        idBuilding: 1,
+        idArea: 1,
+        idPlace: 1,
+        idCriterion: 1
     ),
     "Trottoirs adaptés": StageRead(
         name: "Trottoirs adaptés",
         content: [
-            RegulationCheckField(key: "Sans Dévers", type: TypeField.bool, text: "Sans Dévers", optional: false),
-            RegulationCheckField(key: "Largeur suffisante ( >  à 1,20 mètre) et sans obstacle", type: TypeField.bool, text: "Largeur suffisante ( >  à 1,20 mètre) et sans obstacle", optional: false),
-            RegulationCheckField(key: "Trottoirs Abaissés", type: TypeField.bool, text: "Trottoirs Abaissés", optional: false)
-        ]
+            RegulationCheckField(key: "Sans Dévers", type: TypeField.bool, text: "Sans Dévers", optional: false, idSubCriterion: 1),
+            RegulationCheckField(key: "Largeur suffisante ( >  à 1,20 mètre) et sans obstacle", type: TypeField.bool, text: "Largeur suffisante ( >  à 1,20 mètre) et sans obstacle", optional: false, idSubCriterion: 2),
+            RegulationCheckField(key: "Trottoirs Abaissés", type: TypeField.bool, text: "Trottoirs Abaissés", optional: false, idSubCriterion: 3)
+        ],
+        idBuilding: 1,
+        idArea: 1,
+        idPlace: 1,
+        idCriterion: 2
     ),
     "Parking accessible": StageRead(
         name: "Parking accessible",
         content: [
-            RegulationCheckField(key: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", type: TypeField.bool, text: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", optional: false),
-            RegulationCheckField(key: "Contrôle d’accès et de sortie avec InterPhonie", type: TypeField.bool, text: "Contrôle d’accès et de sortie avec InterPhonie", optional: false),
-            RegulationCheckField(key: "Place(s) de stationnement adaptée(s) située(s) à proximité de l’entrée du site", type: TypeField.bool, text: "Place(s) de stationnement adaptée(s) située(s) à proximité de l’entrée du site", optional: false)
-        ]
+            RegulationCheckField(key: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", type: TypeField.bool, text: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", optional: false, idSubCriterion: 1),
+            RegulationCheckField(key: "Contrôle d’accès et de sortie avec InterPhonie", type: TypeField.bool, text: "Contrôle d’accès et de sortie avec InterPhonie", optional: false, idSubCriterion: 2),
+            RegulationCheckField(key: "Place(s) de stationnement adaptée(s) située(s) à proximité de l’entrée du site", type: TypeField.bool, text: "Place(s) de stationnement adaptée(s) située(s) à proximité de l’entrée du site", optional: false, idSubCriterion: 3)
+        ],
+        idBuilding: 1,
+        idArea: 1,
+        idPlace: 1,
+        idCriterion: 3
     ),
 
 ]
