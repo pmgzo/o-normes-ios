@@ -29,9 +29,9 @@ struct HomeMenu: View {
     @ObservedObject var coordinator: UJCoordinator;
     @EnvironmentObject var appState: AppState
   
-      init() {
-          self.coordinator = UJCoordinator()
-      }
+    init() {
+      self.coordinator = UJCoordinator()
+    }
   
   var body: some View {
       return NavigationView {
@@ -43,15 +43,6 @@ struct HomeMenu: View {
               else {
                   Text("Mode offline")
               }
-              
-//              CustomNavigationLink(coordinator: coordinator, isActive: $hasStartUserJouney, destination: { () -> GenericRegulationView in
-//                  return self.coordinator.getNextView()
-//              },label: {
-//                  Button("Réaliser un diagnostique d'accessibilité") {
-//                      self.coordinator.nextStep(start: true)
-//                      hasStartUserJouney = true
-//                  }.buttonStyle(ButtonStyle())
-//              })
               
               NavigationLink(
                   destination: CreateAuditView().navigationBarHidden(true),
@@ -74,7 +65,7 @@ struct HomeMenu: View {
               )
               
               NavigationLink(
-                  destination: SavedAudit(),
+                destination:  SavedAudit().navigationBarHidden(true),
                   isActive: $hasOpenedNotSentAudit,
                   label: {
                       Button("Audits sauvegardés") {

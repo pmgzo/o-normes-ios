@@ -22,6 +22,7 @@ struct RegulationPageItem {
 }
 
 /**
+ 
  This global variable is used in the **RegulationSelection** page. Usually when we add a new stage in the app, we have to add it in this global variable as well.
  
  */
@@ -44,7 +45,6 @@ var regulationPageslist: [RegulationPageItem] = [
  Function to match string patter
  
  */
-
 
 func match(string: String, patternValue: String) -> Bool {
     let range = NSRange(location: 0, length: string.utf16.count)
@@ -122,7 +122,7 @@ extension GenericRegulationView {
                                 HStack {
                                     Text(stageList[i].name)
                                 }.frame(width: (UIScreen.screenWidth - 100) / 3 * 2, alignment: .leading)
-                                    .truncationMode(.tail)
+//                                    .truncationMode(.tail)
                                 
                                 HStack {
                                     CheckBox(filled: stageList[i].selected)
@@ -186,9 +186,7 @@ extension GenericRegulationView {
 func returnArray(stageNames: [String]) -> [RegulationPageItem] {
     var array: [RegulationPageItem]  = []
     for key in stageNames {
-        print(key)
         array.append(RegulationPageItem(id: key, name: key, imageName: "doorImage"))
-        //print(self.stageList.count)
     }
     return array
 }
@@ -335,7 +333,6 @@ struct SelectStageInSummaryView: View {
         self.selectedItems = SelectedRegulationSet(selectedItems: [])
         self.stageList = returnArray(stageNames: self.coordinator.getStageNames)
         
-        print(self.stageList.count)
     }
     
     
@@ -351,7 +348,6 @@ struct SelectStageInSummaryView: View {
                     ForEach(searchResult, id: \.self) { i in
                         Button(action: {
                                 self.stageList[i].selected = !stageList[i].selected
-                                print(stageList[i].id + " selected")
                                 if stageList[i].selected {
                                     // add
                                     if !selectedItems.contains(id: stageList[i].id) {

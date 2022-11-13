@@ -226,7 +226,7 @@ class APIService {
         let buildingId = buildingTypeList.firstIndex(where: {$0 == auditInfos.buildingType})! + 1
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM/YY"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         
         // get company's id : http://51.103.72.63:3001/api/companies/user
         // get user id:
@@ -255,6 +255,8 @@ class APIService {
         request.httpBody = jsonData
 
         let (data, response) = try await URLSession.shared.data(for: request)
+       
+       //print(String(decoding: data, as: UTF8.self))
 
         guard (response as? HTTPURLResponse)!.statusCode >= 200 && (response as? HTTPURLResponse)!.statusCode <= 299 else {
             throw ServerErrorType.internalError(reason: "La requête pour créer l'audit a échouée")

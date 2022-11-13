@@ -116,21 +116,11 @@ class UJCoordinator: ObservableObject {
         Load filled steps from file
     */
     
-    func loadPath(pathToLoad: String) { // TODO: modify with JSON
-        self.myDictionary = convertJsonToStep(path: pathToLoad)
-        
-        self.stageHistory = Array(self.myDictionary.keys)
+    func loadPath(pathToLoad: String) {
+
+        //        self.stageHistory = Array(self.myDictionary.keys)
         self.index = self.stageHistory.count - 1
-        
-        self.stageDelegate = nil
-        
-        // get it from json
-        //self.auditRef = UUID().uuidString;
-        let startIndex = pathToLoad.index(pathToLoad.endIndex, offsetBy: -6-35)
-        let endIndex = pathToLoad.index(pathToLoad.endIndex, offsetBy: -6)
-        let range = startIndex...endIndex
-        self.auditRef = String(pathToLoad[range])
-        print("new audit ref \(self.auditRef)")
+        (self.auditInfos, self.savedData) = try! readAuditFile(path: pathToLoad)
     }
 
     /**
@@ -294,63 +284,8 @@ class UJCoordinator: ObservableObject {
      */
     
     func writeDataIntoJsonFile() -> Void {
-        
-        // TODO: to refacto, change the data structure
-        
-        do {
-            let obj = convertStepIntoJson(data: myDictionary)
-
-            if JSONSerialization.isValidJSONObject(obj) {
-                
-                //print("1")
-                let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-                let pathToSavedAudit = userDirectory!.path + "/savedAudit"
-                
-                //print("3")
-                try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
-                
-                // TODO: to remove
-                // remove previous file in the directory
-                let allFiles = try FileManager.default.contentsOfDirectory(atPath: pathToSavedAudit)
-                for file in allFiles {
-                    try FileManager.default.removeItem(atPath: pathToSavedAudit + "/" + file)
-                }
-                
-                //print(FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask))
-                
-                //jsonData.write(to: )
-                //print("4")
-
-                let data = try JSONSerialization.data(withJSONObject: obj, options: .prettyPrinted)
-                //print("5")
-
-                let string = String(data: data, encoding: String.Encoding.utf8)
-                //print("6")
-                //print(string)
-
-                let filename = pathToSavedAudit + "/" + self.auditRef + ".json"
-                //print(filename)
-                //print(string)
-                //print("7")
-                try string!.write(to: URL(fileURLWithPath: filename), atomically: true, encoding: String.Encoding.utf8)
-                //print("8")
-                // TODO: to remove
-//                let allFiles = try FileManager.default.contentsOfDirectory(atPath: pathToSavedAudit)
-//                print("9")
-//                for file in allFiles {
-//                    print(file)
-//                }
-                    
-            }
-            
-        } catch {
-            print("Unexpected error: \(error).")
-            print("erreur lors de la sauvegarde du json")
-        }
+        saveIntoJson(auditInfos: auditInfos, savedData: savedData)
     }
-    
-    
-
 
     // used once the stages are added at the end of the summary
     func startTheNewStage() {
@@ -384,7 +319,7 @@ class UJCoordinator: ObservableObject {
         }
         
         // save in json file
-        //self.writeDataIntoJsonFile()
+        self.writeDataIntoJsonFile()
     }
     
     /**

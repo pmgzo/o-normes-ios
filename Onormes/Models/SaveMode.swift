@@ -9,146 +9,232 @@ import Foundation
 import SwiftUI
 
 
-// serialize
-
-
-func convertDataNormToDictionary(dataNorm: DataNorm) -> [[String:Any]] {
-    var dic: [[String:Any]] = []
-    let substepId = dataNorm.subStepId
-
-    // browse RegulationNorm
-    for criterion in dataNorm.data {
-        if criterion.type == TypeField.bool {
-            dic.append([
-                "id": dataNorm.id,
-                "key": criterion.key,
-                "value": criterion.valueCheckBox,
-                //"comment": criterion.comment,
-                "substepId": substepId
-            ])
-            
-        }
-        else  {
-            dic.append([
-                "id": dataNorm.id,
-                "key": criterion.key,
-                "value": criterion.valueString,
-                //"comment": criterion.comment,
-                "substepId": substepId
-            ])
-        }
-    }
-
-    return dic
-}
-
-func dataNormToDictionary(dataNormList: [DataNorm]) -> [String:[[String:Any]]] {
-    var criteriaList: [String:[[String:Any]]] = [:]
-
-    for criterion in dataNormList {
-        // one data Norm has only one RegulationNorm
-        criteriaList[criterion.id] = convertDataNormToDictionary(dataNorm: criterion)
-
-        //convertDataNormToDictionary(dataNorm: criterion)
-    }
-    return criteriaList
-}
-
-// returns Dictionary which as an array of dictionaries
-/**
- 
- Returned data is represented as follow:
- 
- ```json
- 
- {
-        StepName: [
-                {
-                            PageName/DataNorm'sName: [ // this the list of RegulationNorm
-                                                {
-                                                    // first data contain the field's attributes
-                                                }
-                                                {
-                                                    // second are the comment
-                                                }
-                                                                                                        
-                                    ]
-            }
-        ]
- }
- ```
- 
- 
- */
-func convertStepIntoJson(data: [String:[DataNorm]]) -> [String:[String:[[String:Any]]]] {
-    var newObject: [String:[String:[[String:Any]]]] = [:]
-    
-    for (id,value) in data {
-        newObject[id] = dataNormToDictionary(dataNormList: value)
-    }
-    print(newObject)
-    return newObject
+enum SavedModeErrorType: Error {
+    case jsonError(reason: String)
 }
 
 // load
 
-func convertJsonToRegulationNorm(jsonArray: [[String:Any]]) -> DataNorm {
-    var regNorms: [RegulationNorm] = []
-    var id = ""
-    var subStep = ""
-    for obj in jsonArray {
-        id = obj["id"] as! String
-        subStep =  obj["substepId"] as! String
-        let key = obj["key"] as! String
-        let view = getSubSteps(id: subStep)
-        let reg = view.content![0]
+func deserializeRegulationNorms(criterion: [String:Any]) -> [RegulationNorm] {
+    let value: String = criterion["value"] as! String
+    let type: TypeField = value == "true" || value == "false" ? TypeField.bool : TypeField.string
+    let comment: String = criterion["comment"] as! String
+    let text: String = criterion["text"] as! String
+    let name: String = criterion["name"] as! String
 
-        if reg.type == TypeField.bool && !key.contains("-comment") {
-            regNorms.append(RegulationNorm(key: key, inst: reg.text, type: reg.type, valueBool: obj["value"] as! Bool))
-        } else if key.contains("-comment") {
-            regNorms.append(RegulationNorm(key: key, inst: "", type: TypeField.string, valueString: obj["value"] as! String))
-        } else {
-            regNorms.append(RegulationNorm(key: key, inst: reg.text, type: reg.type, valueString: obj["value"] as! String))
-        }
-    }
-    return DataNorm(key: id, data: regNorms, subStepId: subStep)
-}
-
-func convertJsonToDataNorm(json: [String:[[String:Any]]]) -> [DataNorm]
-{
-    var norms: [DataNorm] = []
-
-    for (_,reglist) in json {
-        norms.append(convertJsonToRegulationNorm(jsonArray: reglist))
-    }
-    return norms
-}
-
-func convertJsonToStep(path: String) -> [String:[DataNorm]] {
-    let string = try! String(contentsOfFile: path)
+    let norm: RegulationNorm;
     
-    let data = string.data(using: .utf8)!
+    if type == TypeField.bool {
+        norm = RegulationNorm(key: name, inst: text, type: TypeField.bool, valueBool: value == "true" ? true : false)
+    } else {
+        norm = RegulationNorm(key: name, inst: text, type: TypeField.string, valueString: value)
+    }
+    
+    return [
+        norm,
+        RegulationNorm(key: name + "-comment", inst: text, type: type,  mandatory: true, valueString: comment)
+    ]
+}
+
+func deserializeCriterion(criterion: [String:Any]) -> DataNorm {
+    
+    let text: String = criterion["text"] as! String
+    let name: String = criterion["name"] as! String
+    
+    if criterion["idSubCriterion"] != nil {
+        return DataNorm(
+            key: name,
+            data: deserializeRegulationNorms(criterion: criterion),
+            subStepId: text,
+            idSubCriterion: criterion["idSubCriterion"] as? Int
+        )
+    }
+    return DataNorm(
+        key: name,
+        data: deserializeRegulationNorms(criterion: criterion),
+        subStepId: text)
+}
+
+func deserializeCriteria(criteria: [[String:Any]]) -> [DataNorm] {
+    var criteriaList: [DataNorm] = []
+    for criterion in criteria {
+        criteriaList.append(
+            deserializeCriterion(criterion: criterion)
+        )
+    }
+    return criteriaList
+}
+
+func deserializeStage(stage: [String:Any]) -> StageWrite {
+    return StageWrite(
+        stageName: stage["stageName"] as! String,
+        description: stage["description"] as! String,
+        data: deserializeCriteria(criteria: stage["criteria"] as! [[String:Any]]),
+        idBuilding: stage["idBuilding"] as! Int,
+        idArea: stage["idArea"] as! Int,
+        idPlace: stage["idPlace"] as! Int,
+        idCriterion: stage["idCriterion"] as! Int
+    )
+}
+
+func deserializeStages(stages: [[String:Any]]) -> [StageWrite] {
+    
+    var stageList: [StageWrite] = []
+
+    for stage in stages {
+        stageList.append(deserializeStage(stage: stage))
+    }
+    print(stageList)
+    return stageList
+}
+
+func deserializeAuditInfos(auditInfos: [String:Any]) -> AuditInfos {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+    return AuditInfos(
+        buildingType: auditInfos["buildingType"] as! String,
+        name: auditInfos["name"] as! String,
+        buildingName: auditInfos["buildingName"] as! String,
+        address: auditInfos["address"] as! String,
+        siret: auditInfos["siret"] as! String,
+        email: auditInfos["email"] as! String,
+        phoneNumber: auditInfos["phoneNumber"] as! String,
+        notes: auditInfos["notes"] as! String,
+        date: dateFormatter.date(from: auditInfos["date"] as! String)!
+    )
+}
+
+func readAuditFile(path: String) throws -> (AuditInfos, [StageWrite]) {
+        let fileUrl = URL(string: "file://" + path)
+        
+        let jsonString = try String(contentsOf: fileUrl!)
+        
+        print("convert data")
+        print(jsonString)
+        
+        let data = jsonString.data(using: .utf8)!
+        
+        let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:Any]
+        
+        // get audti Infos
+    let auditInfos = deserializeAuditInfos(auditInfos: jsonObject!["audit"] as! [String:Any] )
+        
+        // get stageWrite
+        print("deserializeStage")
+        let stages = deserializeStages(stages: jsonObject!["data"] as! [[String:Any]])
+
+        return (auditInfos, stages)
+}
+
+// serialize
+
+func serializeSubcriterion(criterion: DataNorm) -> [String:Any] {
+    
+    if criterion.idSubCriterion == nil {
+        return [
+            "value": getValueFromRegulationNormArray(regNorms: criterion.data),
+            "comment": getCommentFromRegulationNormArray(regNorms: criterion.data),
+            "text": criterion.subStepId,
+            "name": criterion.key
+        ]
+    }
+    
+    return [
+        "idSubCriterion": criterion.idSubCriterion,
+        "value": getValueFromRegulationNormArray(regNorms: criterion.data),
+        "comment": getCommentFromRegulationNormArray(regNorms: criterion.data),
+        "text": criterion.subStepId,
+        "name": criterion.key
+    ]
+}
+
+func serializeCriteria(criteria: [DataNorm]) -> [[String:Any]]
+{
+    var array: [[String:Any]] = []
+    for subcriterion in criteria {
+        array.append(serializeSubcriterion(criterion: subcriterion))
+    }
+    return array
+}
+
+func serializeStage(stage: StageWrite) -> [String:Any] {
+    return [
+        "stageName": stage.stageName,
+        "description": stage.description,
+        "criteria": serializeCriteria(criteria: stage.data),
+        "idBuilding": stage.idBuilding,
+        "idArea": stage.idArea,
+        "idPlace": stage.idPlace,
+        "idCriterion": stage.idCriterion
+    ]
+}
+
+func serializeStages(stages: [StageWrite]) -> [[String:Any]] {
+    var array: [[String:Any]] = []
+    for stage in stages {
+        array.append(serializeStage(stage: stage))
+    }
+    return array
+}
+
+func serializeAuditInfos(auditInfos: AuditInfos) -> [String:Any]
+{
+    
+//https://stackoverflow.com/questions/36861732/convert-string-to-date-in-swift
+    
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+    
+    return [
+        "buildingType": auditInfos.buildingType,
+        "name": auditInfos.name,
+        "buildingName": auditInfos.buildingName,
+        "address": auditInfos.address,
+        "siret": auditInfos.siret,
+        "email": auditInfos.email,
+        "phoneNumber": auditInfos.phoneNumber,
+        "notes": auditInfos.notes,
+        "date": dateFormatter.string(from: auditInfos.date)
+    ]
+}
+
+
+func saveIntoJson(auditInfos: AuditInfos, savedData: [StageWrite]) {
+    var savedObject: [String:Any] = [:]
+
+    savedObject["audit"] = serializeAuditInfos(auditInfos: auditInfos)
+    savedObject["data"] = serializeStages(stages: savedData)
+
+    // save in json
     do {
-        if let jsonArray = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:[String:[[String:Any]]]]
-        {
-            var arr: [String:[DataNorm]] = [:]
-            print(jsonArray)
-            for (key, criteria) in jsonArray {
-                arr[key] = convertJsonToDataNorm(json: criteria)
-            }
-            print("json has been loaded successfully")
-            print(arr)
-            return arr
-            
-        } else {
-            print("bad json")
+        let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let pathToSavedAudit = userDirectory!.path + "/savedAudit"
+        
+        if FileManager.default.fileExists(atPath: pathToSavedAudit) == false {
+            try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
         }
         
+        let pathTowardFile = pathToSavedAudit + "/" + auditInfos.name + ".json"
+        
+        if FileManager.default.fileExists(atPath: pathTowardFile) == true {
+            // erase existing file with the same name
+            try FileManager.default.removeItem(atPath: pathTowardFile)
+        }
+        
+        if !JSONSerialization.isValidJSONObject(savedObject) {
+            throw SavedModeErrorType.jsonError(reason: "is not a valid json object")
+        }
+        
+        let data = try JSONSerialization.data(withJSONObject: savedObject, options: .prettyPrinted)
+        
+        let success = FileManager.default.createFile(atPath: pathTowardFile, contents: data)
+        
+        if success {
+            print("file \(auditInfos.name).json created")
+        } else {
+            print("fail to create the file \(auditInfos.name).json")
+        }
     } catch {
         print(error)
     }
-    print("empty dic")
-    return [:]
-    
 }
-
