@@ -9,6 +9,56 @@
 import Foundation
 import SwiftUI
 
+struct LogoMenuImage: View {
+  var body: some View {
+    Image("Logo")
+      .resizable()
+      .aspectRatio(contentMode: .fit)
+      .frame(width: 260)
+  }
+}
+
+func getCurrentDay() -> String {
+    let date = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "d"
+    let dayString = dateFormatter.string(from: date)
+    return dayString
+}
+
+let frenchMonths = [
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre"
+]
+
+func getCurrentMonth() -> String {
+    let date = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "M"
+    let monthIndex = Int(dateFormatter.string(from: date))!
+    return frenchMonths[monthIndex - 1]
+}
+
+func getCurrentYear() -> String{
+    let date = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "YYYY"
+    let yearString = dateFormatter.string(from: date)
+    return yearString
+}
+
+
+
 /**
 This structure render the home page. From this page we can access to the user journey.
 
@@ -28,7 +78,8 @@ struct HomeMenu: View {
 
     @ObservedObject var coordinator: UJCoordinator;
     @EnvironmentObject var appState: AppState
-  
+    @StateObject private var userVM = UserViewModel()
+
     init() {
       self.coordinator = UJCoordinator()
     }
@@ -38,11 +89,26 @@ struct HomeMenu: View {
           VStack {
               
               if appState.offlineModeActivated == false {
-                  Text("Vous êtes connecté !")
+                  Text("Bonjour \(userVM.user?.first_name ?? "")").font(.system(size: 25))
+                      .fontWeight(.semibold)
+                      .foregroundColor(Color(hex: "29245A"))
+                      .multilineTextAlignment(.center).onAppear(perform: {
+                      userVM.getCurrentUser()
+                  })
+                  
+                  Spacer().frame(height: 40)
+                  
+                  Text("Nous sommes le \(getCurrentDay()) \(getCurrentMonth()) \(getCurrentYear())") .foregroundColor(Color(hex: "29245A"))
+                      .multilineTextAlignment(.center)
+                  Text("Passez une bonne journée") .foregroundColor(Color(hex: "29245A"))
+                      .multilineTextAlignment(.center)
+
+                  
+              } else {
+                  Text("Mode offline").modifier(Header2(alignment: .center))
               }
-              else {
-                  Text("Mode offline")
-              }
+              
+              LogoMenuImage()
               
               NavigationLink(
                   destination: CreateAuditView().navigationBarHidden(true),
@@ -51,6 +117,16 @@ struct HomeMenu: View {
                       Button("Réaliser un diagnostic") {
                           hasStartUserJouney = true
                       }.modifier(PrimaryButtonStyle1(size: 300))
+                  }
+              )
+              
+              NavigationLink(
+                destination:  SavedAudit().navigationBarHidden(true),
+                  isActive: $hasOpenedNotSentAudit,
+                  label: {
+                      Button("Audits sauvegardés") {
+                          hasOpenedNotSentAudit = true
+                      }.modifier(SecondaryButtonStyle1(size: 300))
                   }
               )
               
@@ -64,15 +140,7 @@ struct HomeMenu: View {
                   }
               )
               
-              NavigationLink(
-                destination:  SavedAudit().navigationBarHidden(true),
-                  isActive: $hasOpenedNotSentAudit,
-                  label: {
-                      Button("Audits sauvegardés") {
-                          hasOpenedNotSentAudit = true
-                      }.modifier(SecondaryButtonStyle1(size: 300))
-                  }
-              )
+              Spacer()
           }
       }
   }

@@ -8,6 +8,24 @@
 import Foundation
 import SwiftUI
 
+/**
+ 
+ This function removes spaces
+ 
+ */
+
+
+func formatPath(pathFile: String) -> String {
+    var str = ""
+    for char in pathFile {
+        if char == " " {
+            str += String("%20")
+        } else {
+            str += String(char)
+        }
+    }
+    return str
+}
 
 enum SavedModeErrorType: Error {
     case jsonError(reason: String)
@@ -105,8 +123,12 @@ func deserializeAuditInfos(auditInfos: [String:Any]) -> AuditInfos {
 }
 
 func readAuditFile(path: String) throws -> (AuditInfos, [StageWrite]) {
-        let fileUrl = URL(string: "file://" + path)
-        
+        print(path)
+
+    print(formatPath(pathFile: path))
+    
+    let fileUrl = URL(string: "file://" + formatPath(pathFile: path))
+        print(fileUrl)
         let jsonString = try String(contentsOf: fileUrl!)
         
         print("convert data")

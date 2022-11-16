@@ -74,6 +74,8 @@ class UJCoordinator: ObservableObject {
         return finished
     }
     
+    var loadedAudit: Bool = false
+    
     // audit, general information:
     var auditRef: String;
     
@@ -121,6 +123,7 @@ class UJCoordinator: ObservableObject {
         //        self.stageHistory = Array(self.myDictionary.keys)
         self.index = self.stageHistory.count - 1
         (self.auditInfos, self.savedData) = try! readAuditFile(path: pathToLoad)
+        loadedAudit = true
     }
 
     /**

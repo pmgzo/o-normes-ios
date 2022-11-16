@@ -415,6 +415,8 @@ struct SummaryWrapper: View {
     var body: some View {
         VStack {
             HStack {
+                
+                if !coordinator.loadedAudit {
                     Button("Retour") {
                         self.coordinator.backToThePreviousStage()
                         self.coordinator.userJourneyNotFinished()
@@ -424,18 +426,25 @@ struct SummaryWrapper: View {
 
                         presentationMode.wrappedValue.dismiss()
                     }.modifier(SecondaryButtonStyle1(size: 100))
-                
-                Spacer().frame(width: 205)
+                    
+                    Spacer().frame(width: 205)
 
-                NavigationLink(
-                    destination: SelectStageInSummaryView(coordinator: self.coordinator).navigationBarHidden(true),
-                    tag: "stageSelection", selection: $selectionTag) {
-                            AddStageButton(action: {
-                                selectionTag = "stageSelection"
-                                // TODO: check if it works
-                                self.coordinator.updateSavedData(modifiedData: self.content().savedData)
-                            })
-                    }
+                    NavigationLink(
+                        destination: SelectStageInSummaryView(coordinator: self.coordinator).navigationBarHidden(true),
+                        tag: "stageSelection", selection: $selectionTag) {
+                                AddStageButton(action: {
+                                    selectionTag = "stageSelection"
+                                    // TODO: check if it works
+                                    self.coordinator.updateSavedData(modifiedData: self.content().savedData)
+                                })
+                        }
+                } else {
+                    Button("Retour") {
+                        presentationMode.wrappedValue.dismiss()
+                    }.modifier(SecondaryButtonStyle1(size: 100))
+
+                    Spacer().frame(width: 250)
+                }
             }
             Spacer().frame(height: 40)
 

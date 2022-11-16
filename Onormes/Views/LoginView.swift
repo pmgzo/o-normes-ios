@@ -74,7 +74,7 @@ struct LoginView: View {
                       print("here")
                       authentication.startModeOffline()
                       appState.offlineModeActivated = true
-                  }.buttonStyle(GrayButtonStyle())
+                  }.modifier(SecondaryButtonStyle1())
                   //Text("SecondView")
                     .transition(AnyTransition.asymmetric(
                     insertion: .move(edge: .trailing),

@@ -283,7 +283,8 @@ struct CustomNavigationLink<Label: View> : View {
         if constructorNumber == 2 {
             NavigationLink(
                 destination:
-                UserJourneyNavigationWrapper(coordinator: coordinator,content: self.destination, navigationButton: self.navigationButton),
+                UserJourneyNavigationWrapper(coordinator: coordinator,
+                                             content: self.destination, navigationButton: self.navigationButton),
                 isActive: self.isActive!,
                 label: label).navigationBarHidden(true)
         }

@@ -45,8 +45,10 @@ class LoginViewModel: ObservableObject {
               DispatchQueue.main.async {
                 self.isAuthenticate = true
               }
-              print("la")
+              
+              //TODO: modify use the function to update on the menu with a button
               APIService().updateCriteriaList()
+              
               completion(true)
             case .failure(let error):
               DispatchQueue.main.async {
@@ -54,8 +56,7 @@ class LoginViewModel: ObservableObject {
               }
               completion(false)
           }
-
-    }
+        }
 
     }
 

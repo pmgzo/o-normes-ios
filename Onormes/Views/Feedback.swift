@@ -34,11 +34,8 @@ struct FeedbackView: View {
             Task {
                 print("va envoyer")
 
-                let seconds = 10
                 animate = true
                 await APIService().sendFeedback(feedback: textInput)
-                //try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-                print("envoyé")
                 animate = false
                 presentationMode.wrappedValue.dismiss()
             }
@@ -48,7 +45,8 @@ struct FeedbackView: View {
             } else {
                 Text("Envoyer")
             }
-        }.buttonStyle(validateButtonStyle())
+        }
+        .modifier(PrimaryButtonStyle1())
     }
 }
 
