@@ -42,6 +42,8 @@
 		EA2DB566289EC05600C66C88 /* GenericRegulationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DB565289EC05600C66C88 /* GenericRegulationViewModel.swift */; };
 		EA2DB568289EC0AF00C66C88 /* RegulationsSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DB567289EC0AF00C66C88 /* RegulationsSelection.swift */; };
 		EA2DB56A289EC13100C66C88 /* DataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DB569289EC13100C66C88 /* DataTypes.swift */; };
+		EA49FFD32926723F009119FB /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA49FFD22926723F009119FB /* Camera.swift */; };
+		EA6B1FB6292A6EE10081C88F /* ImageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6B1FB5292A6EE10081C88F /* ImageHandler.swift */; };
 		EA6F4D9827E0CD92009CDDAF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6F4D9727E0CD92009CDDAF /* Style.swift */; };
 		EA7F07D427F738AA00DFC8CE /* CustomNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */; };
 		EA85AB7D28DA1046006D7195 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA85AB7C28DA1046006D7195 /* AppState.swift */; };
@@ -93,6 +95,8 @@
 		EA2DB565289EC05600C66C88 /* GenericRegulationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericRegulationViewModel.swift; sourceTree = "<group>"; };
 		EA2DB567289EC0AF00C66C88 /* RegulationsSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationsSelection.swift; sourceTree = "<group>"; };
 		EA2DB569289EC13100C66C88 /* DataTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypes.swift; sourceTree = "<group>"; };
+		EA49FFD22926723F009119FB /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		EA6B1FB5292A6EE10081C88F /* ImageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageHandler.swift; sourceTree = "<group>"; };
 		EA6F4D9727E0CD92009CDDAF /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		EA7F07D327F738AA00DFC8CE /* CustomNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigation.swift; sourceTree = "<group>"; };
 		EA85AB7C28DA1046006D7195 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -183,6 +187,7 @@
 				EA2572C028EDD8DB00D97EB5 /* CreateAudit.swift */,
 				EA2572C228EEDC3C00D97EB5 /* BuildingTypeSelection.swift */,
 				EA2572C428EEE1EC00D97EB5 /* ResearchBar.swift */,
+				EA49FFD22926723F009119FB /* Camera.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -194,6 +199,7 @@
 				944A4B4F27366FB100811D53 /* Credentials.swift */,
 				EACEA76F28CB7DAF007DECAD /* Structures.swift */,
 				940D381327B729F900231AD1 /* Common */,
+				EA6B1FB5292A6EE10081C88F /* ImageHandler.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -347,6 +353,7 @@
 				944A4B54273671C400811D53 /* UIApplication+Extension.swift in Sources */,
 				944A4B5027366FB100811D53 /* Credentials.swift in Sources */,
 				EA2572C128EDD8DB00D97EB5 /* CreateAudit.swift in Sources */,
+				EA6B1FB6292A6EE10081C88F /* ImageHandler.swift in Sources */,
 				EA1D30B027E20A4F004BCC97 /* UserJourneyCoordinator.swift in Sources */,
 				EA85AB7D28DA1046006D7195 /* AppState.swift in Sources */,
 				940D380727B7247B00231AD1 /* AreaViewController.swift in Sources */,
@@ -361,6 +368,7 @@
 				EACEA77628CB8763007DECAD /* Feedback.swift in Sources */,
 				940D381027B7283E00231AD1 /* ReconstructionViewController.swift in Sources */,
 				944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */,
+				EA49FFD32926723F009119FB /* Camera.swift in Sources */,
 				940D381727B72A5400231AD1 /* ARFrame+Ext.swift in Sources */,
 				940D381B27B72A9400231AD1 /* SCNGeometry+Ext.swift in Sources */,
 				EA2DB568289EC0AF00C66C88 /* RegulationsSelection.swift in Sources */,

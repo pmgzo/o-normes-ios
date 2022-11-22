@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 protocol PRegulationCheckViewModel: ObservableObject, Identifiable {
-    func addRegulationCheck(coordinator: UJCoordinator, data: [String:RegulationNorm], content: [RegulationCheckField], subStepId: String) -> Bool
+    func addRegulationCheck(coordinator: UJCoordinator, dataContainer: DataNormContainer, content: [RegulationCheckField], subStepId: String) -> Bool
     func formIsOkay(data: [String:RegulationNorm]) -> Bool
 }
 
@@ -18,6 +18,7 @@ protocol PRegulationCheckViewModel: ObservableObject, Identifiable {
  */
 
 class GenericRegulationViewModel: PRegulationCheckViewModel {
+    
     var mandatoryItems: Set<String>;
     var id: String;
 
@@ -86,16 +87,20 @@ class GenericRegulationViewModel: PRegulationCheckViewModel {
 
      */
     
-    func addRegulationCheck(coordinator: UJCoordinator, data: [String:RegulationNorm], content: [RegulationCheckField], subStepId: String) -> Bool {
+    func addRegulationCheck(coordinator: UJCoordinator, dataContainer: DataNormContainer, content: [RegulationCheckField], subStepId: String) -> Bool {
+        let data = dataContainer.data
+        let photoList = dataContainer.photoList
+        
+        
         if formIsOkay(data: data) {
             // TODO: maybe to change because we need the key if we need to go back to the previous state
-            var newObject = DataNorm(key: self.id, data: [], subStepId: subStepId, idSubCriterion: content[0].idSubCriterion)
+            let newObject = DataNorm(key: self.id, data: [], subStepId: subStepId, idSubCriterion: content[0].idSubCriterion)
+            newObject.photoList = photoList
             for (_, value) in data {
                 newObject.data.append(value)
             }
             // TODO: to modify
             coordinator.addNewRegulationCheck(newObject: newObject)
-            
             return true
         }
         return false

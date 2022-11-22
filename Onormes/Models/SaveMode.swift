@@ -123,29 +123,20 @@ func deserializeAuditInfos(auditInfos: [String:Any]) -> AuditInfos {
 }
 
 func readAuditFile(path: String) throws -> (AuditInfos, [StageWrite]) {
-        print(path)
-
-    print(formatPath(pathFile: path))
     
     let fileUrl = URL(string: "file://" + formatPath(pathFile: path))
-        print(fileUrl)
-        let jsonString = try String(contentsOf: fileUrl!)
-        
-        print("convert data")
-        print(jsonString)
-        
-        let data = jsonString.data(using: .utf8)!
-        
-        let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:Any]
-        
-        // get audti Infos
-    let auditInfos = deserializeAuditInfos(auditInfos: jsonObject!["audit"] as! [String:Any] )
-        
-        // get stageWrite
-        print("deserializeStage")
-        let stages = deserializeStages(stages: jsonObject!["data"] as! [[String:Any]])
+    let jsonString = try String(contentsOf: fileUrl!)
+    let data = jsonString.data(using: .utf8)!
+    
+    let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:Any]
 
-        return (auditInfos, stages)
+    // get audti Infos
+    let auditInfos = deserializeAuditInfos(auditInfos: jsonObject!["audit"] as! [String:Any])
+        
+    // get stageWrite
+    let stages = deserializeStages(stages: jsonObject!["data"] as! [[String:Any]])
+
+    return (auditInfos, stages)
 }
 
 // serialize

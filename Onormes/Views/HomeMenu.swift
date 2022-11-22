@@ -79,6 +79,7 @@ struct HomeMenu: View {
     @ObservedObject var coordinator: UJCoordinator;
     @EnvironmentObject var appState: AppState
     @StateObject private var userVM = UserViewModel()
+    @State var activatePhoto: Bool = false
 
     init() {
       self.coordinator = UJCoordinator()
@@ -89,23 +90,27 @@ struct HomeMenu: View {
           VStack {
               
               if appState.offlineModeActivated == false {
-                  Text("Bonjour \(userVM.user?.first_name ?? "")").font(.system(size: 25))
+                  Text("Bonjour \(userVM.user?.first_name ?? "")")
+                      .font(.system(size: 25))
                       .fontWeight(.semibold)
                       .foregroundColor(Color(hex: "29245A"))
-                      .multilineTextAlignment(.center).onAppear(perform: {
-                      userVM.getCurrentUser()
-                  })
+                      .multilineTextAlignment(.center)
+                      .onAppear(perform: {
+                        userVM.getCurrentUser()
+                      })
                   
-                  Spacer().frame(height: 40)
-                  
+                  Spacer()
+                      .frame(height: 40)
+
                   Text("Nous sommes le \(getCurrentDay()) \(getCurrentMonth()) \(getCurrentYear())") .foregroundColor(Color(hex: "29245A"))
                       .multilineTextAlignment(.center)
                   Text("Passez une bonne journée") .foregroundColor(Color(hex: "29245A"))
                       .multilineTextAlignment(.center)
-
-                  
               } else {
-                  Text("Mode offline").modifier(Header2(alignment: .center))
+                  Text("Mode offline")
+                      .font(.system(size: 25))
+                      .foregroundColor(Color(hex: "29245A"))
+                      .multilineTextAlignment(.center)
               }
               
               LogoMenuImage()
@@ -131,7 +136,7 @@ struct HomeMenu: View {
               )
               
               NavigationLink(
-                  destination: FeedbackView(),
+                  destination: FeedbackView().navigationBarHidden(true),
                   isActive: $hasOpenedTheFeedbackPage,
                   label: {
                       Button("Donner un feedback") {

@@ -260,7 +260,7 @@ struct GenericRegulationView: View
         // return true
         return self.model.formIsOkay(data: self.dataContainer.data)
     }
-    
+
     /**
      This function acts as a bridge to access the **GenericRegulationViewModel** and ask to save the data (usually after clicking on the next button.
      
@@ -269,7 +269,18 @@ struct GenericRegulationView: View
      */
     
     func modify(coordinator: UJCoordinator) -> Bool {
-        return self.model.addRegulationCheck(coordinator: coordinator, data: self.dataContainer.data, content: self.content!, subStepId: self.subStepId!)
+        return self.model.addRegulationCheck(coordinator: coordinator, dataContainer: self.dataContainer, content: self.content!, subStepId: self.subStepId!)
+    }
+    
+    /**
+     This function attached picture to the current criterion
+
+    - Parameters:
+        - path: path toward the saved picture
+     */
+    
+    func addPicture(path: String) {
+        dataContainer.photoList.append(path)
     }
     
     /**
@@ -284,7 +295,7 @@ struct GenericRegulationView: View
             } else {
                 dataContainer.data[value.key]?.valueString = value.valueString
             }
-            //dataContainer.data[value.key]?.comment = value.comment
+            dataContainer.photoList = savedData.photoList
         }
     }
 }
@@ -292,18 +303,18 @@ struct GenericRegulationView: View
 struct Criteria_Previews: PreviewProvider {
     
   static var previews: some View {
-//      UserJourneyNavigationPage(
-//        content: {() -> GenericRegulationView in
-//      GenericRegulationView(title: "Parking accessible",
-//                            content: [
-//                                RegulationCheckField(key: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", type: TypeField.bool, text: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", optional: false)
-//                            ],
-//                            id: "Parking accessible",
-//                            subStepId: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur")
-//      }, coordinator: UJCoordinator(), navigationButton: false)
+      UserJourneyNavigationPage(
+        content: {() -> GenericRegulationView in
+      GenericRegulationView(title: "Parking accessible",
+                            content: [
+                                RegulationCheckField(key: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", type: TypeField.bool, text: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", optional: false)
+                            ],
+                            id: "Parking accessible",
+                            subStepId: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur")
+      }, coordinator: returnCoordinator(), navigationButton: false)
       
       //GenericRegulationView(coordinator: returnCoordinator(), description: "description")
-      GenericRegulationView(coordinator: returnCoordinator())
+      //GenericRegulationView(coordinator: returnCoordinator())
   }
 }
 

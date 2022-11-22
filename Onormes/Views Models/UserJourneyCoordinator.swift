@@ -36,7 +36,7 @@ class UJCoordinator: ObservableObject {
 
     // stage to be included during the diagnostic
     private var stageList:  [String:StageRead] = [:]
-    
+
     var auditInfos: AuditInfos;
 
     var getStageNames: [String] {
@@ -44,7 +44,7 @@ class UJCoordinator: ObservableObject {
             return Array(stageList.keys)
         }
     }
-    
+
     var getSavedData: [StageWrite] {
         return savedData
     }
@@ -63,22 +63,21 @@ class UJCoordinator: ObservableObject {
     }
 
     // nav properties
-    
     var done: Bool {
         get {
             return self.finished == true || (!self.stillHaveStage() && self.stageDelegate!.hasFinished && self.wentBack == false)
         }
     }
-    
+
     var hasFinished: Bool {
         return finished
     }
-    
+
     var loadedAudit: Bool = false
-    
+
     // audit, general information:
     var auditRef: String;
-    
+
     // stages properties
     private var wentBack: Bool = false;
     private var stageHistory: [String];

@@ -229,11 +229,12 @@ struct SecondaryButtonStyle1: ViewModifier {
     func body(content: Content) -> some View {
         HStack {
             content
-            .padding([.top, .bottom], 8)
+            .frame(width: CGFloat(size))
+            .padding([.top, .bottom], 9)
             .font(.system(size: 18, design: .default))
             .foregroundColor(Color(hex: "29245A"))
+            .background(.white)
             .cornerRadius(70)
-            .frame(maxWidth: .infinity)
             .overlay(RoundedRectangle(cornerRadius: 70)
                 .stroke(Color(hex: "29245A"), lineWidth: 3))
         }.frame(width: CGFloat(size))

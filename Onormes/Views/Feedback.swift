@@ -21,32 +21,34 @@ struct FeedbackView: View {
 
     var body: some View {
         // title
-        Text("Envoyez-nous votre feedback").font(.title).multilineTextAlignment(.center)
-        
-        TextField(
-          "Ecrivez ici...",
-          text: $textInput
-        ).padding().frame(height: 300)
-        
-        Spacer()
+        ReturnButtonWrapper {
+            Text("Envoyez-nous votre feedback").font(.title).multilineTextAlignment(.center)
+            
+            TextField(
+              "Ecrivez ici...",
+              text: $textInput
+            ).padding().frame(height: 300)
+            
+            Spacer()
+            
+            Button(action: {
+                Task {
+                    print("va envoyer")
 
-        Button(action: {
-            Task {
-                print("va envoyer")
-
-                animate = true
-                await APIService().sendFeedback(feedback: textInput)
-                animate = false
-                presentationMode.wrappedValue.dismiss()
+                    animate = true
+                    await APIService().sendFeedback(feedback: textInput)
+                    animate = false
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }){
+                if animate {
+                    LoadingCircle()
+                } else {
+                    Text("Envoyer")
+                }
             }
-        }){
-            if animate {
-                LoadingCircle()
-            } else {
-                Text("Envoyer")
-            }
+            .modifier(PrimaryButtonStyle1())
         }
-        .modifier(PrimaryButtonStyle1())
     }
 }
 

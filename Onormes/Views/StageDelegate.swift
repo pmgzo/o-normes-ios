@@ -151,6 +151,13 @@ struct StageDelegate  {
         return steps[index].modify(coordinator: coordinator)
     }
     
+    func addPicture(path: String) {
+        if self.descriptionPagePassed == true {
+            steps[index].addPicture(path: path)
+        }
+        // otherwise do not register the picture
+    }
+
     /**
         Method change the current saved data (this function si called to reload the previous stage)
         - Parameters:

@@ -230,7 +230,7 @@ class APIService {
         
         // get company's id : http://51.103.72.63:3001/api/companies/user
         // get user id:
-        let auditeurId = try await self.getUserId()
+        let userId = try await self.getUserId()
         let companyId = try await self.getCompanyId()
         
         let json: [String: Any] = [
@@ -248,7 +248,7 @@ class APIService {
             "comment": auditInfos.notes,
             "building_fk": buildingId,
             "company_fk": companyId,
-            "auditeur_fk": auditeurId
+            "auditeur_fk": userId
         ]
         
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
@@ -326,15 +326,12 @@ class APIService {
     
     /**
      
-        Method to create a measure
+        Build request and send the data
         - Parameters:
-        - subcriterion: sub criterion data
-        - stepId: id reference of the substep
-        - criterionId: id reference of the criterion
+        - json: built json to put in the body
      */
-
-    func createMeasure(subcriterion: DataNorm, stepId: Int, criterionId: Int) async throws -> Int {
-
+    
+    func createMeasureHelperFunction(json: [String:Any]) async throws -> Int {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         
         guard let url = URL(string: "http://51.103.72.63:3001/api/measure/") else {
@@ -347,8 +344,113 @@ class APIService {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+        request.httpBody = jsonData
+        
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)!.statusCode >= 200 && (response as? HTTPURLResponse)!.statusCode <= 299 else {
+            throw ServerErrorType.internalError(reason: "La création de mesure a échouée")
+        }
+        
+        let receivedJson = try? JSONSerialization.jsonObject(with: data, options: [])
+
+        guard receivedJson != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dic = receivedJson as? [String:Any] {
+            let id: Int = dic["id"]! as! Int
+            return id
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+    }
+    
+    /**
+     
+        Method to upload image, return the image's path
+     - Parameters:
+     - imagePath: path of Image registered in the phone
+     - auditId:
+     -
+     
+     */
+    
+    func uploadImage(filename: String, auditId: Int) async throws -> String {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+        
+        guard let url = URL(string: "http://51.103.72.63:3001/api/image") else {
+            throw ServerErrorType.internalError(reason: "La construction de la requête pour créer une mesure a échouée")
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        
+        let userId = try await self.getUserId()
+        let companyId = try await self.getCompanyId()
+        
+        let base64EncodedImage = try? readImage(filename: filename)
+        
+        guard base64EncodedImage != nil else {
+            throw ServerErrorType.internalError(reason: "La lecture de l'image a échouée")
+        }
+        
+        let json: [String:Any] = [
+            "company_fk": companyId,
+            "audit_fk": auditId,
+            "is_profil_pic": true,
+            "base_image": base64EncodedImage!,
+            "type": "png"
+        ]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+        request.httpBody = jsonData
+        
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        print(String(decoding: data, as: UTF8.self))
+        
+        print(response)
+
+
+        guard (response as? HTTPURLResponse)!.statusCode >= 200 && (response as? HTTPURLResponse)!.statusCode <= 299 else {
+            throw ServerErrorType.internalError(reason: "L'upload de l'image a échouée")
+        }
+        
+        let receivedJson = try? JSONSerialization.jsonObject(with: data, options: [])
+
+        guard receivedJson != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+        
+        if let dic = receivedJson as? [String:Any] {
+            let path: String = dic["path_to_image"]! as! String
+            return path
+        } else {
+            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+        }
+    }
+    
+    /**
+     
+        Method to create a measure
+        - Parameters:
+        - subcriterion: sub criterion data
+        - stepId: id reference of the substep
+        - auditId: id reference of the audit
+        - criterionId: id reference of the criterion
+     */
+
+    func createMeasure(subcriterion: DataNorm, stepId: Int, auditId: Int, criterionId: Int) async throws -> Int {
         var json: [String:Any] = [:]
-        let comment = getCommentFromRegulationNormArray(regNorms:subcriterion.data)
+        let comment = getCommentFromRegulationNormArray(regNorms: subcriterion.data)
         let value = getValueFromRegulationNormArray(regNorms: subcriterion.data)
 
         if subcriterion.idSubCriterion == nil {
@@ -375,27 +477,17 @@ class APIService {
             ]
         }
         
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
-        request.httpBody = jsonData
-        
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        guard (response as? HTTPURLResponse)!.statusCode >= 200 && (response as? HTTPURLResponse)!.statusCode <= 299 else {
-            throw ServerErrorType.internalError(reason: "La création de mesure a échouée")
-        }
-        
-        let receivedJson = try? JSONSerialization.jsonObject(with: data, options: [])
-
-        guard receivedJson != nil else {
-            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
-        }
-        
-        if let dic = receivedJson as? [String:Any] {
-            let id: Int = dic["id"]! as! Int
+        if subcriterion.photoList.count > 0 {
+            var id = 0
+            for photo in subcriterion.photoList {
+                // upload picture and get path
+                let path = try await uploadImage(filename: photo, auditId: auditId)
+                json["photo"] = path
+                id = try await createMeasureHelperFunction(json: json)
+            }
             return id
         } else {
-            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+            return try await createMeasureHelperFunction(json: json)
         }
     }
     

@@ -39,7 +39,8 @@ struct UserJourneyNavigationPage: View {
     
     var coordinator: UJCoordinator;
     var navigationButton = false;
-    
+    @State var activatePhoto: Bool = false
+
     init(content: @escaping () -> GenericRegulationView, coordinator: UJCoordinator, navigationButton: Bool) {
         self.content = content
         self.coordinator = coordinator
@@ -53,7 +54,26 @@ struct UserJourneyNavigationPage: View {
             }
             else {
                 HStack {
-                    Spacer().frame(width: 290)
+                    NavigationLink(
+                        destination: CameraPage(coordinator: coordinator).navigationBarHidden(true),
+                        isActive: $activatePhoto) {
+                            Button{
+                                activatePhoto = true
+                            } label: {
+                                Image("Camera")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 32, height: 32)
+                            }
+                            .padding(8)
+                            .overlay(
+                                Circle().stroke(Color(hex: "29245A"), lineWidth: 3)
+                            )
+                        }
+                    
+                    Spacer().frame(width: 220)
+                    //Spacer().frame(width: 290)
+
                     AddStageButton(action: {
                         print("before")
                         navcoordinator.renderStepPage = .stageSelection
@@ -358,10 +378,18 @@ struct ReturnButtonWrapper<WrappedView: View>: View
     }
 }
 
-struct ReturnButton_Previews: PreviewProvider {
-    static var previews: some View {
-        ReturnButtonWrapper {
-            CreateAuditView()
-        }
-    }
+struct UserJourney_Previews: PreviewProvider {
+    
+  static var previews: some View {
+      UserJourneyNavigationPage(
+        content: {() -> GenericRegulationView in
+      GenericRegulationView(title: "Parking accessible",
+                            content: [
+                                RegulationCheckField(key: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", type: TypeField.bool, text: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur", optional: false)
+                            ],
+                            id: "Parking accessible",
+                            subStepId: "Boitier de commande d’accès au parking  accessible depuis la place du conducteur")
+      }, coordinator: returnCoordinator(), navigationButton: false)
+      
+  }
 }

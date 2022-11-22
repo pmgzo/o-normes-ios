@@ -82,10 +82,10 @@ struct RegulationNorm: Identifiable {
 
     init(key: String, inst: String, type: TypeField, mandatory: Bool = true, valueString: String = "", valueBool: Bool = false) {
         self.key = key
-            
+
         self.valueString = valueString
         self.valueCheckBox = valueBool
-        
+
         self.instruction = inst
         self.mandatory = mandatory
         self.type = type
@@ -135,18 +135,21 @@ class DataNorm: Identifiable {
     var data: [RegulationNorm]
     let subStepId: String
     let idSubCriterion: Int?
+    var photoList: [String]
     
     init(key: String, data: [RegulationNorm], subStepId: String, idSubCriterion: Int? = nil) {
         self.key = key
         self.data = data
         self.subStepId = subStepId
         self.idSubCriterion = idSubCriterion
+        self.photoList = []
     }
 }
 
 class DataNormContainer: ObservableObject {
     @Published var data: [String:RegulationNorm] = [:]
-    
+    var photoList: [String] = []
+
     init(content: [RegulationCheckField]) {
         for (_, reg) in content.enumerated() {
             data[reg.key] = RegulationNorm(key: reg.key, inst: reg.text, type: reg.type, mandatory: reg.optional)

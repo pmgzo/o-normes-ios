@@ -175,32 +175,6 @@ struct NavigationBarView: View {
           }
 
 }
-//          VStack(alignment: .center, content: {
-//              TabView {
-//                  HomeMenu()
-//                  .tabItem {
-//                    Image(systemName: "house")
-//                    Text("Accueil")
-//                  }
-//
-//                    MeasuresVCRepresented()
-//                    .tabItem {
-//                        Image(systemName: "ruler.fill")
-//                        Text("Mesures").foregroundColor(Color(hex: "29245A"))
-//                    }
-//
-//                    ReconstructionVCRepresented()
-//                      .tabItem {
-//                        Image("Scan")
-//                        Text("Scan")
-//                      }
-//                    ProfileView()
-//                      .tabItem {
-//                        Image("ProfileImage").renderingMode(.template)
-//                        Text("Profil")
-//                      }
-//              }.accentColor(Color(hex: "29245A"))
-//          }).navigationBarHidden(true)
 
 struct ReconstructionVCRepresented : UIViewControllerRepresentable {
 func updateUIViewController(_ uiViewController: ReconstructionViewController, context: Context) {

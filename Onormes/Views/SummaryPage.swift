@@ -346,7 +346,7 @@ extension GenericRegulationView {
                                     for stage in savedData {
                                         let stepId = try await api.createStep(stage: stage, auditId: auditId)
                                         for subcriterion in stage.data {
-                                            let id = try await api.createMeasure(subcriterion: subcriterion, stepId: stepId, criterionId: stage.idCriterion)
+                                            let id = try await api.createMeasure(subcriterion: subcriterion, stepId: stepId, auditId: auditId,  criterionId: stage.idCriterion)
                                         }
                                         print("criterion well created")
                                     }
