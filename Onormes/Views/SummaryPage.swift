@@ -196,36 +196,38 @@ struct DataDetails: View {
     }
     
     var body: some View {
-        VStack {
-            Text(text).modifier(Header1())
-            Spacer().frame(height: 100)
-            HStack {
-                Spacer().frame(width: 35)
-                Text("Valeur").modifier(Header3())
-            }.frame(maxWidth: .infinity, alignment: .leading)
+        ReturnButtonWrapper {
+            VStack {
+                Text(text).modifier(Header1())
+                Spacer().frame(height: 100)
+                HStack {
+                    Spacer().frame(width: 35)
+                    Text("Valeur").modifier(Header3())
+                }.frame(maxWidth: .infinity, alignment: .leading)
+                
+                HStack {
+                    BooleanRadioButtons(value: $value)
+                }.frame(maxWidth: .infinity, alignment: .center)
+
+                Spacer().frame(height: 50)
+
+                HStack {
+                    Spacer().frame(width: 35)
+                    Text("Commentaire").modifier(Header3())
+                }.frame(maxWidth: .infinity, alignment: .leading)
             
-            HStack {
-                BooleanRadioButtons(value: $value)
-            }.frame(maxWidth: .infinity, alignment: .center)
-
-            Spacer().frame(height: 50)
-
-            HStack {
-                Spacer().frame(width: 35)
-                Text("Commentaire").modifier(Header3())
-            }.frame(maxWidth: .infinity, alignment: .leading)
-        
-            Spacer().frame(height: 20)
-            TextField("commentaire", text:$comment).textFieldStyle(CommentTextFieldStyle()).frame(width: 300)
-        }.onDisappear(perform: {
-            if dataSaved.data[0].key.contains("-comment") {
-                dataSaved.data[0].valueString = comment
-                dataSaved.data[1].valueCheckBox = value
-            } else {
-                dataSaved.data[1].valueString = comment
-                dataSaved.data[0].valueCheckBox = value
-            }
-        })
+                Spacer().frame(height: 20)
+                TextField("commentaire", text:$comment).textFieldStyle(CommentTextFieldStyle()).frame(width: 300)
+            }.onDisappear(perform: {
+                if dataSaved.data[0].key.contains("-comment") {
+                    dataSaved.data[0].valueString = comment
+                    dataSaved.data[1].valueCheckBox = value
+                } else {
+                    dataSaved.data[1].valueString = comment
+                    dataSaved.data[0].valueCheckBox = value
+                }
+            })
+        }
     }
 }
 
@@ -240,16 +242,18 @@ struct StageDetails: View {
 
     var body: some View {
         // details about the stage
-        VStack {
-            Text(stageName).modifier(Header1())
-            Spacer().frame(height: 30)
-            Text("Critères d'accessibilité").modifier(Header2())
-            List(self.data) { value in
-                HStack {
-                    NavigationLink {
-                        DataDetails(data: value)
-                    } label: {
-                        Text(limitStringLength(str: value.subStepId, limit: 20)).modifier(Header3())
+        ReturnButtonWrapper {
+            VStack {
+                Text(stageName).modifier(Header1())
+                Spacer().frame(height: 30)
+                Text("Critères d'accessibilité").modifier(Header2())
+                List(self.data) { value in
+                    HStack {
+                        NavigationLink {
+                            DataDetails(data: value).navigationBarHidden(true)
+                        } label: {
+                            Text(limitStringLength(str: value.subStepId, limit: 20)).modifier(Header3())
+                        }
                     }
                 }
             }
@@ -296,7 +300,7 @@ struct StageList: View {
         VStack {
             List(self.list) { stage in
                 NavigationLink {
-                    StageDetails(stage: stage)
+                    StageDetails(stage: stage).navigationBarHidden(true)
                 } label: {
                     StageRow(stageName: stage.stageName, description: stage.description)
                 }

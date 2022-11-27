@@ -374,6 +374,7 @@ struct ReturnButtonWrapper<WrappedView: View>: View
             Spacer()
                    .frame(height: 5)
             destination()
+            Spacer()
         }
     }
 }
