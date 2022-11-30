@@ -49,19 +49,6 @@ class UJCoordinator: ObservableObject {
         return savedData
     }
 
-    var dataAudit: [DataNorm] {
-        get {
-            var array: [DataNorm] = []
-            
-            for (_, steps) in self.myDictionary {
-                for subStep in steps {
-                    array.append(subStep)
-                }
-            }
-            return array
-        }
-    }
-
     // nav properties
     var done: Bool {
         get {
@@ -99,7 +86,6 @@ class UJCoordinator: ObservableObject {
         self.stageDelegate = nil
 
         self.stageHistory = []
-        self.myDictionary = [:]
         
         // temporary set auditInfos
         self.auditInfos = AuditInfos(buildingType: "",
@@ -119,7 +105,6 @@ class UJCoordinator: ObservableObject {
     
     func loadPath(pathToLoad: String) {
 
-        //        self.stageHistory = Array(self.myDictionary.keys)
         self.index = self.stageHistory.count - 1
         (self.auditInfos, self.savedData) = try! readAuditFile(path: pathToLoad)
         loadedAudit = true

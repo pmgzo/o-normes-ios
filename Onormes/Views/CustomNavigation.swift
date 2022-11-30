@@ -84,99 +84,145 @@ struct UserJourneyNavigationPage: View {
                 // own content
                 Spacer()
                 self.content().frame(maxWidth: .infinity, maxHeight: .infinity)
-                if navigationButton {
-                    VStack {
-                        HStack {
-                            if (self.coordinator.canGoBack()) {
-                                CustomNavigationLink(coordinator: coordinator, tag: "goback", selection: $selectionTag,
-                                    destination: {() -> GenericRegulationView in
-                                    print("call go back")
-                                    return self.coordinator.getPreviousView()}, navigationButton: !self.coordinator.done) {
-                                    Button {
-                                        self.coordinator.backToThePreviousStage()
-                                        selectionTag = "goback"
-                                    } label: {
-                                        Image("LeftArrow")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 50)
-                                    }
-                                    .frame(width: 145, height: 38)
-                                    .background(Color(hex: "29245A"))
-                                    .cornerRadius(70)
-                                    .transition(.slide)
+                VStack {
+                    HStack {
+                        if (self.coordinator.canGoBack()) {
+                            
+                            VStack {
+                                CustomNavigationLink(
+                                    coordinator: coordinator,
+                                    tag: "goback",
+                                    selection: $selectionTag,
+                                    destination: { () -> GenericRegulationView in
+                                        return self.coordinator.getPreviousView()
+                                    },
+                                    navigationButton: !self.coordinator.done
+                                ) {
+                                    EmptyView()
                                 }
-                                
-                                Spacer().frame(width: 10)
-                                
-                                CustomNavigationLink(coordinator: coordinator, tag: "skip", selection: $selectionTag, destination: {() -> GenericRegulationView in
-                                    self.coordinator.getNextView()
-                                    
-                                }, navigationButton: !self.coordinator.done) {
-                                    Button {
-                                        if coordinator.stageDelegate!.formIsOkay() {
-                                            // save data
-                                            self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
-                                            self.coordinator.nextStep()
-                                            selectionTag = "skip"
-                                        }
-                                    } label: {
-                                        Image("RightArrow")
+                                .transition(AnyTransition.asymmetric(
+                                    insertion: .move(edge: .trailing),
+                                    removal: .move(edge: .leading)))
+                            }.hidden()
+                            
+                            
+                            Button(action: {
+                                print("clicked left")
+                                self.coordinator.backToThePreviousStage()
+                                selectionTag = "goback"
+                            }, label: {
+                                VStack {
+                                    Image("LeftArrow")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 50)
-                                    }
-                                    .frame(width: 145, height: 38)
-                                    .background(Color(hex: "29245A"))
-                                    .cornerRadius(70)
-                                    .transition(AnyTransition.asymmetric(
-                                        insertion: .move(edge: .trailing),
-                                        removal: .move(edge: .leading)))
                                 }
+                                .frame(width: 145, height: 38)
+                                .background(Color(hex: "29245A"))
+                                .cornerRadius(70)
+                            })
+                            
                                 
-                            } else {
-                                CustomNavigationLink(coordinator: coordinator,
-                                                     tag: "skip",
-                                                     selection: $selectionTag,
-                                                     destination: {() -> GenericRegulationView in
-                                                                return self.coordinator.getNextView()},
-                                                     navigationButton: !self.coordinator.done) {
-                                    Button {
-                                        if coordinator.stageDelegate!.formIsOkay() {
-                                            // save data
-                                            self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
-                                            self.coordinator.nextStep()
-                                            selectionTag = "skip"
-                                        }
-                                    } label: {
-                                        Image("RightArrow")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 50)
-                                    }
-                                    .frame(width: 300, height: 38)
-                                    .background(Color(hex: "29245A"))
-                                    .cornerRadius(70)
-                                    .transition(AnyTransition.asymmetric(
-                                        insertion: .move(edge: .trailing),
-                                        removal: .move(edge: .leading)))
+                            
+                            Spacer().frame(width: 10)
+                            
+                            VStack {
+                                CustomNavigationLink(
+                                    coordinator: coordinator,
+                                    tag: "skip",
+                                    selection: $selectionTag,
+                                    destination: { () -> GenericRegulationView in
+                                        return self.coordinator.getNextView()
+                                    },
+                                    navigationButton: !self.coordinator.done
+                                ) {
+                                    EmptyView()
                                 }
-                            }
-                        }
-                        
-                        CustomNavigationLink(coordinator: coordinator,tag: "finished", selection: $selectionTag, destination: {() -> GenericRegulationView in
-                            return self.coordinator.getNextView()}, navigationButton: false) {
-                                Button("Finir l'audit") {
-                                    // coordinator check
-                                    coordinator.userJourneyFinished()
-                                    selectionTag  = "finished"
-                                }
-                                .modifier(SecondaryButtonStyle1())
                                 .transition(.slide)
-                            }
+                            }.hidden()
+                            
+                            Button(action: {
+                                print("clicked right")
+                                if coordinator.stageDelegate!.formIsOkay() {
+                                    // save data
+                                    self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
+                                    self.coordinator.nextStep()
+                                    selectionTag = "skip"
+                                }
+                            }, label: {
+                                VStack {
+                                    Image("RightArrow")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 50)
+                                }
+                                .frame(width: 145, height: 38)
+                                .background(Color(hex: "29245A"))
+                                .cornerRadius(70)
+                            })
+                                                        
+                        } else {
+                            VStack {
+                                CustomNavigationLink(
+                                    coordinator: coordinator,
+                                    tag: "skip",
+                                    selection: $selectionTag,
+                                    destination: { () -> GenericRegulationView in
+                                        return self.coordinator.getNextView()
+                                    },
+                                    navigationButton: !self.coordinator.done
+                                ) {
+                                    EmptyView()
+                                }
+                                .transition(.slide)
+                            }.hidden()
+                            
+                            Button(action: {
+                                if coordinator.stageDelegate!.formIsOkay() {
+                                    // save data
+                                    self.coordinator.stageDelegate!.modify(coordinator: self.coordinator)
+                                    self.coordinator.nextStep()
+                                    selectionTag = "skip"
+                                }
+                            }, label: {
+                                VStack {
+                                    Image("RightArrow")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 50)
+                                }
+                                .frame(width: 300, height: 38)
+                                .background(Color(hex: "29245A"))
+                                .cornerRadius(70)
+                            })
+                            
+                        }
                     }
-                    Spacer().frame(height: 20)
-            }
+                    Spacer().frame(height: 15)
+                    
+                    VStack {
+                        CustomNavigationLink(
+                            coordinator: coordinator,
+                            tag: "finished",
+                            selection: $selectionTag,
+                            destination: { () -> GenericRegulationView in
+                                return self.coordinator.getNextView()
+                            },
+                            navigationButton: !self.coordinator.done
+                        ) {
+                            EmptyView()
+                        }
+                        .transition(.slide)
+                    }.hidden()
+                    
+                    Button(action: {
+                        coordinator.userJourneyFinished()
+                        selectionTag  = "finished"
+                    },label: {
+                        Text("Finir l'audit").modifier(SecondaryButtonStyle1())
+                    })
+                }
+                Spacer().frame(height: 20)
         }
     }
 
