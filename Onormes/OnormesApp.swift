@@ -19,7 +19,7 @@ struct OnormesApp: App {
               .environmentObject(authentication)
               .environmentObject(appState)
           } else {
-            LoginView()
+              LoginMainView()
               .environmentObject(authentication)
               .environmentObject(appState)
           }

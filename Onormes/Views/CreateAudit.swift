@@ -111,6 +111,7 @@ struct CreateViewForm: View {
 
 struct CreateAuditView: View {
     
+    @EnvironmentObject var appState: AppState
     @ObservedObject var audit = AuditInfosObject(infos:                                                     AuditInfos(
                                     buildingType: "",
                                     name: "",
@@ -163,26 +164,48 @@ struct CreateAuditView: View {
                                     
                                     let buildingId = buildingTypeList.firstIndex(where: {$0 == audit.buildingType})! + 1
                                     
-//                                    let stages = await APIService().getAllStages(buildingTypeId: buildingId)
-                                    
-                                    //TODO:
-                                    // Retrieve data
-                                    // convert it into StageRead type
-                                    do {
-                                        let stages = try await APIService().getAllStages(buildingTypeId: buildingId)
-                                        self.coordinator.loadBuildingTypeStages(stages: stages)
-                                        //                                    self.coordinator.loadBuildingTypeStages(stages: temporaryStageList)
-                                    } catch ServerErrorType.internalError(let reason) {
-                                        animateButton = false
-                                        requestError = RequestError(errorDescription: reason)
-                                        displayErrorMessage = true
-                                        return
-                                    } catch {
-                                        animateButton = false
-                                        requestError = RequestError(errorDescription: "Erreur interne")
-                                        displayErrorMessage = true
-                                        return
-                                        //print(error)
+                                    // retrieve that in either offline mode or in connected mode
+                                    if appState.offlineModeActivated == true {
+                                        
+                                        // readFile
+                                        
+                                        do {
+                                            let stages = try readSaveCriteria(buildingTypeId: buildingId)
+                                            self.coordinator.loadBuildingTypeStages(stages: stages)
+                                            
+                                        } catch FileErrorType.custom(let reason) {
+                                            animateButton = false
+                                            requestError = RequestError(errorDescription: reason)
+                                            displayErrorMessage = true
+                                            return
+                                        } catch {
+                                            animateButton = false
+                                            requestError = RequestError(errorDescription: "Erreur interne lors de la lecture de la liste des critères sauvegardée")
+                                            displayErrorMessage = true
+                                            return
+                                        }
+                                        
+                                        
+                                    } else {
+                                        //TODO:
+                                        // Retrieve data
+                                        // convert it into [StageRead] type
+                                        // for the stage list page
+                                        do {
+                                            let stages = try await APIService().getAllStages(buildingTypeId: buildingId)
+                                            self.coordinator.loadBuildingTypeStages(stages: stages)
+                                            // self.coordinator.loadBuildingTypeStages(stages: temporaryStageList)
+                                        } catch ServerErrorType.internalError(let reason) {
+                                            animateButton = false
+                                            requestError = RequestError(errorDescription: reason)
+                                            displayErrorMessage = true
+                                            return
+                                        } catch {
+                                            animateButton = false
+                                            requestError = RequestError(errorDescription: "Erreur interne")
+                                            displayErrorMessage = true
+                                            return
+                                        }
                                     }
                                     
                                     animateButton = false

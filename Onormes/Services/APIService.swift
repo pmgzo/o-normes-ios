@@ -531,7 +531,6 @@ class APIService {
                 return
           }
             print("User feedback \(userResponse.id)")
-          //completion(userResponse)
         }.resume()
         return true
     }
@@ -665,7 +664,10 @@ class APIService {
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-            throw ServerErrorType.internalError(reason: "La requête pour obtenir des critères à partir de l'id de la place (\(placeId)) a échouée")
+//            throw ServerErrorType.internalError(reason: "La requête pour obtenir des critères à partir de l'id de la place (\(placeId)) a échouée")
+            // silence this throw because the data in its self contains holes
+            print("La requête pour obtenir des critères à partir de l'id de la place (\(placeId)) a échouée")
+            return []
         }
         
         
@@ -777,5 +779,71 @@ class APIService {
             throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
         }
         return stages
+    }
+    
+    /**
+     
+        Download all criteria from all building types
+     
+     */
+    
+    func downloadAllCriteria() async throws -> [[StageRead]]  {
+        // list of all criteria from different building type
+        var criteriaObject: [[StageRead]] = []
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+
+        for buildingId in (1...173) {
+            
+            guard let url = URL(string: "http://51.103.72.63:3001/api/area/building?buildingId=\(buildingId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des endroits a échouée") }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+                throw ServerErrorType.internalError(reason: "La requête pour obtenir des endroits à partir de l'id du batiment (\(buildingId)) a échouée")
+            }
+
+            let json = try? JSONSerialization.jsonObject(with: data, options: [])
+
+            guard json != nil else {
+                throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+            }
+            
+            print(buildingId)
+            
+            if let dictionary = json as? [[String: Any]] {
+                print("areas \(dictionary)")
+                for obj in dictionary {
+                    let areaId = obj["id"] as! Int
+                    let placesId: [Int]  = try await self.getPlaceFromArea(areadId: areaId)
+                    print("place ids \(placesId)")
+                    for placeId in placesId {
+                        let criteria: [(String, Int)] = try await self.getCriteriaFromPlace(placeId: placeId)
+                        if criteria.count == 0 {
+                            continue
+                        }
+                        print("criteria \(criteria)")
+                        for criterion in criteria {
+                            let criterionName = criterion.0
+                            let criterionId = criterion.1
+                            let criterias: [RegulationCheckField] = try await self.getSubCriteriaFromCriterion(criterionName: criterionName, criterionId: criterionId)
+                            if buildingId == criteriaObject.count {
+                                criteriaObject[buildingId - 1].append(StageRead(name: criterionName, content: criterias, idBuilding: buildingId, idArea: areaId, idPlace: placeId, idCriterion: criterionId))
+                            } else {
+                                criteriaObject.append([StageRead(name: criterionName, content: criterias, idBuilding: buildingId, idArea: areaId, idPlace: placeId, idCriterion: criterionId)])
+                            }
+                        }
+                    }
+                }
+            } else {
+                throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+            }
+        }
+        return criteriaObject
     }
  }

@@ -55,6 +55,7 @@
 		EACEA77228CB8413007DECAD /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACEA77128CB8413007DECAD /* NavigationBar.swift */; };
 		EACEA77428CB84AE007DECAD /* HomeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACEA77328CB84AE007DECAD /* HomeMenu.swift */; };
 		EACEA77628CB8763007DECAD /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACEA77528CB8763007DECAD /* Feedback.swift */; };
+		EAFE5912293493AE00594AD7 /* OfflineMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAFE5911293493AE00594AD7 /* OfflineMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +109,7 @@
 		EACEA77128CB8413007DECAD /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		EACEA77328CB84AE007DECAD /* HomeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenu.swift; sourceTree = "<group>"; };
 		EACEA77528CB8763007DECAD /* Feedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
+		EAFE5911293493AE00594AD7 /* OfflineMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineMode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +197,7 @@
 		9494C80C273668EC00FA0354 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				EAFE5911293493AE00594AD7 /* OfflineMode.swift */,
 				EA0B2B6428D648F0001F38D7 /* SaveMode.swift */,
 				944A4B4F27366FB100811D53 /* Credentials.swift */,
 				EACEA76F28CB7DAF007DECAD /* Structures.swift */,
@@ -367,6 +370,7 @@
 				940D381527B72A0E00231AD1 /* ARMeshGeometry+Ext.swift in Sources */,
 				EACEA77628CB8763007DECAD /* Feedback.swift in Sources */,
 				940D381027B7283E00231AD1 /* ReconstructionViewController.swift in Sources */,
+				EAFE5912293493AE00594AD7 /* OfflineMode.swift in Sources */,
 				944A4B4E27366DAA00811D53 /* LoginViewModel.swift in Sources */,
 				EA49FFD32926723F009119FB /* Camera.swift in Sources */,
 				940D381727B72A5400231AD1 /* ARFrame+Ext.swift in Sources */,

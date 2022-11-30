@@ -59,6 +59,8 @@ func getCurrentYear() -> String{
 
 
 
+
+
 /**
 This structure render the home page. From this page we can access to the user journey.
 
@@ -79,13 +81,37 @@ struct HomeMenu: View {
     @ObservedObject var coordinator: UJCoordinator;
     @EnvironmentObject var appState: AppState
     @StateObject private var userVM = UserViewModel()
-    @State var activatePhoto: Bool = false
+    @State var animateButton = false
+    @State var displayErrorMessage: Bool = false;
+    @State var requestError: RequestError?;
+
+    @State var fileExist: Bool
+    @State var updateDate: String
 
     init() {
-      self.coordinator = UJCoordinator()
+        self.coordinator = UJCoordinator()
+        
+        let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let filePath = userDirectory!.path + "/allCriteria/criteria.json"
+        
+        if FileManager.default.fileExists(atPath: filePath) == true {
+            fileExist = true
+            
+            // get the date
+            let attributes = try! FileManager.default.attributesOfItem(atPath: filePath)
+            let creationDate = attributes[.creationDate] as! Date
+
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd/MM/YYYY"
+            
+            self.updateDate = formatter.string(from: creationDate)
+        } else {
+            fileExist = false
+            self.updateDate = ""
+        }
     }
   
-  var body: some View {
+    var body: some View {
       return NavigationView {
           VStack {
               
@@ -99,8 +125,7 @@ struct HomeMenu: View {
                         userVM.getCurrentUser()
                       })
                   
-                  Spacer()
-                      .frame(height: 40)
+                  Spacer().frame(height: 40)
 
                   Text("Nous sommes le \(getCurrentDay()) \(getCurrentMonth()) \(getCurrentYear())") .foregroundColor(Color(hex: "29245A"))
                       .multilineTextAlignment(.center)
@@ -145,10 +170,97 @@ struct HomeMenu: View {
                   }
               )
               
-              Spacer()
+              if fileExist {
+                  Text("Dernière mise à jour le \(updateDate)").modifier(ModeOfflineInformationText())
+              } else {
+                  Text("Pour pouvoir utiliser le mode offline\nVeuillez télécharger les critères")
+                      .underline()
+                      .modifier(ModeOfflineSuggestionText())
+              }
+
+              Button(action: {
+                  Task {
+                      animateButton = true
+                      
+                      // query all stages
+                      do {
+                          if fileExist {
+                              // if already have the file nothing to do
+                              try await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
+                              animateButton = false
+                              return
+                          }
+                          
+                          let criteriaObject = try await APIService().downloadAllCriteria()
+                          
+                          // save in file
+                          try saveCriteria(criteriaObject: criteriaObject)
+                          
+                          // dynamic rendering update
+                          checkCriteriaFile()
+                          
+                          animateButton = false
+                      } catch ServerErrorType.internalError(let reason) {
+                          animateButton = false
+                          requestError = RequestError(errorDescription: reason)
+                          displayErrorMessage = true
+                          return
+                      } catch {
+                          animateButton = false
+                          requestError = RequestError(errorDescription: "Internal Error")
+                          displayErrorMessage = true
+                          return
+                      }
+                  }
+              }, label: {
+                  HStack {
+                      if animateButton {
+                          LoadingCircle()
+                      } else {
+                          Text(!fileExist ? "Télécharger les critères" : "Mettre à jour les critères")
+                      }
+                  }.modifier(PrimaryButtonStyle1(size: 300))
+              })
+              .alert(
+                  isPresented: $displayErrorMessage, error: requestError,
+                 actions: { errorObject in
+                      Button("Ok") {
+                          requestError = nil
+                          displayErrorMessage = false
+                      }
+                  },
+                  message: { errorObject
+                  in
+                      Text(errorObject.errorDescription)
+                  }
+              )
           }
+          Spacer().frame(height: 100)
       }
-  }
+    }
+
+    func checkCriteriaFile() {
+        let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let filePath = userDirectory!.path + "/allCriteria/criteria.json"
+        
+        if FileManager.default.fileExists(atPath: filePath) == true {
+            self.fileExist = true
+            
+            // get the date
+            let attributes = try! FileManager.default.attributesOfItem(atPath: filePath)
+            let creationDate = attributes[.creationDate] as! Date
+
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd/MM/YYYY"
+            
+            self.updateDate = formatter.string(from: creationDate)
+        } else {
+            self.fileExist = false
+            self.updateDate = ""
+        }
+    }
+    
+    
 };
 
 struct HomeMenu_Previews: PreviewProvider {
