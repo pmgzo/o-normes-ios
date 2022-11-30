@@ -200,14 +200,11 @@ class UJCoordinator: ObservableObject {
     
     func updateSavedData(modifiedData: [StageWrite]) {
         savedData = modifiedData
-        
         stageHistory = []
         
         for stage in modifiedData {
             stageHistory.append(stage.stageName)
         }
-        
-        self.index = stageHistory.count
     }
     
     /**

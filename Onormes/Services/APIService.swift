@@ -814,20 +814,15 @@ class APIService {
                 throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
             }
             
-            print(buildingId)
-            
             if let dictionary = json as? [[String: Any]] {
-                print("areas \(dictionary)")
                 for obj in dictionary {
                     let areaId = obj["id"] as! Int
                     let placesId: [Int]  = try await self.getPlaceFromArea(areadId: areaId)
-                    print("place ids \(placesId)")
                     for placeId in placesId {
                         let criteria: [(String, Int)] = try await self.getCriteriaFromPlace(placeId: placeId)
                         if criteria.count == 0 {
                             continue
                         }
-                        print("criteria \(criteria)")
                         for criterion in criteria {
                             let criterionName = criterion.0
                             let criterionId = criterion.1

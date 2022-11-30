@@ -317,7 +317,6 @@ extension GenericRegulationView {
                 Spacer()
                        .frame(height: 30)
 
-                // TODO: voir les données de l'audit
                 NavigationLink(
                     destination: AuditSummaryView(auditInfos: self.auditInfos!, coordinator: self.coordinator!).navigationBarHidden(true),
                     tag: "auditInfos",
@@ -381,6 +380,9 @@ extension GenericRegulationView {
                     } else {
                         // for offline mode
                         Button("Enregistrer l'audit") {
+                            self.coordinator!.updateSavedData(modifiedData: self.savedData)
+                            
+                            self.coordinator!.writeDataIntoJsonFile()
                             self.isActive = true
                         }.modifier(PrimaryButtonStyle1())
                     }
@@ -422,11 +424,11 @@ struct SummaryWrapper: View {
                 
                 if !coordinator.loadedAudit {
                     Button("Retour") {
+                        self.coordinator.updateSavedData(modifiedData: self.content().savedData)
+                        
                         self.coordinator.backToThePreviousStage()
                         self.coordinator.userJourneyNotFinished()
                         
-                        // TODO: check if it works
-                        self.coordinator.updateSavedData(modifiedData: self.content().savedData)
                         presentationMode.wrappedValue.dismiss()
                     }.modifier(SecondaryButtonStyle1(size: 100))
                     
@@ -437,7 +439,6 @@ struct SummaryWrapper: View {
                         tag: "stageSelection", selection: $selectionTag) {
                                 AddStageButton(action: {
                                     selectionTag = "stageSelection"
-                                    // TODO: check if it works
                                     self.coordinator.updateSavedData(modifiedData: self.content().savedData)
                                 })
                         }
