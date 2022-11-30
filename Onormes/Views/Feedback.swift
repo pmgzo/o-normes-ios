@@ -13,7 +13,9 @@ struct FeedbackView: View {
     @State private var hasSendFeedback = false
     @State private var textInput: String = ""
     
-    @State private var animate: Bool = false
+    @State private var animateButton: Bool = false
+    @State private var displayErrorMessage: Bool = false;
+    @State var requestError: RequestError?;
 
     var coordinator: UJCoordinator?;
     
@@ -33,15 +35,26 @@ struct FeedbackView: View {
             
             Button(action: {
                 Task {
-                    print("va envoyer")
-
-                    animate = true
-                    await APIService().sendFeedback(feedback: textInput)
-                    animate = false
+                    do {
+                        animateButton = true
+                        try await  APIService().sendFeedback(feedback: textInput)
+                    } catch ServerErrorType.internalError(let reason) {
+                        animateButton = false
+                        requestError = RequestError(errorDescription: reason)
+                        displayErrorMessage = true
+                        return
+                    } catch {
+                        animateButton = false
+                        requestError = RequestError(errorDescription: "Erreur interne")
+                        displayErrorMessage = true
+                        return
+                    }
+                    
+                    animateButton = false
                     presentationMode.wrappedValue.dismiss()
                 }
             }){
-                if animate {
+                if animateButton {
                     LoadingCircle()
                 } else {
                     Text("Envoyer")
@@ -49,6 +62,19 @@ struct FeedbackView: View {
             }
             .modifier(PrimaryButtonStyle1())
         }
+        .alert(
+            isPresented: $displayErrorMessage, error: requestError,
+           actions: { errorObject in
+                Button("Ok") {
+                    requestError = nil
+                    displayErrorMessage = false
+                }
+            },
+            message: { errorObject
+            in
+                Text(errorObject.errorDescription)
+            }
+        )
     }
 }
 

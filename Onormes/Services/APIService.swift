@@ -493,16 +493,16 @@ class APIService {
     
     /**
      
-        
-     
+        API call to send feedback to our services
+
      */
     
-    func sendFeedback(feedback: String) -> Bool {
+    func sendFeedback(feedback: String) async throws -> Bool {
         
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/observation/") else { return false }
+        guard let url = URL(string: "http://51.103.72.63:3001/api/observation/") else { throw ServerErrorType.internalError(reason: "La construction de la requête envoyer un feedback a échouée") }
         
         var request = URLRequest(url: url)
         
@@ -516,22 +516,22 @@ class APIService {
             "text": feedback
         ]
         
-        let json = try? JSONSerialization.data(withJSONObject: unserialisedJson)
+        guard let json = try? JSONSerialization.data(withJSONObject: unserialisedJson) else {
+            throw ServerErrorType.internalError(reason: "Erreur lors de la construction de la requête")
+        }
         
         request.httpBody = json
         
-        URLSession.shared.dataTask(with: request) {(data, response, error) in
-          guard let data = data, error == nil else {
-            print(error?.localizedDescription ?? "No data")
-            return
-          }
+        let (data, response) = try await URLSession.shared.data(for: request)
 
-          guard let userResponse = try? JSONDecoder().decode(Observation.self, from: data) else {
-                print("Error feedback haven't saved")
-                return
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ServerErrorType.internalError(reason: "L'envoi du message a échoué")
+        }
+        
+        guard let userResponse = try? JSONDecoder().decode(Observation.self, from: data) else {
+            throw ServerErrorType.internalError(reason: "La réponse du message n'a pas pu être décodée")
           }
-            print("User feedback \(userResponse.id)")
-        }.resume()
+        print("User feedback \(String(describing: userResponse.id))")
         return true
     }
     
