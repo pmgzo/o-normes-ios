@@ -280,7 +280,7 @@ struct StageRow: View {
             Spacer()
             
             HStack {
-                Text(limitStringLength(str: self.description == "" ? "-" :  self.description, limit: 20)).italic().modifier(DescriptionText())
+                Text(limitStringLength(str: self.description == "" ? "-" :  self.description, limit: 20)).italic().modifier(StageDescriptionText())
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }.frame(maxWidth: .infinity, alignment: .leading)
@@ -427,7 +427,6 @@ struct SummaryWrapper: View {
                         
                         // TODO: check if it works
                         self.coordinator.updateSavedData(modifiedData: self.content().savedData)
-
                         presentationMode.wrappedValue.dismiss()
                     }.modifier(SecondaryButtonStyle1(size: 100))
                     

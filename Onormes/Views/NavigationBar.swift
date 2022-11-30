@@ -120,32 +120,6 @@ struct CustomTabView<Content: View>: View {
 struct NavigationBarView: View {
     @State var selectedIndex: Int = 0
       var body: some View {
-//        VStack(alignment: .center, content: {
-//            TabView {
-//                HomeMenu()
-//                .tabItem {
-//                  Image(systemName: "house")
-//                  Text("Accueil")
-//                }
-//
-//                  MeasuresVCRepresented()
-//                  .tabItem {
-//                      Image(systemName: "ruler.fill")
-//                      Text("Mesures").foregroundColor(Color(hex: "29245A"))
-//                  }
-//
-//                  ReconstructionVCRepresented()
-//                    .tabItem {
-//                      Image("Scan")
-//                      Text("Scan")
-//                    }
-//                  ProfileView()
-//                    .tabItem {
-//                      Image("ProfileImage").renderingMode(.template)
-//                      Text("Profil")
-//                    }
-//            }.accentColor(Color(hex: "29245A"))
-//        }).navigationBarHidden(true)
           CustomTabView(
             tabs: [
                 TabItemData(systemImage: true, image: "house.fill", title: "Accueil"),

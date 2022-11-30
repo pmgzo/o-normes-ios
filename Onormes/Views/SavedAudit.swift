@@ -124,7 +124,7 @@ struct SavedAudit: View {
                                         }.frame(maxWidth: .infinity, alignment: .leading)
                                         Spacer()
                                         HStack {
-                                            Text(self.savedAuditList[idx].date).italic().modifier(DescriptionText())
+                                            Text(self.savedAuditList[idx].date).italic().modifier(StageDescriptionText())
                                         }.frame(maxWidth: .infinity, alignment: .leading)
                                     }.frame(maxWidth: .infinity, alignment: .leading)
                                 }

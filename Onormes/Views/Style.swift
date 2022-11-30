@@ -295,6 +295,32 @@ struct DescriptionText: ViewModifier {
     }
 }
 
+struct StageDescriptionText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 15))
+            .foregroundColor(Color(hex: "CABFBF"))
+    }
+}
+
+struct ModeOfflineInformationText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(Color(hex: "9B9B9B"))
+            .multilineTextAlignment(.center)
+    }
+}
+
+struct ModeOfflineSuggestionText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 15))
+            .foregroundColor(Color(hex: "29245A"))
+            .multilineTextAlignment(.center)
+    }
+}
+
+
 // Components
 
 struct RadioButton: View {
