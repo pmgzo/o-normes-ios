@@ -100,9 +100,7 @@ struct UserJourneyNavigationPage: View {
                                 ) {
                                     EmptyView()
                                 }
-                                .transition(AnyTransition.asymmetric(
-                                    insertion: .move(edge: .trailing),
-                                    removal: .move(edge: .leading)))
+                                
                             }.hidden()
                             
                             
@@ -121,6 +119,9 @@ struct UserJourneyNavigationPage: View {
                                 .background(Color(hex: "29245A"))
                                 .cornerRadius(70)
                             })
+                            .transition(AnyTransition.asymmetric(
+                                insertion: .move(edge: .trailing),
+                                removal: .move(edge: .leading)))
                             
                                 
                             
@@ -138,7 +139,7 @@ struct UserJourneyNavigationPage: View {
                                 ) {
                                     EmptyView()
                                 }
-                                .transition(.slide)
+                                
                             }.hidden()
                             
                             Button(action: {
@@ -159,7 +160,7 @@ struct UserJourneyNavigationPage: View {
                                 .frame(width: 145, height: 38)
                                 .background(Color(hex: "29245A"))
                                 .cornerRadius(70)
-                            })
+                            }).transition(.slide)
                                                         
                         } else {
                             VStack {
@@ -174,7 +175,6 @@ struct UserJourneyNavigationPage: View {
                                 ) {
                                     EmptyView()
                                 }
-                                .transition(.slide)
                             }.hidden()
                             
                             Button(action: {
@@ -195,6 +195,7 @@ struct UserJourneyNavigationPage: View {
                                 .background(Color(hex: "29245A"))
                                 .cornerRadius(70)
                             })
+                            .transition(.slide)
                             
                         }
                     }
@@ -212,7 +213,7 @@ struct UserJourneyNavigationPage: View {
                         ) {
                             EmptyView()
                         }
-                        .transition(.slide)
+                        
                     }.hidden()
                     
                     Button(action: {
@@ -221,6 +222,7 @@ struct UserJourneyNavigationPage: View {
                     },label: {
                         Text("Finir l'audit").modifier(SecondaryButtonStyle1())
                     })
+                    .transition(.slide)
                 }
                 Spacer().frame(height: 20)
         }
