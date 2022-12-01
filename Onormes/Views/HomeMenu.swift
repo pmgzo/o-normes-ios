@@ -115,6 +115,8 @@ struct HomeMenu: View {
       return NavigationView {
           VStack {
               
+              Spacer().frame(height: 10)
+              
               if appState.offlineModeActivated == false {
                   Text("Bonjour \(userVM.user?.first_name ?? "")")
                       .font(.system(size: 25))
@@ -124,8 +126,8 @@ struct HomeMenu: View {
                       .onAppear(perform: {
                         userVM.getCurrentUser()
                       })
-                  
-                  Spacer().frame(height: 40)
+
+                  Spacer().frame(height: 20)
 
                   Text("Nous sommes le \(getCurrentDay()) \(getCurrentMonth()) \(getCurrentYear())") .foregroundColor(Color(hex: "29245A"))
                       .multilineTextAlignment(.center)
@@ -137,9 +139,9 @@ struct HomeMenu: View {
                       .foregroundColor(Color(hex: "29245A"))
                       .multilineTextAlignment(.center)
               }
-              
+
               LogoMenuImage()
-              
+
               NavigationLink(
                   destination: CreateAuditView().navigationBarHidden(true),
                   isActive: $hasStartUserJouney,
@@ -149,7 +151,7 @@ struct HomeMenu: View {
                       }.modifier(PrimaryButtonStyle1(size: 300))
                   }
               )
-              
+
               NavigationLink(
                 destination:  SavedAudit().navigationBarHidden(true),
                   isActive: $hasOpenedNotSentAudit,
@@ -159,7 +161,7 @@ struct HomeMenu: View {
                       }.modifier(SecondaryButtonStyle1(size: 300))
                   }
               )
-              
+
               NavigationLink(
                   destination: FeedbackView().navigationBarHidden(true),
                   isActive: $hasOpenedTheFeedbackPage,
@@ -169,7 +171,7 @@ struct HomeMenu: View {
                       }.modifier(SecondaryButtonStyle1(size: 300))
                   }
               )
-              
+
               if fileExist {
                   Text("Dernière mise à jour le \(updateDate)").modifier(ModeOfflineInformationText())
               } else {
@@ -181,7 +183,7 @@ struct HomeMenu: View {
               Button(action: {
                   Task {
                       animateButton = true
-                      
+
                       // query all stages
                       do {
                           if fileExist {
@@ -190,15 +192,15 @@ struct HomeMenu: View {
                               animateButton = false
                               return
                           }
-                          
+
                           let criteriaObject = try await APIService().downloadAllCriteria()
-                          
+
                           // save in file
                           try saveCriteria(criteriaObject: criteriaObject)
-                          
+
                           // dynamic rendering update
                           checkCriteriaFile()
-                          
+
                           animateButton = false
                       } catch ServerErrorType.internalError(let reason) {
                           animateButton = false
@@ -234,8 +236,9 @@ struct HomeMenu: View {
                       Text(errorObject.errorDescription)
                   }
               )
-          }
-          Spacer().frame(height: 100)
+              Spacer()
+          }.navigationBarHidden(true)
+//          Spacer().frame(height: 100)
       }
     }
 
