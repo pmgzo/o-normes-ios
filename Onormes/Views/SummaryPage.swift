@@ -426,7 +426,10 @@ struct SummaryWrapper: View {
                     Button("Retour") {
                         self.coordinator.updateSavedData(modifiedData: self.content().savedData)
                         
-                        self.coordinator.backToThePreviousStage()
+                        if self.coordinator.stageDelegate!.hasFinished {
+                            self.coordinator.backToThePreviousStage()
+                        }
+                        
                         self.coordinator.userJourneyNotFinished()
                         
                         presentationMode.wrappedValue.dismiss()

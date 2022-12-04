@@ -401,13 +401,20 @@ class APIService {
             throw ServerErrorType.internalError(reason: "La lecture de l'image a échouée")
         }
         
+//        let json: [String:Any] = [
+//            "company_fk": companyId,
+//            "audit_fk": auditId,
+//            "is_profil_pic": true,
+//            "base_image": base64EncodedImage!,
+//            "type": "png"
+//        ]
+        
         let json: [String:Any] = [
-            "company_fk": companyId,
-            "audit_fk": auditId,
-            "is_profil_pic": true,
-            "base_image": base64EncodedImage!,
-            "type": "png"
+            "action_id": auditId,
+            "action_type": "audit",
+            "base_64": base64EncodedImage!,
         ]
+
         
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
         request.httpBody = jsonData
@@ -431,7 +438,8 @@ class APIService {
         }
         
         if let dic = receivedJson as? [String:Any] {
-            let path: String = dic["path_to_image"]! as! String
+            //let path: String = dic["path_to_image"]! as! String
+            let path = String(dic["id"]! as! Int)
             return path
         } else {
             throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")

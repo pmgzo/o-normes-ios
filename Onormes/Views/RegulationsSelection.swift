@@ -120,9 +120,8 @@ extension GenericRegulationView {
                         VStack {
                             HStack {
                                 HStack {
-                                    Text(stageList[i].name)
+                                    Text(stageList[i].name).multilineTextAlignment(.leading)
                                 }.frame(width: (UIScreen.screenWidth - 100) / 3 * 2, alignment: .leading)
-//                                    .truncationMode(.tail)
                                 
                                 HStack {
                                     CheckBox(filled: stageList[i].selected)
@@ -131,7 +130,7 @@ extension GenericRegulationView {
                             }
                             .frame(maxWidth: .infinity)
                             Divider()
-                        }.frame(height: 40)
+                        }.frame(height: 70)
                     })
                 }
             }.frame(maxWidth: .infinity).background(.white)
@@ -162,7 +161,7 @@ extension GenericRegulationView {
                     Spacer().frame(height: 20)
                 }
             } else {
-                Spacer().frame(height: 64)
+                Spacer().frame(height: 10)
             }
         }
     }
@@ -243,9 +242,8 @@ struct SelectStageView: View {
                                 VStack {
                                     HStack {
                                         HStack {
-                                            Text(stageList[i].name)
+                                            Text(stageList[i].name).multilineTextAlignment(.leading)
                                         }.frame(width: (UIScreen.screenWidth - 100) / 3 * 2, alignment: .leading)
-                                            .truncationMode(.tail)
                                         
                                         HStack {
                                             CheckBox(filled: stageList[i].selected)
@@ -254,10 +252,10 @@ struct SelectStageView: View {
                                     }
                                     .frame(maxWidth: .infinity)
                                     Divider()
-                                }.frame(height: 40)
+                                }.frame(height: 70)
                             })
                         }
-                    }.frame(maxWidth: .infinity).background(.white)
+                    }.frame(maxWidth: .infinity, maxHeight: .infinity).background(.white)
                 
 
                 if selectedItems.items.count != 0 || userJourneyStarted == true { // its a hack to allow the navigation to continue otherwise it stops as we reset selectedItems
@@ -291,7 +289,7 @@ struct SelectStageView: View {
                         Spacer().frame(height: 20)
                     }
                 } else {
-                    Spacer().frame(height: 64)
+                    Spacer().frame(height: 10)
                 }
             }
         }
@@ -361,9 +359,8 @@ struct SelectStageInSummaryView: View {
                             VStack {
                                 HStack {
                                     HStack {
-                                        Text(stageList[i].name)
+                                        Text(stageList[i].name).multilineTextAlignment(.leading)
                                     }.frame(width: (UIScreen.screenWidth - 100) / 3 * 2, alignment: .leading)
-                                        .truncationMode(.tail)
                                     
                                     HStack {
                                         CheckBox(filled: stageList[i].selected)
@@ -372,7 +369,7 @@ struct SelectStageInSummaryView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 Divider()
-                            }.frame(height: 40)
+                            }.frame(height: 70)
                         })
                     }
                 }.frame(maxWidth: .infinity).background(.white)
@@ -406,7 +403,7 @@ struct SelectStageInSummaryView: View {
                         Spacer().frame(height: 20)
                     }
                 } else {
-                    Spacer().frame(height: 64)
+                    Spacer().frame(height: 10)
                 }
             }
         }
