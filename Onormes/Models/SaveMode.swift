@@ -60,17 +60,21 @@ func deserializeCriterion(criterion: [String:Any]) -> DataNorm {
     let name: String = criterion["name"] as! String
     
     if criterion["idSubCriterion"] != nil {
-        return DataNorm(
+        var dataNorm = DataNorm(
             key: name,
             data: deserializeRegulationNorms(criterion: criterion),
             subStepId: text,
             idSubCriterion: criterion["idSubCriterion"] as? Int
         )
+        dataNorm.photoList = criterion["photoList"] as! [String]
+        return dataNorm
     }
-    return DataNorm(
+    var dataNorm = DataNorm(
         key: name,
         data: deserializeRegulationNorms(criterion: criterion),
         subStepId: text)
+    dataNorm.photoList = criterion["photoList"] as! [String]
+    return dataNorm
 }
 
 func deserializeCriteria(criteria: [[String:Any]]) -> [DataNorm] {
@@ -148,7 +152,8 @@ func serializeSubcriterion(criterion: DataNorm) -> [String:Any] {
             "value": getValueFromRegulationNormArray(regNorms: criterion.data),
             "comment": getCommentFromRegulationNormArray(regNorms: criterion.data),
             "text": criterion.subStepId,
-            "name": criterion.key
+            "name": criterion.key,
+            "photoList": criterion.photoList
         ]
     }
     
@@ -157,7 +162,8 @@ func serializeSubcriterion(criterion: DataNorm) -> [String:Any] {
         "value": getValueFromRegulationNormArray(regNorms: criterion.data),
         "comment": getCommentFromRegulationNormArray(regNorms: criterion.data),
         "text": criterion.subStepId,
-        "name": criterion.key
+        "name": criterion.key,
+        "photoList": criterion.photoList
     ]
 }
 

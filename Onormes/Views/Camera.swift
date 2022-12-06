@@ -244,19 +244,7 @@ struct CameraPage: View {
                         Spacer()
                         HStack {
                             Button("Valider") {
-                                
-                                let resizedImage = resizeImage(image: capturedImage!, maxSize: CGSize(width: 100, height: 100))
-                                
-                                
-                                let heightInPoints = resizedImage.size.height
-                                let heightInPixels = heightInPoints * resizedImage.scale
-
-                                let widthInPoints = resizedImage.size.width
-                                let widthInPixels = widthInPoints * resizedImage.scale
-                                
-                                print("width: \(widthInPixels), height: \(heightInPixels)")
-                                
-                                let imagePath = saveImage(image: resizedImage)
+                                let imagePath = saveImage(image: capturedImage!)
                                 self.coordinator.stageDelegate!.addPicture(path: imagePath)
                                 presentationMode.wrappedValue.dismiss()
                             }.modifier(PrimaryButtonStyle1(size: 100))

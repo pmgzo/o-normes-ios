@@ -39,9 +39,12 @@ func resizeImage(image: UIImage, maxSize: CGSize) -> UIImage {
  */
 
 func saveImage(image: UIImage) -> String {
-    let imageName = UUID().uuidString + ".png"
-    let data = image.pngData()
+    let idImage = UUID().uuidString
+    let imageName = idImage + ".png"
     
+    
+    let data = image.pngData()
+    let resizedData = resizeImage(image: image, maxSize: CGSize(width: 100, height: 100)).pngData()
     
     do {
         
@@ -50,14 +53,14 @@ func saveImage(image: UIImage) -> String {
         }
         
         let userDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        let pathToSavedAudit = userDirectory!.path + "/temporaryImages"
+        let pathToImages = userDirectory!.path + "/temporaryImages"
 
         // if directory doesn't exists, create it
-        if FileManager.default.fileExists(atPath: pathToSavedAudit) == false {
-            try FileManager.default.createDirectory(atPath: pathToSavedAudit, withIntermediateDirectories: true, attributes: nil)
+        if FileManager.default.fileExists(atPath: pathToImages) == false {
+            try FileManager.default.createDirectory(atPath: pathToImages, withIntermediateDirectories: true, attributes: nil)
         }
 
-        let fullPath = pathToSavedAudit + "/" + imageName
+        let fullPath = pathToImages + "/" + imageName
 
         // rare case where the UUID is the same generated as before
         if FileManager.default.fileExists(atPath: fullPath) == true {
@@ -65,8 +68,11 @@ func saveImage(image: UIImage) -> String {
             try FileManager.default.removeItem(atPath: fullPath)
         }
 
-        // create file
-        let success = FileManager.default.createFile(atPath: fullPath, contents: data)
+        // save resized Image
+        let success = FileManager.default.createFile(atPath: fullPath, contents: resizedData)
+        
+        // save normal image
+        FileManager.default.createFile(atPath: pathToImages + "/" + idImage + "_2.png", contents: data)
 
         if success {
             print("image saved created")

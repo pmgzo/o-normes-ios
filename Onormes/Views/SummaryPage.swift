@@ -181,6 +181,7 @@ struct DataDetails: View {
     
     @State var value: Bool;
     @State var comment: String;
+    @State var lookIntoPictures: Bool = false
     var dataSaved: DataNorm
 
     init(data: DataNorm) {
@@ -218,6 +219,21 @@ struct DataDetails: View {
             
                 Spacer().frame(height: 20)
                 TextField("commentaire", text:$comment).textFieldStyle(CommentTextFieldStyle()).frame(width: 300)
+                if dataSaved.photoList.count > 0 {
+                    NavigationLink(
+                        destination: PicturesViewer(paths: dataSaved.photoList).navigationBarHidden(true),
+                        isActive: $lookIntoPictures,
+                        label: {
+                            Button(action: {
+                                lookIntoPictures = true
+                            }) {
+                                Text("Voir les photos")
+                                    .underline()
+                                    .multilineTextAlignment(.center)
+                            }.buttonStyle(LinkStyle())
+                        }
+                    )
+                }
             }.onDisappear(perform: {
                 if dataSaved.data[0].key.contains("-comment") {
                     dataSaved.data[0].valueString = comment
