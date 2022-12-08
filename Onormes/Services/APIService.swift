@@ -113,6 +113,8 @@ class APIService {
             print(error?.localizedDescription ?? "No data")
             return
           }
+            
+            print(String(decoding: data, as: UTF8.self))
 
           guard let userResponse = try? JSONDecoder().decode(User.self, from: data) else {
             print("Error get current User")
@@ -121,6 +123,45 @@ class APIService {
           completion(userResponse)
         }.resume()
     }
+    
+    /**
+            Return id data
+     */
+    
+    func getCompany() async throws -> [String:Any] {
+        let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
+
+        guard let url = URL(string: "http://51.103.72.63:3001/api/companies/user") else { throw ServerErrorType.internalError(reason: "Echec de la création de la requête pour avoir l'id de la l'entreprise") }
+        
+        // Build the request, set the method, the value and the body of the request
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        var  id = 0
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ServerErrorType.internalError(reason: "Echec de l'obtention de l'id de la company")
+        }
+        
+        let json = try? JSONSerialization.jsonObject(with: data, options: [])
+
+        guard json != nil else {
+            throw ServerErrorType.internalError(reason: "Erreur de la deserialization de l'objet json")
+        }
+
+//        if let dictionary = json as? [String: Any] {
+//            id = dictionary["id"]! as! Int
+//        } else {
+//            throw ServerErrorType.internalError(reason: "La tentative de casting sur l'objet json a échouée")
+//        }
+        return json as! [String: Any]
+    }
+    
     
     /**
      

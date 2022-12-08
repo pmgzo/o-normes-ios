@@ -54,11 +54,11 @@ struct LoginViewOfflineModeEnabled: View {
                           : AnyView(LoginButtonContent())
                       }).modifier(PrimaryButtonStyle1())
                       
-                      LabelledDivider(label: "ou")
-                      
-                        Text("Mot de passe oublié")
-                            .font(.system(size: 18, design: .default))
-                            .foregroundColor(Color(hex: "29245A"))
+//                      LabelledDivider(label: "ou")
+//
+//                        Text("Mot de passe oublié")
+//                            .font(.system(size: 18, design: .default))
+//                            .foregroundColor(Color(hex: "29245A"))
                     }.padding()
                       .preferredColorScheme(.light)
                       .autocapitalization(.none)
@@ -151,11 +151,11 @@ struct LoginViewOfflineModeDisabled: View {
                   : AnyView(LoginButtonContent())
               }).modifier(PrimaryButtonStyle1())
               
-              LabelledDivider(label: "ou")
-              
-                Text("Mot de passe oublié")
-                    .font(.system(size: 18, design: .default))
-                    .foregroundColor(Color(hex: "29245A"))
+//              LabelledDivider(label: "ou")
+//
+//                Text("Mot de passe oublié")
+//                    .font(.system(size: 18, design: .default))
+//                    .foregroundColor(Color(hex: "29245A"))
             }.padding()
               .preferredColorScheme(.light)
               .autocapitalization(.none)
