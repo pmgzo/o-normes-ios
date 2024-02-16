@@ -42,6 +42,8 @@ class RequestError: LocalizedError {
 
 class APIService {
     
+    // place your own backend url
+    let BACKEND_URL = ""
     /**
      
         Method to call the login route
@@ -52,7 +54,8 @@ class APIService {
   func login(credentials: Credentials, completion: @escaping (Result<String, Authentication.AuthenticationError>) -> Void) {
 
     // Check the URL, if the URL isn't correctly formated return an error
-    guard let url = URL(string: "http://51.103.72.63:3001/api/users/login") else {
+    // place your own backend API address
+    guard let url = URL(string: "\(BACKEND_URL)/api/users/login") else {
       completion(.failure(.custom(errorMessage: "Url is not correct")))
       return
     }
@@ -99,7 +102,8 @@ class APIService {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
 
-        guard let url = URL(string: "http://51.103.72.63:3001/api/users/?email=\(email)") else { return }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/users/?email=\(email)") else { return }
         
         // Build the request, set the method, the value and the body of the request
         var request = URLRequest(url: url)
@@ -131,7 +135,8 @@ class APIService {
     func getCompany() async throws -> [String:Any] {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
 
-        guard let url = URL(string: "http://51.103.72.63:3001/api/companies/user") else { throw ServerErrorType.internalError(reason: "Echec de la création de la requête pour avoir l'id de la l'entreprise") }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/companies/user") else { throw ServerErrorType.internalError(reason: "Echec de la création de la requête pour avoir l'id de la l'entreprise") }
         
         // Build the request, set the method, the value and the body of the request
         var request = URLRequest(url: url)
@@ -171,7 +176,8 @@ class APIService {
     func getCompanyId() async throws -> Int {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
 
-        guard let url = URL(string: "http://51.103.72.63:3001/api/companies/user") else { throw ServerErrorType.internalError(reason: "Echec de la création de la requête pour avoir l'id de la l'entreprise") }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/companies/user") else { throw ServerErrorType.internalError(reason: "Echec de la création de la requête pour avoir l'id de la l'entreprise") }
         
         // Build the request, set the method, the value and the body of the request
         var request = URLRequest(url: url)
@@ -211,7 +217,8 @@ class APIService {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
 
-        guard let url = URL(string: "http://51.103.72.63:3001/api/users/?email=\(email)") else {
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/users/?email=\(email)") else {
             throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir l'id de l'utilisateur a échouée")
         }
 
@@ -254,7 +261,8 @@ class APIService {
     
    func createAudit(auditInfos: AuditInfos) async throws -> Int {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
-        guard let url = URL(string: "http://51.103.72.63:3001/api/audit/") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour créer l'audit a échouée")
+       // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/audit/") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour créer l'audit a échouée")
         }
         var request = URLRequest(url: url)
 
@@ -325,7 +333,8 @@ class APIService {
     
     func createStep(stage: StageWrite, auditId: Int) async throws -> Int {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
-        guard let url = URL(string: "http://51.103.72.63:3001/api/step/") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour créer l'étape a échouée") }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/step/") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour créer l'étape a échouée") }
         var request = URLRequest(url: url)
 
         request.httpMethod = "POST"
@@ -375,7 +384,8 @@ class APIService {
     func createMeasureHelperFunction(json: [String:Any]) async throws -> Int {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/measure/") else {
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/measure/") else {
             throw ServerErrorType.internalError(reason: "La construction de la requête pour créer une mesure a échouée")
         }
         
@@ -423,7 +433,8 @@ class APIService {
     func uploadImage(filename: String, auditId: Int) async throws -> String {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/image") else {
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/image") else {
             throw ServerErrorType.internalError(reason: "La construction de la requête pour créer une mesure a échouée")
         }
         
@@ -551,7 +562,8 @@ class APIService {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/observation/") else { throw ServerErrorType.internalError(reason: "La construction de la requête envoyer un feedback a échouée") }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/observation/") else { throw ServerErrorType.internalError(reason: "La construction de la requête envoyer un feedback a échouée") }
         
         var request = URLRequest(url: url)
         
@@ -594,7 +606,8 @@ class APIService {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         let email: String = UserDefaults.standard.string(forKey: "email") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/criteria/all") else { return false }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/criteria/all") else { return false }
         
         var request = URLRequest(url: url)
         
@@ -641,8 +654,9 @@ class APIService {
         
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         
+        // place your own backend API address
         guard let url = URL(string:
-                                "http://51.103.72.63:3001/api/sub_criterion/criterion?criterionId=\(criterionId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des sous critère a échouée") }
+                                "\(BACKEND_URL)/api/sub_criterion/criterion?criterionId=\(criterionId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des sous critère a échouée") }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -700,8 +714,9 @@ class APIService {
     func getCriteriaFromPlace(placeId: Int) async throws -> [(String, Int)] {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         
+        // place your own backend API address
         guard let url = URL(string:
-                                "http://51.103.72.63:3001/api/criterion/place?placeId=\(placeId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des critères a échouée") }
+                                "\(BACKEND_URL)/api/criterion/place?placeId=\(placeId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des critères a échouée") }
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -747,7 +762,8 @@ class APIService {
     func getPlaceFromArea(areadId: Int) async throws -> [Int] {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/place/area?areaId=\(areadId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des  places a échouée") }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/place/area?areaId=\(areadId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des  places a échouée") }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -789,7 +805,8 @@ class APIService {
     func getAllStages(buildingTypeId: Int) async throws -> [String:StageRead] {
         let accessToken: String = UserDefaults.standard.string(forKey: "token") ?? ""
         
-        guard let url = URL(string: "http://51.103.72.63:3001/api/area/building?buildingId=\(buildingTypeId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des endroits a échouée") }
+        // place your own backend API address
+        guard let url = URL(string: "\(BACKEND_URL)/api/area/building?buildingId=\(buildingTypeId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des endroits a échouée") }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -843,7 +860,8 @@ class APIService {
 
         for buildingId in (1...173) {
             
-            guard let url = URL(string: "http://51.103.72.63:3001/api/area/building?buildingId=\(buildingId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des endroits a échouée") }
+            // place your own backend API address
+            guard let url = URL(string: "\(BACKEND_URL)/api/area/building?buildingId=\(buildingId)") else { throw ServerErrorType.internalError(reason: "La construction de la requête pour obtenir des endroits a échouée") }
             
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
